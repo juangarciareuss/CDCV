@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDCV - Inicio</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: 0 auto; background-color: #f9f9f9; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .logo { font-size: 24px; font-weight: bold; }
+        .user-info { font-size: 14px; }
+        h1 { color: #333; }
+        .course-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .course-card { background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 20px; }
+        .course-card h3 { margin-top: 0; }
+        .course-card a {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+        }
+        .course-card a:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">CDCV</div>
+        <div class="user-info">
+            <!-- Mostramos el nombre de usuario si está logueado -->
+            Usuario: <strong>{{ request.user.username }}</strong>
+        </div>
+    </header>
+
+    <h1>Certificaciones Disponibles</h1>
+
+    <div class="course-list">
+        {% for curso in cursos %}
+            <div class="course-card">
+                <h3>{{ curso.nombre }}</h3>
+                <p>Nivel: {{ curso.get_nivel_display|default:curso.nivel }} | Tema: {{ curso.tema.nombre }}</p>
+                <p>{{ curso.descripcion|default:"Sin descripción." }}</p>
+                <a href="{% url 'core:examen' curso.id %}">Comenzar Examen</a>
+            </div>
+        {% empty %}
+            <p>No hay cursos disponibles en este momento.</p>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

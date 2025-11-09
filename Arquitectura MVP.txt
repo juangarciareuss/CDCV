@@ -1,0 +1,55 @@
+┌─────────────────────────────┐
+│         Usuario             │
+│-----------------------------│
+│ Registro / Login obligatorio│
+│ Selección de curso y nivel  │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌─────────────────────────────┐
+│         Examen              │
+│-----------------------------│
+│ Set aleatorio de preguntas  │
+│ Validación automática IA    │
+│ Retroalimentación respuestas│
+└─────────────┬──────────────┘
+              │
+              ▼
+┌─────────────────────────────┐
+│       Certificado PDF       │
+│-----------------------------│
+│ Generación automática       │
+│ Código QR de verificación   │
+│ Guardado local              │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌─────────────────────────────┐
+│       Base de Datos         │
+│-----------------------------│
+│ Modelos Django:             │
+│ - Usuario                   │
+│ - Curso                     │
+│ - Nivel                     │
+│ - Pregunta                  │
+│ - Examen                    │
+│ - Certificado               │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌─────────────────────────────┐
+│          IA Engine          │
+│-----------------------------│
+│ Generación de preguntas     │
+│ Justificación automática    │
+│ Validación 90% asertividad  │
+│ Multiidioma (Futuro)       │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌─────────────────────────────┐
+│       Pagos / Monetización  │
+│-----------------------------│
+│ Stripe / PayPal $5 USD      │
+│ Acceso a certificado        │
+└─────────────────────────────┘

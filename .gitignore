@@ -1,0 +1,18 @@
+# Archivo de secretos. ¡NUNCA SUBIR!
+.env
+
+# Base de datos local
+db.sqlite3
+
+# Archivos de media (Certificados, QRs)
+mediafiles/
+
+# Entorno virtual de Python
+venv/
+
+# Archivos compilados y cache de Python
+__pycache__/
+*.pyc
+
+# Archivos de configuración de VS Code
+.vscode/

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Examen: {{ curso.nombre }}</title>
+    <!-- (Añadimos un poco de estilo para que sea más claro) -->
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: 0 auto; background-color: #f9f9f9; }
+        h1, h2, h3 { color: #333; }
+        form { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #0056b3; }
+        
+        .resultados { margin-top: 30px; }
+        .pregunta-resultado { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; background: #fff; }
+        .correcta { border-left: 5px solid #28a745; }
+        .incorrecta { border-left: 5px solid #dc3545; }
+
+        /* --- Estilos para los nuevos mensajes --- */
+        .mensaje-caja { text-align: center; padding: 30px; border-radius: 8px; margin-bottom: 20px; }
+        .pago-exito { background-color: #e6ffed; border: 1px solid #28a745; }
+        .pago-fallo { background-color: #fff8f8; border: 1px solid #dc3545; }
+        
+        /* --- Estilo para el botón de PayPal --- */
+        .boton-pago {
+            display: inline-block;
+            background-color: #ffc439; /* Color de PayPal */
+            color: #003087; /* Color de PayPal */
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+        .boton-pago:hover { background-color: #f0b934; }
+    </style>
+</head>
+<body>
+    <h1>Examen: {{ curso.nombre }}</h1>
+
+    <!-- FORMULARIO DE EXAMEN (Se oculta si ya hay resultados) -->
+    <!-- 'resultados' solo existe después de un POST -->
+    {% if not resultados %}
+        <form method="post">
+            {% csrf_token %}
+            {% for p in preguntas %}
+                <div style="margin-bottom: 20px;">
+                    <p><strong>{{ forloop.counter }}. {{ p.texto }}</strong></p>
+                    {% for key, opcion in p.opciones.items %}
+                        <label>
+                            <input type="radio" name="pregunta_{{ p.id }}" value="{{ key }}" required>
+                            {{ key }}. {{ opcion.texto }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit">Enviar examen</button>
+        </form>
+    {% endif %}
+
+    <!-- SECCIÓN DE RESULTADOS (Se muestra después del POST) -->
+    {% if resultados %}
+        <div class="resultados">
+            <h2>Resultados</h2>
+
+            <!-- Mensaje de Aprobación y Botón de Pago -->
+            <!-- 'examen' es el objeto que guardamos en la DB y pasamos a la plantilla -->
+            {% if examen.aprobado %}
+                <div class="mensaje-caja pago-exito">
+                    <h3>¡Felicidades, {{ request.user.username }}! Has aprobado.</h3>
+                    <p>Puntaje: <strong>{{ porcentaje }}%</strong> ({{ total_correctas }} / {{ total_preguntas }})</p>
+                    <p>Has demostrado tu competencia. Ahora puedes obtener tu certificado verificable por $5.00 USD.</p>
+                    
+                    <!-- ¡Botón de Pago! Apunta a la URL 'crear_pago_paypal' -->
+                    <a href="{% url 'core:crear_pago_paypal' examen.id %}" class="boton-pago">
+                        Pagar con PayPal y Obtener Certificado
+                    </a>
+                </div>
+            
+            <!-- Mensaje de Reprobación -->
+            {% else %}
+                <div class="mensaje-caja pago-fallo">
+                    <h3>Lo sentimos, no has aprobado.</h3>
+                    <p>Puntaje: <strong>{{ porcentaje }}%</strong> ({{ total_correctas }} / {{ total_preguntas }})</p>
+                    <p>Se requiere un 80% para aprobar. Puedes volver a intentarlo cuando estés listo.</p>
+                    <a href="{% url 'core:homepage' %}">Volver al inicio</a>
+                </div>
+            {% endif %}
+
+            <!-- Revisión detallada de respuestas -->
+            <h3 style="margin-top: 30px;">Revisión de tus respuestas:</h3>
+            {% for r in resultados %}
+                <div class="pregunta-resultado {% if r.correcta %}correcta{% else %}incorrecta{% endif %}">
+                    <p><strong>{{ r.pregunta }}</strong></p>
+                    <p>Tu respuesta: {{ r.respuesta_usuario }} - 
+                        {% if r.correcta %}
+                            ✅ Correcta
+                        {% else %}
+                            ❌ Incorrecta
+                        {% endif %}
+                    </p>
+                    <p>Justificación: {{ r.justificacion }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</body>
+</html>
