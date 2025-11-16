@@ -4,24 +4,36 @@ from django.urls import reverse
 from django.conf import settings
 from django.http import HttpResponseBadRequest
 
-from .models import Curso, Pregunta, Examen, Certificado, Tema
-from .utils import generar_sets_examen, calcular_resultados, generar_certificado_pdf
+from .models import Curso, Pregunta, Examen, Certificado
+from .utils import generar_sets_examen, calcular_resultados, generar_certificado_pdf 
 import random
 
 # Importar PayPal
 import paypalrestsdk
 
-# --- VISTA HOMEPAGE ---
 def homepage(request):
-    cursos = Curso.objects.all()
-    return render(request, "core/homepage.html", {
-        "cursos": cursos
-    })
+    # ELIMINAMOS: cursos = Curso.objects.all()
+    
+    # AÑADIMOS: Lógica de Métricas (Prueba Social)
+    # Filtramos solo cursos que tengan una "receta" (que estén activos)
+    cursos_activos = Curso.objects.filter(estructura_examen__isnull=False).order_by('nivel') 
+    
+    total_cursos = cursos_activos.count()
+    total_examenes = Examen.objects.count()
+    total_certificados = Certificado.objects.count()
 
-# --- VISTA PERFIL DE USUARIO ---
+    context = {
+        "cursos": cursos_activos,
+        "total_cursos": total_cursos,
+        "total_examenes": total_examenes,
+        "total_certificados": total_certificados
+    }
+    
+    return render(request, "core/homepage.html", context)
+
+# --- VISTA PERFIL DE USUARIO (Sin cambios) ---
 @login_required
 def perfil_usuario(request):
-    # Obtenemos todos los exámenes y certificados del usuario que ha iniciado sesión
     examenes = Examen.objects.filter(usuario=request.user).order_by('-fecha')
     certificados = Certificado.objects.filter(usuario=request.user).order_by('-fecha_emision')
     return render(request, 'core/perfil.html', {
@@ -29,7 +41,7 @@ def perfil_usuario(request):
         'certificados': certificados
     })
 
-# --- VISTA EXAMEN ---
+# --- VISTA EXAMEN (MODIFICADA) ---
 @login_required 
 def examen(request, curso_id):
     curso = get_object_or_404(Curso, id=curso_id)
@@ -38,9 +50,17 @@ def examen(request, curso_id):
     # Lógica GET
     if request.method == "GET":
         if session_key not in request.session:
-            sets_ids = generar_sets_examen(curso_id, num_sets=3, preguntas_por_set=10) 
+            
+            # --- MODIFICACIÓN CLAVE (SPRINT 5) ---
+            # ELIMINADO: preguntas_por_set=10
+            # La nueva función (en utils.py) lee la 'estructura_examen' del curso.
+            sets_ids = generar_sets_examen(curso_id, num_sets=3) 
+            # --- FIN DE MODIFICACIÓN ---
+            
             if not sets_ids:
-                 return render(request, "core/error.html", {"mensaje": "No hay suficientes preguntas disponibles para este curso."})
+                 # Mensaje actualizado para reflejar la nueva lógica
+                 return render(request, "core/error.html", {"mensaje": "Este curso no tiene una 'receta' de examen (estructura_examen) válida o no hay suficientes preguntas en el banco que cumplan sus reglas."})
+            
             preguntas_ids = random.choice(sets_ids)
             request.session[session_key] = preguntas_ids
         else:
@@ -51,6 +71,8 @@ def examen(request, curso_id):
              if session_key in request.session:
                 del request.session[session_key]
              return render(request, "core/error.html", {"mensaje": "Error al cargar las preguntas. Inténtalo de nuevo."})
+        
+        # Ordenamos las preguntas según el ID guardado en la sesión
         preguntas_set.sort(key=lambda x: preguntas_ids.index(x.id))
 
         return render(request, "core/examen.html", {
@@ -58,7 +80,7 @@ def examen(request, curso_id):
             'preguntas': preguntas_set
         })
 
-    # --- Lógica POST ---
+    # --- Lógica POST (Sin cambios) ---
     if request.method == "POST":
         preguntas_ids = request.session.get(session_key)
         if not preguntas_ids:
@@ -68,6 +90,8 @@ def examen(request, curso_id):
         preguntas_set.sort(key=lambda x: preguntas_ids.index(x.id))
 
         respuestas_usuario = {k: v for k, v in request.POST.items() if k.startswith('pregunta_')}
+        
+        # La función calcular_resultados no cambió
         resultados, porcentaje, total_correctas, total_preguntas = calcular_resultados(respuestas_usuario, preguntas_set)
         
         examen_aprobado = porcentaje >= 80.0
@@ -82,8 +106,8 @@ def examen(request, curso_id):
         )
 
         if session_key in request.session:
-            del request.session[session_key]
-
+            del request.session
+        
         return render(request, "core/examen.html", {
             'curso': curso,
             'preguntas': preguntas_set,
@@ -94,14 +118,13 @@ def examen(request, curso_id):
             'examen': examen_guardado
         })
 
-# --- VISTAS DE PAGO (CORREGIDAS) ---
+# --- VISTAS DE PAGO (Sin cambios) ---
 
 @login_required
 def crear_pago_paypal(request, examen_id):
     try:
         examen = get_object_or_404(Examen, id=examen_id)
 
-        # (Chequeos de seguridad)
         if examen.usuario != request.user:
             return HttpResponseBadRequest("No tienes permiso para pagar este examen.")
         if not examen.aprobado:
@@ -109,7 +132,6 @@ def crear_pago_paypal(request, examen_id):
         if Certificado.objects.filter(examen=examen).exists():
              return HttpResponseBadRequest("Este examen ya tiene un certificado emitido.")
 
-        # --- INICIO DE CORRECCIÓN (VALIDATION_ERROR) ---
         payment = paypalrestsdk.Payment({
             "intent": "sale",
             "payer": {
@@ -132,20 +154,16 @@ def crear_pago_paypal(request, examen_id):
                 "amount": {
                     "total": "5.00",
                     "currency": "USD",
-                    # --- ¡ESTA ES LA CORRECCIÓN! ---
-                    # Añadimos el desglose 'details' que PayPal requiere
                     "details": {
                         "subtotal": "5.00",
                         "tax": "0.00",
                         "shipping": "0.00"
                     }
-                    # --- FIN DE LA CORRECCIÓN ---
                 },
                 "description": f"Emisión de certificado para el examen ID {examen.id}.",
                 "custom": str(examen.id)
             }]
         })
-        # --- FIN DE CORRECCIÓN ---
 
         if payment.create():
             for link in payment.links:
@@ -198,7 +216,7 @@ def pago_cancelado(request):
     return render(request, 'core/pago_cancelado.html')
 
 
-# --- VISTA VERIFICACIÓN ---
+# --- VISTA VERIFICACIÓN (Sin cambios) ---
 def verificar_certificado(request, codigo_verificacion):
     certificado = get_object_or_404(Certificado, codigo_verificacion=codigo_verificacion)
     return render(request, 'core/verificacion.html', {

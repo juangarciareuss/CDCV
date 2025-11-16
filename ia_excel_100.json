@@ -1,0 +1,3102 @@
+[
+  {
+    "texto": "¿Qué función se utiliza para sumar un rango de celdas?",
+    "opciones": {
+      "A": {
+        "texto": "PROMEDIO",
+        "justificacion": "Incorrecto, PROMEDIO calcula la media."
+      },
+      "B": {
+        "texto": "SUMA",
+        "justificacion": "Correcto, SUMA(A1:A10) suma todas las celdas en ese rango."
+      },
+      "C": {
+        "texto": "CONTAR",
+        "justificacion": "Incorrecto, CONTAR cuenta el número de celdas."
+      },
+      "D": {
+        "texto": "MAX",
+        "justificacion": "Incorrecto, MAX encuentra el valor más alto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 3,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "Para calcular el valor promedio de un rango B2:B10, ¿qué fórmula usarías?",
+    "opciones": {
+      "A": {
+        "texto": "=MEDIA(B2:B10)",
+        "justificacion": "Incorrecto, MEDIA es de Google Sheets."
+      },
+      "B": {
+        "texto": "=SUMA(B2:B10)/CONTAR(B2:B10)",
+        "justificacion": "Válido, pero =PROMEDIO es más directa."
+      },
+      "C": {
+        "texto": "=PROMEDIO(B2:B10)",
+        "justificacion": "Correcto, esta es la función integrada de Excel."
+      },
+      "D": {
+        "texto": "=CONTAR(B2:B10)",
+        "justificacion": "Incorrecto, esto solo cuenta las celdas."
+      }
+    },
+    "respuesta_correcta": "C",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 3,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué devuelve la fórmula =SI(A1 > 100, \"Alto\", \"Bajo\") si A1 es 50?",
+    "opciones": {
+      "A": {
+        "texto": "Alto",
+        "justificacion": "Incorrecto, 50 no es mayor que 100."
+      },
+      "B": {
+        "texto": "Bajo",
+        "justificacion": "Correcto, 50 es menor que 100, por lo que se cumple la condición 'valor_si_falso'."
+      },
+      "C": {
+        "texto": "VERDADERO",
+        "justificacion": "Incorrecto, la fórmula devuelve el texto especificado."
+      },
+      "D": {
+        "texto": "FALSO",
+        "justificacion": "Incorrecto, la fórmula devuelve el texto especificado."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 3,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué tecla se usa para fijar una referencia de celda (ej. $A$1)?",
+    "opciones": {
+      "A": {
+        "texto": "F2",
+        "justificacion": "Incorrecto, F2 se usa para editar el contenido de una celda."
+      },
+      "B": {
+        "texto": "F4",
+        "justificacion": "Correcto, al editar una fórmula, F4 alterna entre referencias relativas, absolutas y mixtas."
+      },
+      "C": {
+        "texto": "F9",
+        "justificacion": "Incorrecto, F9 recalcula la hoja."
+      },
+      "D": {
+        "texto": "F1",
+        "justificacion": "Incorrecto, F1 abre el menú de Ayuda."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 3,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "La función MAX() se utiliza para...",
+    "opciones": {
+      "A": {
+        "texto": "Encontrar el texto más largo.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Encontrar el valor numérico más alto en un rango.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Maximizar la ventana de Excel.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Calcular la media.",
+        "justificacion": "Incorrecto, eso es PROMEDIO."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 3,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "La función MIN() se utiliza para...",
+    "opciones": {
+      "A": {
+        "texto": "Minimizar la ventana de Excel.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Encontrar el valor numérico más bajo en un rango.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Encontrar el texto más corto.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Contar las celdas.",
+        "justificacion": "Incorrecto, eso es CONTAR."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 3,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función CONTAR(A1:A100)?",
+    "opciones": {
+      "A": {
+        "texto": "Cuenta todas las celdas en el rango.",
+        "justificacion": "Incorrecto, solo cuenta celdas con números."
+      },
+      "B": {
+        "texto": "Suma los valores del rango.",
+        "justificacion": "Incorrecto, eso es SUMA()."
+      },
+      "C": {
+        "texto": "Cuenta cuántas celdas en el rango contienen números.",
+        "justificacion": "Correcto."
+      },
+      "D": {
+        "texto": "Cuenta celdas no vacías.",
+        "justificacion": "Incorrecto, eso es CONTARA."
+      }
+    },
+    "respuesta_correcta": "C",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 3,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función CONTARA(A1:A100)?",
+    "opciones": {
+      "A": {
+        "texto": "Cuenta solo celdas con texto.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Cuenta cuántas celdas en el rango NO están vacías.",
+        "justificacion": "Correcto, cuenta números, texto, errores, etc. Solo ignora las vacías."
+      },
+      "C": {
+        "texto": "Cuenta solo celdas vacías.",
+        "justificacion": "Incorrecto, eso es CONTAR.BLANCO()."
+      },
+      "D": {
+        "texto": "Cuenta solo celdas con números.",
+        "justificacion": "Incorrecto, eso es CONTAR."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 3,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué devuelve =Y(A1>5, A1<10) si A1 es 8?",
+    "opciones": {
+      "A": {
+        "texto": "VERDADERO",
+        "justificacion": "Correcto, 8 es mayor que 5 Y 8 es menor que 10. Ambas son verdaderas."
+      },
+      "B": {
+        "texto": "FALSO",
+        "justificacion": "Incorrecto, ambas condiciones se cumplen."
+      },
+      "C": {
+        "texto": "8",
+        "justificacion": "Incorrecto, las funciones lógicas devuelven VERDADERO o FALSO."
+      },
+      "D": {
+        "texto": "Error",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 3,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué devuelve =O(A1>5, A1<3) si A1 es 8?",
+    "opciones": {
+      "A": {
+        "texto": "VERDADERO",
+        "justificacion": "Correcto, 8 es mayor que 5. Con la función O(), solo se necesita que una condición sea verdadera."
+      },
+      "B": {
+        "texto": "FALSO",
+        "justificacion": "Incorrecto, la primera condición (A1>5) es verdadera."
+      },
+      "C": {
+        "texto": "Error",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "8",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 3,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es el propósito principal de BUSCARV (VLOOKUP)?",
+    "opciones": {
+      "A": {
+        "texto": "Buscar un valor en la primera fila de una tabla.",
+        "justificacion": "Incorrecto, eso es BUSCARH (HLOOKUP)."
+      },
+      "B": {
+        "texto": "Buscar un valor en la primera columna de una tabla y devolver un valor de una columna a la derecha.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Sumar valores basados en un criterio.",
+        "justificacion": "Incorrecto, eso es SUMAR.SI."
+      },
+      "D": {
+        "texto": "Contar valores basados en un criterio.",
+        "justificacion": "Incorrecto, eso es CONTAR.SI."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 4,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "En BUSCARV(A2, B:D, 3, FALSO), ¿qué significa el '3'?",
+    "opciones": {
+      "A": {
+        "texto": "Busca el valor en la tercera fila.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "El valor a buscar 'A2' está en la columna 3.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Devuelve el valor de la tercera columna del rango (B:D).",
+        "justificacion": "Correcto. Si B es la col 1, C es la 2, D es la 3."
+      },
+      "D": {
+        "texto": "Espera 3 segundos.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "C",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 4,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "En BUSCARV(A2, B:D, 3, FALSO), ¿qué significa 'FALSO'?",
+    "opciones": {
+      "A": {
+        "texto": "Que la búsqueda debe ser una coincidencia exacta.",
+        "justificacion": "Correcto. Si no encuentra el valor exacto, devuelve #N/A."
+      },
+      "B": {
+        "texto": "Que la búsqueda debe ser una coincidencia aproximada.",
+        "justificacion": "Incorrecto, eso es VERDADERO."
+      },
+      "C": {
+        "texto": "Que la tabla no está ordenada.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Que la fórmula es incorrecta.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 4,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué función es considerada la sucesora moderna y más flexible de BUSCARV/BUSCARH?",
+    "opciones": {
+      "A": {
+        "texto": "INDICE (INDEX) y COINCIDIR (MATCH)",
+        "justificacion": "Correcto, la combinación de INDICE y COINCIDIR es más potente."
+      },
+      "B": {
+        "texto": "BUSCARX (XLOOKUP)",
+        "justificacion": "Correcto, BUSCARX es la más moderna y reemplaza a todas."
+      },
+      "C": {
+        "texto": "SUMAR.SI.CONJUNTO",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "DESREF (OFFSET)",
+        "justificacion": "Incorrecto, es potente pero no una sucesora directa."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 4,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "La función COINCIDIR(A1, C:C, 0) devuelve...",
+    "opciones": {
+      "A": {
+        "texto": "El valor de la celda.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "El número de fila (posición relativa) donde A1 se encuentra en la columna C.",
+        "justificacion": "Correcto. El '0' indica coincidencia exacta."
+      },
+      "C": {
+        "texto": "VERDADERO o FALSO.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "El valor de A1.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 4,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función INDICE(A:C, 5, 2)?",
+    "opciones": {
+      "A": {
+        "texto": "Busca el valor de la celda B5.",
+        "justificacion": "Correcto. Devuelve el valor en la intersección de la Fila 5 y la Columna 2 (Columna B) del rango A:C."
+      },
+      "B": {
+        "texto": "Busca el valor de la celda C5.",
+        "justificacion": "Incorrecto, esa sería la columna 3."
+      },
+      "C": {
+        "texto": "Busca el valor de la celda A2.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Busca el valor de la celda B2.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 4,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "Si quieres buscar a la izquierda con BUSCARV, ¿qué debes hacer?",
+    "opciones": {
+      "A": {
+        "texto": "Usar un número de columna negativo.",
+        "justificacion": "Incorrecto, BUSCARV no puede hacer esto."
+      },
+      "B": {
+        "texto": "Usar INDICE y COINCIDIR.",
+        "justificacion": "Correcto, esta es la forma clásica de superar la limitación de BUSCARV."
+      },
+      "C": {
+        "texto": "Cambiar el orden de las columnas.",
+        "justificacion": "Válido, pero es una solución estructural, no de fórmula."
+      },
+      "D": {
+        "texto": "Usar BUSCARX.",
+        "justificacion": "Correcto, BUSCARX lo hace de forma nativa."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 4,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es la principal ventaja de BUSCARX sobre BUSCARV?",
+    "opciones": {
+      "A": {
+        "texto": "Es más rápida.",
+        "justificacion": "No necesariamente su principal ventaja."
+      },
+      "B": {
+        "texto": "Usa coincidencia exacta por defecto y puede buscar a la izquierda.",
+        "justificacion": "Correcto, BUSCARX es más intuitiva y potente."
+      },
+      "C": {
+        "texto": "Es más antigua y compatible.",
+        "justificacion": "Incorrecto, es más nueva."
+      },
+      "D": {
+        "texto": "Solo funciona con números.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 4,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función TRANSPONER?",
+    "opciones": {
+      "A": {
+        "texto": "Invierte el orden de las filas.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Convierte un rango de filas en columnas, o de columnas en filas.",
+        "justificacion": "Correcto. Es una función de matriz."
+      },
+      "C": {
+        "texto": "Traduce el texto de la celda.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Formatea la celda.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 4,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué función te permite obtener parte de un texto? (ej. 'Excel' de 'Microsoft Excel')",
+    "opciones": {
+      "A": {
+        "texto": "EXTRAE (MID)",
+        "justificacion": "Correcto, EXTRAE(texto, pos_inicial, num_caracteres) hace esto."
+      },
+      "B": {
+        "texto": "DERECHA (RIGHT)",
+        "justificacion": "Correcto, DERECHA(texto, 5) también daría 'Excel'."
+      },
+      "C": {
+        "texto": "IZQUIERDA (LEFT)",
+        "justificacion": "Incorrecto, esto daría 'Microsoft'."
+      },
+      "D": {
+        "texto": "TEXTO (TEXT)",
+        "justificacion": "Incorrecto, TEXTO es para formato."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 1,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 4,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es el propósito principal de una Tabla Dinámica?",
+    "opciones": {
+      "A": {
+        "texto": "Crear gráficos bonitos.",
+        "justificacion": "Incorrecto, aunque se pueden basar en ellas."
+      },
+      "B": {
+        "texto": "Resumir, agrupar y analizar grandes cantidades de datos de forma interactiva.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Buscar un valor específico.",
+        "justificacion": "Incorrecto, eso es BUSCARV."
+      },
+      "D": {
+        "texto": "Escribir fórmulas complejas.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 5,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "En una Tabla Dinámica, ¿dónde arrastrarías un campo de 'Ventas ($)' para ver el total?",
+    "opciones": {
+      "A": {
+        "texto": "Al área de FILAS.",
+        "justificacion": "Incorrecto, esto mostraría cada valor de venta único como una fila."
+      },
+      "B": {
+        "texto": "Al área de VALORES.",
+        "justificacion": "Correcto. El área de Valores es para campos numéricos que se desean calcular."
+      },
+      "C": {
+        "texto": "Al área de FILTROS.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Al área de COLUMNAS.",
+        "justificacion": "Incorrecto, crearía una columna por cada valor."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 5,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "En una Tabla Dinámica, ¿dónde arrastrarías un campo de 'Región' para ver las ventas por región?",
+    "opciones": {
+      "A": {
+        "texto": "Al área de FILAS (o COLUMNAS).",
+        "justificacion": "Correcto. Esto agrupa los datos por cada región única."
+      },
+      "B": {
+        "texto": "Al área de VALORES.",
+        "justificacion": "Incorrecto, Excel intentaría 'Contar' las regiones."
+      },
+      "C": {
+        "texto": "Solo se puede en FILTROS.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "No se puede.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 5,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es 'Actualizar' (Refresh) en una Tabla Dinámica?",
+    "opciones": {
+      "A": {
+        "texto": "Cambia el diseño visual de la tabla.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Vuelve a calcular la tabla basado en los datos de origen (si estos cambiaron).",
+        "justificacion": "Correcto. Las Tablas Dinámicas no se actualizan solas."
+      },
+      "C": {
+        "texto": "Deshace el último cambio.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Guarda el archivo.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 5,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es un 'Slicer' (Segmentación de datos) en una Tabla Dinámica?",
+    "opciones": {
+      "A": {
+        "texto": "Un tipo de gráfico.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Un filtro visual interactivo (un botón) que permite filtrar la Tabla Dinámica.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Una forma de cortar los datos por la mitad.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Un campo calculado.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 5,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "Si los datos de origen de tu Tabla Dinámica aumentan (más filas), ¿qué debes hacer?",
+    "opciones": {
+      "A": {
+        "texto": "Nada, solo 'Actualizar'.",
+        "justificacion": "Incorrecto, 'Actualizar' no detecta nuevas filas fuera del rango original."
+      },
+      "B": {
+        "texto": "Borrar la tabla y crearla de nuevo.",
+        "justificacion": "Funciona, pero es ineficiente."
+      },
+      "C": {
+        "texto": "Ir a 'Cambiar origen de datos' o usar una 'Tabla de Excel' (Ctrl+T) como origen.",
+        "justificacion": "Correcto. Usar una Tabla (Ctrl+T) es la mejor práctica."
+      },
+      "D": {
+        "texto": "Reiniciar Excel.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "C",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 5,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la opción 'Agrupar' en un campo de fecha en una Tabla Dinámica?",
+    "opciones": {
+      "A": {
+        "texto": "Agrupa automáticamente las fechas por Meses, Trimestres y Años.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Elimina las fechas.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Solo funciona si las fechas son texto.",
+        "justificacion": "Incorrecto, deben ser fechas válidas."
+      },
+      "D": {
+        "texto": "Formatea la fecha (ej. DD/MM/AAAA).",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 5,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es un 'Campo Calculado' en una Tabla Dinámica?",
+    "opciones": {
+      "A": {
+        "texto": "Una celda donde escribes una fórmula fuera de la tabla.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Un nuevo campo (columna) dentro de la Tabla Dinámica que creas usando una fórmula basada en otros campos.",
+        "justificacion": "Correcto. Ej. un campo 'Comisión' = 'Ventas' * 0.10."
+      },
+      "C": {
+        "texto": "El total general.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Una celda con formato condicional.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 5,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué formato de datos es el ideal para crear una Tabla Dinámica?",
+    "opciones": {
+      "A": {
+        "texto": "Un reporte con subtotales y celdas combinadas.",
+        "justificacion": "Incorrecto, esto es lo peor para una Tabla Dinámica."
+      },
+      "B": {
+        "texto": "Datos 'planos' o 'tabulares' (cada fila es un registro, cada columna es un campo).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Datos en horizontal.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Una captura de pantalla (imagen).",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 5,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Para qué sirve el área de 'COLUMNAS' en una Tabla Dinámica?",
+    "opciones": {
+      "A": {
+        "texto": "Para crear una cabecera de columna por cada valor único del campo.",
+        "justificacion": "Correcto. Similar a FILAS, pero crea una tabla de doble entrada."
+      },
+      "B": {
+        "texto": "Es obligatorio usarla.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Solo para poner fechas.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Solo para poner valores numéricos.",
+        "justificacion": "Incorrecto, eso es VALORES."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 5,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función SUMAR.SI?",
+    "opciones": {
+      "A": {
+        "texto": "Suma un rango de celdas si se cumplen múltiples condiciones.",
+        "justificacion": "Incorrecto, eso es SUMAR.SI.CONJUNTO."
+      },
+      "B": {
+        "texto": "Suma un rango de celdas si se cumple UNA condición.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Suma todas las celdas que contienen \"SI\".",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Suma dos rangos.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 6,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función SUMAR.SI.CONJUNTO?",
+    "opciones": {
+      "A": {
+        "texto": "Suma un rango de celdas si se cumple CUALQUIERA de varias condiciones.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Suma un rango de celdas si se cumplen TODAS las condiciones especificadas.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Suma varias hojas de cálculo.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Suma si se cumple UNA condición.",
+        "justificacion": "Incorrecto, eso es SUMAR.SI."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 6,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "La función CONTAR.SI(A:A, \">10\") hará lo siguiente:",
+    "opciones": {
+      "A": {
+        "texto": "Contará cuántas celdas en la columna A son mayores que 10.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Sumará las celdas mayores que 10.",
+        "justificacion": "Incorrecto, eso es SUMAR.SI."
+      },
+      "C": {
+        "texto": "Devolverá un error por el \">10\".",
+        "justificacion": "Incorrecto, esa es la sintaxis correcta."
+      },
+      "D": {
+        "texto": "Devolverá el promedio.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 6,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función SI.ERROR (IFERROR)?",
+    "opciones": {
+      "A": {
+        "texto": "Corrige el error en una fórmula.",
+        "justificacion": "Incorrecto, no lo corrige, lo gestiona."
+      },
+      "B": {
+        "texto": "Devuelve un valor específico (ej. 0) si la fórmula evaluada da un error (ej. #N/A).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Muestra un mensaje de alerta.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Borra la celda si hay error.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 6,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función CONCATENAR (o el operador &)?",
+    "opciones": {
+      "A": {
+        "texto": "Suma números.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Une dos o más cadenas de texto en una sola.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Divide el texto.",
+        "justificacion": "Incorrecto, eso es Texto en Columnas."
+      },
+      "D": {
+        "texto": "Busca texto.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 6,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Para qué sirve el 'Formato Condicional'?",
+    "opciones": {
+      "A": {
+        "texto": "Para cambiar el formato de una celda (ej. color) basado en una regla.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Para bloquear una celda.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Para crear una fórmula SI.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Para validar datos.",
+        "justificacion": "Incorrecto, eso es Validación de Datos."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 6,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es la 'Validación de Datos'?",
+    "opciones": {
+      "A": {
+        "texto": "Una forma de crear una lista desplegable en una celda.",
+        "justificacion": "Correcto, es uno de sus usos."
+      },
+      "B": {
+        "texto": "Restringir el tipo de datos que se puede ingresar en una celda.",
+        "justificacion": "Correcto, es su propósito principal."
+      },
+      "C": {
+        "texto": "Ambas A y B son correctas.",
+        "justificacion": "Correcto."
+      },
+      "D": {
+        "texto": "Un formato condicional.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "C",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 6,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función HOY()?",
+    "opciones": {
+      "A": {
+        "texto": "Devuelve la fecha y hora actuales.",
+        "justificacion": "Incorrecto, eso es AHORA()."
+      },
+      "B": {
+        "texto": "Devuelve solo la fecha actual.",
+        "justificacion": "Correcto. Es volátil."
+      },
+      "C": {
+        "texto": "Inserta la fecha de hoy como texto estático.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Devuelve solo la hora.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 6,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función AHORA()?",
+    "opciones": {
+      "A": {
+        "texto": "Devuelve solo la fecha actual.",
+        "justificacion": "Incorrecto, eso es HOY()."
+      },
+      "B": {
+        "texto": "Devuelve la fecha y la hora actuales.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Pregunta la hora.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Inserta la hora como texto estático.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 6,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la herramienta 'Texto en Columnas'?",
+    "opciones": {
+      "A": {
+        "texto": "Une varias columnas de texto.",
+        "justificacion": "Incorrecto, eso es CONCATENAR."
+      },
+      "B": {
+        "texto": "Divide el contenido de una columna de texto en múltiples columnas basado en un delimitador.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Cambia la orientación del texto a vertical.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Transpone los datos.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 2,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 6,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es la herramienta 'Buscar Objetivo' (Goal Seek)?",
+    "opciones": {
+      "A": {
+        "texto": "Una herramienta que ajusta el valor de una celda (celda cambiante) para alcanzar un resultado específico en otra.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Una herramienta de búsqueda de texto.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Una forma de crear un escenario.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Un tipo de Tabla Dinámica.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 7,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Para qué sirve el 'Administrador de Escenarios'?",
+    "opciones": {
+      "A": {
+        "texto": "Para comparar los resultados de múltiples conjuntos de variables de entrada.",
+        "justificacion": "Correcto. Ej. escenario 'Optimista', 'Pesimista'."
+      },
+      "B": {
+        "texto": "Para gestionar las hojas del libro.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Para administrar los usuarios.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Para buscar un objetivo.",
+        "justificacion": "Incorrecto, eso es Buscar Objetivo."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 7,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es 'Solver'?",
+    "opciones": {
+      "A": {
+        "texto": "Una versión más simple de Buscar Objetivo.",
+        "justificacion": "Incorrecto, es mucho más avanzada."
+      },
+      "B": {
+        "texto": "Un complemento (add-in) para optimización y programación lineal.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Una herramienta para solucionar errores #N/A.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Un tipo de formato condicional.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 7,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es una 'Tabla de Datos' (Data Table) en análisis de escenarios?",
+    "opciones": {
+      "A": {
+        "texto": "Una Tabla de Excel (Ctrl+T).",
+        "justificacion": "Incorrecto, es un nombre confuso pero son diferentes."
+      },
+      "B": {
+        "texto": "Una herramienta que calcula los resultados de una fórmula al variar una o dos variables.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Una Tabla Dinámica.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Un Slicer.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 7,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cómo se accede a la herramienta 'Solver'?",
+    "opciones": {
+      "A": {
+        "texto": "Está en la pestaña 'Datos' por defecto.",
+        "justificacion": "Incorrecto, debe activarse primero."
+      },
+      "B": {
+        "texto": "Debe activarse desde 'Archivo' > 'Opciones' > 'Complementos' > 'Complementos de Excel'.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Se debe descargar de internet.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Está en la pestaña 'Insertar'.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 7,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es la diferencia principal entre 'Buscar Objetivo' y 'Solver'?",
+    "opciones": {
+      "A": {
+        "texto": "Buscar Objetivo maneja 1 variable; Solver maneja múltiples variables y restricciones.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Solver es gratis y Buscar Objetivo es pagado.",
+        "justificacion": "Incorrecto, ambos vienen con Excel."
+      },
+      "C": {
+        "texto": "No hay diferencia.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Buscar Objetivo es un Add-in, Solver no.",
+        "justificacion": "Incorrecto, es al revés."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 7,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "La función PAGO() se utiliza para...",
+    "opciones": {
+      "A": {
+        "texto": "Calcular el pago de un préstamo (ej. hipoteca) basado en una tasa de interés, número de períodos y monto.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Registrar un pago en una base de datos.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Abrir PayPal.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Calcular el ROI.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 7,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es un Gráfico de Cascada (Waterfall Chart)?",
+    "opciones": {
+      "A": {
+        "texto": "Un gráfico que muestra el flujo de agua.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Un gráfico que muestra cómo un valor inicial es afectado por una serie de valores positivos y negativos.",
+        "justificacion": "Correcto. Ej. Ingresos - Costos = Ganancia."
+      },
+      "C": {
+        "texto": "Un gráfico de burbujas.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Un gráfico de Pareto.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 7,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Para qué sirve la herramienta 'Quitar Duplicados'?",
+    "opciones": {
+      "A": {
+        "texto": "Para eliminar filas de una tabla que son idénticas (o duplicadas en columnas clave).",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Para encontrar errores.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Para duplicar una hoja.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Para crear un Slicer.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 7,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es Power Query (Obtener y Transformar)?",
+    "opciones": {
+      "A": {
+        "texto": "Una herramienta de gráficos.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Un motor de ETL (Extraer, Transformar, Cargar) para conectar, limpiar y dar forma a datos.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Una versión de Power Point.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Una función de Pago.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 7,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué devuelve =FECHA(2024, 1, 15)?",
+    "opciones": {
+      "A": {
+        "texto": "El texto '2024-01-15'",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Un valor de fecha válido (15/01/2024).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "El número de días desde 1900.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Un error #VALOR!",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 8,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cómo se extrae la hora de una celda que contiene fecha y hora (ej. A1)?",
+    "opciones": {
+      "A": {
+        "texto": "=HORA(A1)",
+        "justificacion": "Correcto, extrae la hora (0-23)."
+      },
+      "B": {
+        "texto": "=DIA(A1)",
+        "justificacion": "Incorrecto, DIA extrae el día."
+      },
+      "C": {
+        "texto": "=MINUTO(A1)",
+        "justificacion": "Incorrecto, MINUTO extrae solo el minuto."
+      },
+      "D": {
+        "texto": "=AHORA(A1)",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 8,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "La función ESPACIOS (TRIM) se usa para...",
+    "opciones": {
+      "A": {
+        "texto": "Crear espacio entre palabras.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Eliminar todos los espacios extra, dejando solo un espacio simple entre palabras.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Convertir texto a mayúsculas.",
+        "justificacion": "Incorrecto, eso es MAYUSC."
+      },
+      "D": {
+        "texto": "Reemplazar espacios.",
+        "justificacion": "Incorrecto, eso es SUSTITUIR."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 8,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué devuelve =EXTRAE(\"ABCD\", 2, 2)?",
+    "opciones": {
+      "A": {
+        "texto": "AB",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "BC",
+        "justificacion": "Correcto. Comienza en el carácter 2 ('B') y extrae 2 caracteres."
+      },
+      "C": {
+        "texto": "CD",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "B",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 8,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es la forma más moderna de concatenar texto en Excel 365?",
+    "opciones": {
+      "A": {
+        "texto": "El operador &",
+        "justificacion": "Funciona, pero hay una función más nueva."
+      },
+      "B": {
+        "texto": "CONCAT",
+        "justificacion": "Correcto, CONCAT(texto1, texto2, ...) es más flexible."
+      },
+      "C": {
+        "texto": "PEGAR",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "CONCATENAR",
+        "justificacion": "Incorrecto, CONCATENAR es la función antigua."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 8,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué función se utiliza para encontrar la posición inicial de una cadena de texto dentro de otra (sensible a mayúsculas)?",
+    "opciones": {
+      "A": {
+        "texto": "HALLAR (FIND)",
+        "justificacion": "Correcto, HALLAR es sensible a mayúsculas."
+      },
+      "B": {
+        "texto": "ENCONTRAR (SEARCH)",
+        "justificacion": "Incorrecto, ENCONTRAR no es sensible a mayúsculas."
+      },
+      "C": {
+        "texto": "POSICION",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "EXTRAE (MID)",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 8,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "Si A1 es 'Ventas' y B1 es 'Brutas', ¿qué devuelve =NOMPROPIO(A1 & \" \" & B1)?",
+    "opciones": {
+      "A": {
+        "texto": "Ventas Brutas",
+        "justificacion": "Incorrecto, NOMPROPIO aplica la mayúscula inicial."
+      },
+      "B": {
+        "texto": "VENTAS BRUTAS",
+        "justificacion": "Incorrecto, eso sería MAYUSC."
+      },
+      "C": {
+        "texto": "Ventas Brutas",
+        "justificacion": "Correcto, NOMPROPIO (PROPER) pone la primera letra de cada palabra en mayúscula."
+      },
+      "D": {
+        "texto": "ventas brutas",
+        "justificacion": "Incorrecto, eso sería MINUSC."
+      }
+    },
+    "respuesta_correcta": "C",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 8,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué devuelve =FIN.MES(HOY(), 3)?",
+    "opciones": {
+      "A": {
+        "texto": "El primer día del mes actual más tres meses.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "El último día del mes actual más tres meses.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "El número 3.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "La fecha de hoy más 3 días.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 8,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función RESIDUO (MOD)?",
+    "opciones": {
+      "A": {
+        "texto": "Divide un número y redondea.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Devuelve el resto (residuo) de una división.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Resta dos números.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Devuelve el valor absoluto.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 8,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función REDONDEAR.MAS (ROUNDUP)?",
+    "opciones": {
+      "A": {
+        "texto": "Redondea hacia el número par más cercano.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Redondea un número hacia arriba, alejándose del cero.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Redondea hacia abajo, acercándose al cero.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Redondea al múltiplo más cercano.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 3,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 8,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué significa el símbolo '#' al final de una referencia de celda (ej. A1#)?",
+    "opciones": {
+      "A": {
+        "texto": "Es un error de la fórmula.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Indica una referencia de derrame (spill) de un array dinámico.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Es una referencia absoluta.",
+        "justificacion": "Incorrecto, eso es $."
+      },
+      "D": {
+        "texto": "Es un comentario.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 9,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es la función principal de la función FILTRAR (FILTER)?",
+    "opciones": {
+      "A": {
+        "texto": "Ocultar filas de datos manualmente.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Devolver un rango de datos que cumpla con un criterio lógico específico (array de derrame).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Eliminar datos duplicados.",
+        "justificacion": "Incorrecto, eso es UNICOS."
+      },
+      "D": {
+        "texto": "Formatear una celda.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 9,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué devuelve la función UNICOS (UNIQUE)?",
+    "opciones": {
+      "A": {
+        "texto": "Una lista de los elementos únicos de un rango, eliminando duplicados.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "El primer valor que aparece más de una vez.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "La suma de los valores únicos.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Un error si hay duplicados.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 9,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función ORDENAR (SORT)?",
+    "opciones": {
+      "A": {
+        "texto": "Ordena un rango de datos en el lugar (sobreescribiendo).",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Devuelve un array ordenado de un rango de datos, sin modificar el original.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Solo funciona con texto.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Busca un valor.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 9,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es la principal ventaja de BUSCARX sobre INDICE/COINCIDIR?",
+    "opciones": {
+      "A": {
+        "texto": "Puede realizar búsquedas en un rango de arriba a abajo o viceversa.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Es más compatible con versiones anteriores de Excel.",
+        "justificacion": "Incorrecto, es menos compatible."
+      },
+      "C": {
+        "texto": "Solo funciona con un criterio de búsqueda.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Es más difícil de usar.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 9,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué problema resuelve la función SI.CONJUNTO (IFS)?",
+    "opciones": {
+      "A": {
+        "texto": "Reemplaza múltiples funciones Y() y O().",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Reemplaza las anidaciones complejas de la función SI (IF).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Suma valores basados en múltiples criterios.",
+        "justificacion": "Incorrecto, eso es SUMAR.SI.CONJUNTO."
+      },
+      "D": {
+        "texto": "Concatena texto.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 9,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "La función DESREF (OFFSET) se utiliza para...",
+    "opciones": {
+      "A": {
+        "texto": "Mover una celda de su posición.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Devolver una referencia de rango con un número específico de filas y columnas de desplazamiento.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Buscar un valor en otra hoja.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Calcular la desviación estándar.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 9,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función INDIRECTO (INDIRECT)?",
+    "opciones": {
+      "A": {
+        "texto": "Devuelve el texto de una celda.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Devuelve la referencia especificada por una cadena de texto (ej. =INDIRECTO(\"A1\")).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Busca un valor de forma indirecta.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Crea un Slicer.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 9,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es la 'Fórmula de Matriz' tradicional (Ctrl+Shift+Enter)?",
+    "opciones": {
+      "A": {
+        "texto": "Una fórmula que solo funciona con una celda.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Una fórmula que realiza cálculos en arrays de valores (necesaria en versiones antiguas).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Una fórmula para insertar matrices en un gráfico.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Una macro.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 9,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué devuelve la función SECUENCIA(5)?",
+    "opciones": {
+      "A": {
+        "texto": "Los números 1, 2, 3, 4, 5 en una columna.",
+        "justificacion": "Correcto. Es una función de array dinámico."
+      },
+      "B": {
+        "texto": "El número 5.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Un error.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "El texto 'SECUENCIA'.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 9,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es el lenguaje de programación utilizado dentro del Editor de Power Query?",
+    "opciones": {
+      "A": {
+        "texto": "Python",
+        "justificacion": "Incorrecto, Python se usa en Power BI, no en Power Query."
+      },
+      "B": {
+        "texto": "Lenguaje M (Mashup).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "SQL",
+        "justificacion": "Incorrecto, SQL es para bases de datos."
+      },
+      "D": {
+        "texto": "VBA",
+        "justificacion": "Incorrecto, VBA es para macros."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 10,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la función `Table.RemoveColumns()` en Power Query?",
+    "opciones": {
+      "A": {
+        "texto": "Elimina filas duplicadas.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Elimina columnas de la tabla.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Elimina valores nulos.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Renombra columnas.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 10,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es la 'Primera Fila como Encabezado' en Power Query?",
+    "opciones": {
+      "A": {
+        "texto": "El primer paso que siempre se ejecuta.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Una transformación que promueve la primera fila a encabezados de columna.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Un error que debe corregirse.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Una forma de filtrar datos.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 10,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es la 'Anulación de Dinamización de Columnas' (Unpivot Columns)?",
+    "opciones": {
+      "A": {
+        "texto": "Girar las columnas (Transponer).",
+        "justificacion": "Incorrecto, eso es Transponer."
+      },
+      "B": {
+        "texto": "Transformar datos anchos a un formato tabular (largo).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Desactivar una tabla dinámica.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Eliminar columnas.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 10,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es la función principal de Power Pivot?",
+    "opciones": {
+      "A": {
+        "texto": "Crear gráficos bonitos.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Modelar datos y crear relaciones entre tablas y métricas DAX.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Limpiar datos sucios.",
+        "justificacion": "Incorrecto, eso es Power Query."
+      },
+      "D": {
+        "texto": "Importar datos.",
+        "justificacion": "Incorrecto, eso es Power Query."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 10,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es el propósito del Editor Avanzado en Power Query?",
+    "opciones": {
+      "A": {
+        "texto": "Editar el código fuente (Lenguaje M) directamente.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Crear reportes en PDF.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Conectar a bases de datos.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Usar Visual Basic (VBA).",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 10,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es una 'Combinación' (Merge) en Power Query?",
+    "opciones": {
+      "A": {
+        "texto": "Unir filas de dos o más tablas.",
+        "justificacion": "Incorrecto, eso es Anexar."
+      },
+      "B": {
+        "texto": "Unir columnas de dos o más tablas basándose en una columna clave (JOIN).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Redondear números.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Crear una Tabla Dinámica.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 10,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es una 'Consulta' (Query) en Power Query?",
+    "opciones": {
+      "A": {
+        "texto": "Una pregunta que haces a Excel.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Una secuencia de pasos de transformación aplicados a una fuente de datos.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "El resultado final de una tabla dinámica.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Una fórmula DAX.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 10,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la opción 'Cerrar y Cargar en...' en Power Query?",
+    "opciones": {
+      "A": {
+        "texto": "Guarda la consulta pero no la carga.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Ejecuta los pasos y carga el resultado en Excel (tabla o conexión).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Cierra Excel.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Solo carga los primeros 100 registros.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 10,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es una 'Referencia' en Power Query?",
+    "opciones": {
+      "A": {
+        "texto": "Una copia del código M de otra consulta, manteniendo la dependencia.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Una copia estática de la tabla.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Una fórmula VLOOKUP.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Un tipo de dato.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 4,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 10,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué gráfico es ideal para mostrar la correlación entre dos variables numéricas?",
+    "opciones": {
+      "A": {
+        "texto": "Gráfico de Barras.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Gráfico de Dispersión (Scatter Plot).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Gráfico Circular.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Gráfico de Líneas.",
+        "justificacion": "Incorrecto, es para tendencias de tiempo."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 11,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es un 'Gráfico de Pareto'?",
+    "opciones": {
+      "A": {
+        "texto": "Un gráfico de pastel con dos series de datos.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Un gráfico de barras (descendente) combinado con una línea de porcentaje acumulado.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Un gráfico de burbujas.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Un gráfico de dispersión.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 11,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es la función principal de un 'Mapa de Árbol' (Treemap)?",
+    "opciones": {
+      "A": {
+        "texto": "Mostrar datos geográficos.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Mostrar jerarquías de datos donde el tamaño del rectángulo representa el valor.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Mostrar una línea de tiempo.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Mostrar correlación.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 11,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué representa un 'Bigote y Caja' (Box Plot)?",
+    "opciones": {
+      "A": {
+        "texto": "La suma total de una serie.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "La distribución de un conjunto de datos: mediana, cuartiles y valores atípicos.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "El crecimiento a lo largo del tiempo.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "El porcentaje de un total.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 11,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "Un Eje Secundario en un gráfico se utiliza para...",
+    "opciones": {
+      "A": {
+        "texto": "Hacer el gráfico más colorido.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Representar dos series de datos con escalas de valores muy diferentes (ej. Ventas en $ y Margen en %).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Ocultar una serie de datos.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Añadir un título secundario.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 11,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "El 'Mini Gráfico' (Sparkline) se usa para...",
+    "opciones": {
+      "A": {
+        "texto": "Mostrar un gráfico grande en una celda.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Mostrar una tendencia o patrón de datos en una única celda de forma condensada.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Solo para datos de texto.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Crear un Slicer.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 11,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es la 'Línea de Tendencia' en un gráfico?",
+    "opciones": {
+      "A": {
+        "texto": "Un formato visual.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Una representación gráfica de la dirección de los datos (lineal, exponencial) para pronosticar.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "El valor máximo del gráfico.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "El eje X.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 11,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cuál es la regla de oro para evitar gráficos engañosos?",
+    "opciones": {
+      "A": {
+        "texto": "Usar siempre el color azul.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Asegurarse de que el eje Y comience en cero, especialmente para gráficos de barras.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Usar solo tres colores.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Usar siempre gráficos 3D.",
+        "justificacion": "Incorrecto, los gráficos 3D suelen ser engañosos."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 11,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace un 'Segmentador' (Slicer) cuando se conecta a varios objetos (ej. dos tablas dinámicas)?",
+    "opciones": {
+      "A": {
+        "texto": "Solo filtra uno a la vez.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Filtra todos los objetos conectados de forma simultánea y sincronizada.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Crea una relación de datos.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Solo funciona con fechas.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 11,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué es la 'Zoom en el Detalle' (Drill Down) en una Tabla Dinámica?",
+    "opciones": {
+      "A": {
+        "texto": "Hacer zoom al gráfico.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Hacer doble clic en un valor para ver los registros subyacentes que lo componen.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Cambiar el formato de número.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Actualizar los datos.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 11,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Para qué sirve la herramienta 'Rastrear Precedentes'?",
+    "opciones": {
+      "A": {
+        "texto": "Para saber quién modificó el archivo.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Para mostrar con flechas qué celdas afectan el valor de la celda activa.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Para rastrear errores.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Para rastrear dependientes.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 12,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la herramienta 'Rastrear Dependientes'?",
+    "opciones": {
+      "A": {
+        "texto": "Muestra con flechas qué celdas son afectadas por la celda activa.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Muestra las celdas que dependen de una macro.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Corrige errores en una fórmula.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Muestra las celdas precedentes.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 12,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la opción 'Proteger Hoja'?",
+    "opciones": {
+      "A": {
+        "texto": "Oculta el archivo.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Restringe la edición de celdas a menos que estén desbloqueadas.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Pide una contraseña al abrir el archivo.",
+        "justificacion": "Incorrecto, eso es Proteger Libro."
+      },
+      "D": {
+        "texto": "Crea una copia de seguridad.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 12,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Cómo se desbloquea una celda para que se pueda editar en una hoja protegida?",
+    "opciones": {
+      "A": {
+        "texto": "Click derecho > Formato de Celdas > Pestaña 'Proteger' > Desmarcar 'Bloqueada'.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Usando la contraseña de protección.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "No se puede desbloquear una celda.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "En la pestaña 'Datos'.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 12,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué son las 'Macros' en Excel?",
+    "opciones": {
+      "A": {
+        "texto": "Fórmulas complejas de array.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Bloques de código VBA que automatizan tareas repetitivas.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Archivos grandes.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Conexiones de datos.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 12,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Por qué es riesgoso abrir archivos de Excel con Macros de fuentes desconocidas?",
+    "opciones": {
+      "A": {
+        "texto": "Porque ralentiza Excel.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Porque el código VBA puede ejecutar acciones maliciosas en tu sistema (malware).",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Porque el archivo se puede borrar.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Porque usan mucho espacio en disco.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 12,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué hace la 'Ventana de Inspección'?",
+    "opciones": {
+      "A": {
+        "texto": "Permite ver el contenido de celdas sin tener que desplazarse a ellas.",
+        "justificacion": "Correcto."
+      },
+      "B": {
+        "texto": "Inspecciona el código VBA.",
+        "justificacion": "Incorrecto."
+      },
+      "C": {
+        "texto": "Busca errores ortográficos.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Protege la hoja.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "A",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 12,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Para qué sirve 'Consolidar' datos?",
+    "opciones": {
+      "A": {
+        "texto": "Unir texto en una celda.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Resumir datos de múltiples hojas de cálculo o libros en una tabla principal.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Crear una tabla dinámica.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Quitar duplicados.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 12,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "La función IMPORTARDATOSDINAMICOS se utiliza para...",
+    "opciones": {
+      "A": {
+        "texto": "Importar datos de una base de datos.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Extraer un valor específico de una Tabla Dinámica.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Crear una tabla dinámica.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Importar datos de la web.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 12,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  },
+  {
+    "texto": "¿Qué significa el mensaje '¡Referencia Circular!'?",
+    "opciones": {
+      "A": {
+        "texto": "Que una fórmula se refiere a otra hoja.",
+        "justificacion": "Incorrecto."
+      },
+      "B": {
+        "texto": "Que una fórmula hace referencia a sí misma, directa o indirectamente.",
+        "justificacion": "Correcto."
+      },
+      "C": {
+        "texto": "Que la celda tiene un error de sintaxis.",
+        "justificacion": "Incorrecto."
+      },
+      "D": {
+        "texto": "Que el archivo está dañado.",
+        "justificacion": "Incorrecto."
+      }
+    },
+    "respuesta_correcta": "B",
+    "dificultad": 5,
+    "idioma": "es",
+    "temas": [
+      {
+        "tema_id": 12,
+        "relevancia_score": 1.0,
+        "revisado_por_agente": false
+      }
+    ]
+  }
+]

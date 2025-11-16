@@ -2,7 +2,8 @@
 
 import random, os, uuid
 from io import BytesIO
-from .models import Pregunta, Certificado, Examen 
+# AÑADIMOS: Curso y Tema para la nueva lógica de generación
+from .models import Pregunta, Certificado, Examen, Curso, Tema 
 
 from django.core.files.base import ContentFile
 from django.conf import settings
@@ -14,39 +15,96 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 
 
-def generar_sets_examen(curso_id, num_sets=3, preguntas_por_set=3):
+# --- FUNCIÓN REFACTORIZADA (SPRINT 5) ---
+def generar_sets_examen(curso_id, num_sets=3):
     """
-    Obtiene TODOS los IDs de preguntas de un curso y genera 'num_sets'
-    listas aleatorias de IDs de preguntas.
+    Genera 'num_sets' de IDs de preguntas basándose en la 'receta'
+    definida en el campo JSON 'estructura_examen' del Curso.
     """
-    print(f"Buscando IDs para curso: {curso_id}")
+    print(f"Iniciando generación de sets para Curso ID: {curso_id} usando la nueva estructura robusta.")
+    
     try:
-        # --- ESTA ES LA LÍNEA CORREGIDA ---
-        # Usamos values_list para obtener solo los IDs (números)
-        banco_ids = list(Pregunta.objects.filter(curso_id=curso_id).values_list('id', flat=True))
+        curso = Curso.objects.get(id=curso_id)
         
-        if len(banco_ids) < preguntas_por_set:
-            print(f"Error: No hay suficientes preguntas. Se necesitan {preguntas_por_set}, se encontraron {len(banco_ids)}")
+        # 1. Validar la "receta" (estructura_examen)
+        receta = curso.estructura_examen
+        if not receta or 'reglas_seleccion' not in receta or 'total_preguntas' not in receta:
+            print(f"Error: El Curso ID {curso_id} no tiene una 'estructura_examen' (receta) válida.")
+            return []
+
+        reglas = receta.get('reglas_seleccion', [])
+        total_preguntas_requeridas = receta.get('total_preguntas', 0)
+        
+        banco_ids_final = set() # Usamos un set para evitar duplicados si una pregunta cumple múltiples reglas
+
+        # 2. Iterar sobre cada regla de la receta y construir el banco de preguntas
+        for regla in reglas:
+            try:
+                # Obtenemos los IDs de los temas (tags)
+                # La receta puede usar 'tema_id' o 'tema_nombre'
+                tema_obj = None
+                if 'tema_id' in regla:
+                    tema_obj = Tema.objects.get(id=regla['tema_id'])
+                elif 'tema_nombre' in regla:
+                    tema_obj = Tema.objects.get(nombre=regla['tema_nombre'])
+                else:
+                    raise KeyError("La regla debe contener 'tema_id' o 'tema_nombre'")
+
+                dificultad_min = regla.get('dificultad_min', 1) # Default 1
+                dificultad_max = regla.get('dificultad_max', 5) # Default 5
+                cantidad = regla['cantidad']
+                
+                # Buscamos IDs de preguntas que cumplan TODOS los criterios
+                ids_encontrados = list(Pregunta.objects.filter(
+                    temas=tema_obj, # Filtra por el Tag (Tema)
+                    dificultad__gte=dificultad_min, # Filtra por dificultad
+                    dificultad__lte=dificultad_max
+                ).values_list('id', flat=True))
+                
+                if len(ids_encontrados) < cantidad:
+                    print(f"Advertencia: No hay suficientes preguntas para la regla '{tema_obj.nombre}' (Dificultad {dificultad_min}-{dificultad_max}). Se necesitan {cantidad}, se encontraron {len(ids_encontrados)}.")
+                    # Si faltan, añadimos las que hay
+                    banco_ids_final.update(ids_encontrados)
+                else:
+                    # Si sobran, seleccionamos aleatoriamente la cantidad exacta
+                    banco_ids_final.update(random.sample(ids_encontrados, cantidad))
+
+            except Tema.DoesNotExist:
+                print(f"Error en la receta: El Tema (Tag) '{regla.get('tema_nombre') or regla.get('tema_id')}' no existe en la DB.")
+                continue
+            except KeyError as e:
+                print(f"Error en la receta: Falta la llave {e} en una de las reglas.")
+                continue
+
+        # 3. Validar el banco final y generar los sets
+        banco_ids_list = list(banco_ids_final)
+        
+        if len(banco_ids_list) < total_preguntas_requeridas:
+            print(f"Error: No se pudo construir un examen completo. Se requieren {total_preguntas_requeridas} preguntas, pero solo se recolectaron {len(banco_ids_list)} preguntas únicas que cumplen las reglas.")
             return []
         
         exam_sets_ids = []
         for _ in range(num_sets):
-            # random.sample ahora trabaja sobre una lista de números
-            set_ids = random.sample(banco_ids, preguntas_por_set)
+            # Seleccionamos aleatoriamente del banco final
+            # Nos aseguramos de no pedir más preguntas de las que tenemos
+            k = min(total_preguntas_requeridas, len(banco_ids_list))
+            set_ids = random.sample(banco_ids_list, k)
             exam_sets_ids.append(set_ids)
             
-        print(f"Sets generados: {exam_sets_ids}")
+        print(f"Sets generados (basados en 'estructura_examen'): {exam_sets_ids}")
         return exam_sets_ids
         
+    except Curso.DoesNotExist:
+        print(f"Error fatal: El Curso ID {curso_id} no existe.")
+        return []
     except Exception as e:
-        print(f"Error al generar sets de examen: {e}")
+        print(f"Error inesperado al generar sets de examen: {e}")
         return []
 
 
 def calcular_resultados(respuestas_usuario, preguntas_set):
     """
-    Compara las respuestas del usuario con las preguntas correctas.
-    'preguntas_set' es una lista de OBJETOS Pregunta.
+    (Esta función no necesita cambios, ya que opera sobre el objeto Pregunta)
     """
     resultados = []
     total_correctas = 0
@@ -81,7 +139,7 @@ def calcular_resultados(respuestas_usuario, preguntas_set):
 
 def generar_certificado_pdf(examen):
     """
-    Genera un Certificado (con PDF y QR) para un Examen aprobado.
+    (Esta función no necesita cambios)
     """
     print(f"Iniciando generación de certificado para Examen ID: {examen.id}...")
     

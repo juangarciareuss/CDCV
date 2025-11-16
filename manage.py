@@ -6,8 +6,15 @@ import sys
 def main():
     """Run administrative tasks."""
     
-    # --- CORRECCIÓN AQUÍ ---
-    # Debe apuntar a 'config.settings', no 'cdcv.settings'
+    # --- (AÑADIDO) INSERCIÓN DE RUTA ROBUSTA ---
+    # Añade el directorio raíz del proyecto (la carpeta que contiene este archivo) 
+    # al inicio del path de Python.
+    # Esto asegura que 'core' y 'config' sean importables por Django.
+    PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+    if PROJECT_ROOT not in sys.path:
+        sys.path.insert(0, PROJECT_ROOT)
+    # --- FIN DE LA ADICIÓN ---
+
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings') 
     
     try:
