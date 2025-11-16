@@ -16,3 +16,8 @@ __pycache__/
 
 # Archivos de configuración de VS Code
 .vscode/
+
+# Archivos de Office y Temporales
+*.docx
+*.doc
+~$*
