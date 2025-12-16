@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-import dj_database_url # Para base de datos (si se requiere en producción)
+import dj_database_url # Importante para la base de datos en la nube
 
 # Carga las variables de entorno si existe el archivo .env
 load_dotenv()
@@ -9,12 +9,22 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Lee la llave secreta desde el archivo .env o usa una por defecto insegura para desarrollo
+# SEGURIDAD:
+# Lee la llave secreta desde el archivo .env. Si no existe (prod), falla o usa default.
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-clave-por-defecto-para-dev')
 
-# Poner en True para desarrollo
-DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# DEBUG:
+# En producción (Render), 'RENDER' suele estar en las variables de entorno.
+# Si estamos en Render, DEBUG debe ser False. Si no, True.
+if 'RENDER' in os.environ:
+    DEBUG = False
+else:
+    DEBUG = True
+
+# HOSTS PERMITIDOS:
+# En producción, esto debe incluir tu dominio (ej. 'cdcv.onrender.com').
+# El '*' permite todo, útil para probar el deploy inicial, luego ciérralo.
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -24,22 +34,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # Tu aplicación principal
     'core',
-
-    # --- CORRECCIÓN ---
-    # Se eliminó 'whitenoise.middleware.WhiteNoiseMiddleware' de aquí.
-    # Esta lista es SOLO para aplicaciones (Apps).
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    
-    # --- CORRECCIÓN ---
-    # WhiteNoise debe ir aquí, justo después de SecurityMiddleware
-    'whitenoise.middleware.WhiteNoiseMiddleware', 
-    
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Gestión de archivos estáticos
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,13 +69,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
-# Database
+# --- BASE DE DATOS (CONFIGURACIÓN HÍBRIDA) ---
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Si existe la variable DATABASE_URL (que Render pone automáticamente para PostgreSQL),
+# sobrescribimos la configuración para usar esa base de datos real.
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -91,12 +97,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# --- ARCHIVOS ESTÁTICOS (CRÍTICO PARA PRODUCCIÓN) ---
 STATIC_URL = 'static/'
-# Configuración para WhiteNoise (archivos estáticos en producción)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# Compresión y almacenamiento eficiente
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' (Opcional por ahora)
+
+# Habilitar compresión y almacenamiento en caché de Whitenoise
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Configuración de Archivos Media (Uploads)
 MEDIA_URL = '/media/'
@@ -111,10 +118,11 @@ AUTH_USER_MODEL = 'core.Usuario'
 # --- Configuración de PayPal ---
 import paypalrestsdk
 
-# Lee las llaves de PayPal desde el archivo .env
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET')
-PAYPAL_MODE = os.environ.get('PAYPAL_MODE', 'sandbox')
+# Si estamos en Render, asumimos producción (live), si no, sandbox.
+# Opcional: puedes controlarlo con una variable PAYPAL_MODE en el .env
+PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')
 
 if PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET:
     paypalrestsdk.configure({
@@ -123,4 +131,4 @@ if PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET:
         "client_secret": PAYPAL_CLIENT_SECRET
     })
 else:
-    print("ADVERTENCIA: Credenciales de PayPal no encontradas en .env")
+    print("ADVERTENCIA: Credenciales de PayPal no encontradas en variables de entorno.")
