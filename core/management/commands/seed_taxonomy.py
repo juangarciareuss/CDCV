@@ -244,14 +244,16 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('--- Seeding de Taxonomía y Recetas completado ---'))
 
-        # --- 7. (NUEVO) VINCULACIÓN FORZADA DE PREGUNTAS (EL SALVAVIDAS) ---
-        # Como solo estamos cargando Excel en producción ahora mismo,
-        # forzamos a que TODAS las preguntas existentes sean de Excel.
-        # Esto arregla el error "encontraron 0".
-        
+# --- 7. (NUEVO) VINCULACIÓN FORZADA DE PREGUNTAS (CORREGIDO) ---
         self.stdout.write(self.style.NOTICE('Iniciando vinculación forzada de preguntas...'))
         
-        # Actualizamos todas las preguntas para que apunten al Tema Padre de Excel
-        total_vinculadas = Pregunta.objects.all().update(tema=tema_padre_excel)
+        preguntas = Pregunta.objects.all()
+        contador = 0
         
-        self.stdout.write(self.style.SUCCESS(f'¡ÉXITO! Se forzó la etiqueta "{tema_padre_excel.nombre}" a {total_vinculadas} preguntas.'))
+        for pregunta in preguntas:
+            # IMPORTANTE: Usamos .add() porque es una relación Muchos-a-Muchos
+            # Si 'temas' da error, prueba con 'tags', pero por defecto es 'temas'
+            pregunta.temas.add(tema_padre_excel)
+            contador += 1
+            
+        self.stdout.write(self.style.SUCCESS(f'¡ÉXITO! Se vincularon {contador} preguntas al tema "{tema_padre_excel.nombre}".'))
