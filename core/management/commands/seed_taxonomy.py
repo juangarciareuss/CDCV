@@ -52,30 +52,18 @@ class Command(BaseCommand):
         # MODIFICAMOS: La receta para que coincida con la dificultad real de las preguntas
         # --- 2. DEFINICIÓN DE LA "RECETA" DEL CURSO DE EXCEL ---
         
-        # RECETA CORREGIDA: Más flexible para asegurar que el examen funcione
+      # --- 2. DEFINICIÓN DE LA "RECETA" DEL CURSO DE EXCEL ---
+        
+        # RECETA "NUCLEAR": Apunta al Tema Padre para asegurar que encuentre algo.
         receta_excel_pro = {
-            "total_preguntas": 10,
+            "total_preguntas": 5,  # Pedimos pocas para facilitar el éxito
             "reglas_seleccion": [
-                # Regla 1: Busca funciones básicas (Cualquier dificultad)
                 {
-                    "tema_nombre": "Funciones Básicas y Lógica", 
-                    "dificultad_min": 1, 
-                    "dificultad_max": 5, 
-                    "cantidad": 4
-                },
-                # Regla 2: Busca búsqueda y referencia (Cualquier dificultad)
-                {
-                    "tema_nombre": "Búsqueda y Referencia", 
-                    "dificultad_min": 1, 
-                    "dificultad_max": 5, 
-                    "cantidad": 3
-                },
-                # Regla 3: Busca tablas dinámicas (Cualquier dificultad)
-                {
-                    "tema_nombre": "Tablas Dinámicas", 
-                    "dificultad_min": 1, 
-                    "dificultad_max": 5, 
-                    "cantidad": 3
+                    # Usamos el nombre EXACTO del tema padre que creamos unas líneas arriba
+                    "tema_nombre": "Análisis de Datos (Excel)", 
+                    "dificultad_min": 0,  # Aceptamos nivel 0 (por si acaso)
+                    "dificultad_max": 10, # Aceptamos hasta lo más difícil
+                    "cantidad": 5
                 }
             ]
         }
