@@ -1,37 +1,31 @@
 #!/usr/bin/env bash
-# (Paso 1: Salir inmediatamente si algo falla)
+# exit on error
 set -o errexit
 
-# (Paso 2: Instalar dependencias)
+# 1. Instalar dependencias
 pip install -r requirements.txt
 
-# (Paso 3: Archivos estáticos)
+# 2. Archivos estáticos
 python manage.py collectstatic --no-input
 
-# (Paso 4: Base de datos - Tablas)
+# 3. Base de datos
 python manage.py migrate
 
-# (Paso 5: Sembrar Cursos y Temas - CRÍTICO antes de las preguntas)
-# Si este comando falla, las preguntas no tendrán donde guardarse.
+# 4. Crear Cursos (Esqueleto)
 python manage.py seed_taxonomy
 
-# (Paso 6: Llenar la tienda - Importar Preguntas desde tus JSON)
-# Ajusta las rutas si moviste los archivos, aquí asumo que están en la raíz o en core/
+# 5. Cargar Preguntas (SOLO EXCEL que funciona)
 if [ -f "ia_excel_100.json" ]; then
     python manage.py import_questions --file ia_excel_100.json
 fi
 
-if [ -f "ia_prompts_10.json" ]; then
-    python manage.py import_questions --file ia_prompts_10.json
-fi
+# NOTA: Comentamos los que dan error para que el servidor arranque.
+# Cuando arregles los JSON, descomenta estas líneas:
+# python manage.py import_questions --file ia_python_10.json
+# python manage.py import_questions --file core/powerbi_avanzado.json
 
-if [ -f "ia_python_10.json" ]; then
-    python manage.py import_questions --file ia_python_10.json
-fi
-
-if [ -f "core/powerbi_avanzado.json" ]; then
-    python manage.py import_questions --file core/powerbi_avanzado.json
-fi
-
-# (Paso 7: Hack Superusuario - Mantenemos el que funcionó)
+# 6. Crear Superusuario (CORREGIDO y con NOMBRE para el certificado)
 python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='juangarciareuss').exists() or User.objects.create_superuser('juangarciareuss', 'junagarciareuss@gmail.com', 'waarewer6')"
+
+# 7. Asegurar que el usuario tenga Nombre y Apellido (Para que el PDF no salga en blanco)
+python manage.py shell -c "from django.contrib.auth import get_user_model; u = get_user_model().objects.get(username='juangarciareuss'); u.first_name='JUAN IGNACIO'; u.last_name='GARCIA REUSS'; u.save()"
