@@ -50,36 +50,32 @@ class Command(BaseCommand):
         
         # 2.1. Definimos la Receta para el Nivel Profesional (CDCV-P)
         # MODIFICAMOS: La receta para que coincida con la dificultad real de las preguntas
+        # --- 2. DEFINICIÓN DE LA "RECETA" DEL CURSO DE EXCEL ---
+        
+        # RECETA CORREGIDA: Más flexible para asegurar que el examen funcione
         receta_excel_pro = {
             "total_preguntas": 10,
             "reglas_seleccion": [
-                # CORREGIDO: Nivel 2 (Búsqueda) tiene Dificultad 1.
+                # Regla 1: Busca funciones básicas (Cualquier dificultad)
+                {
+                    "tema_nombre": "Funciones Básicas y Lógica", 
+                    "dificultad_min": 1, 
+                    "dificultad_max": 5, 
+                    "cantidad": 4
+                },
+                # Regla 2: Busca búsqueda y referencia (Cualquier dificultad)
                 {
                     "tema_nombre": "Búsqueda y Referencia", 
-                    "dificultad_min": 1, # Antes 2
-                    "dificultad_max": 2, # Antes 3
-                    "cantidad": 2
+                    "dificultad_min": 1, 
+                    "dificultad_max": 5, 
+                    "cantidad": 3
                 },
-                # CORREGIDO: Nivel 3 (Tablas Dinámicas) tiene Dificultad 2.
+                # Regla 3: Busca tablas dinámicas (Cualquier dificultad)
                 {
                     "tema_nombre": "Tablas Dinámicas", 
-                    "dificultad_min": 2, 
-                    "dificultad_max": 3, # Antes 4
-                    "cantidad": 3
-                },
-                # Nivel 5 (Análisis) tiene Dificultad 3. (Sin cambios)
-                {
-                    "tema_nombre": "Análisis y Escenarios", 
-                    "dificultad_min": 3, 
+                    "dificultad_min": 1, 
                     "dificultad_max": 5, 
                     "cantidad": 3
-                },
-                # Nivel 8 (Power Query) tiene Dificultad 4. (Sin cambios)
-                {
-                    "tema_nombre": "Power Query (M)", 
-                    "dificultad_min": 4, 
-                    "dificultad_max": 5, 
-                    "cantidad": 2 
                 }
             ]
         }
