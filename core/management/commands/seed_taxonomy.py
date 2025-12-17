@@ -1,7 +1,7 @@
 import json
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from core.models import Curso, Tema
+from core.models import Curso, Tema, Pregunta
 
 # Este comando se ejecuta con: python manage.py seed_taxonomy
 class Command(BaseCommand):
@@ -243,3 +243,15 @@ class Command(BaseCommand):
 
 
         self.stdout.write(self.style.SUCCESS('--- Seeding de Taxonomía y Recetas completado ---'))
+
+        # --- 7. (NUEVO) VINCULACIÓN FORZADA DE PREGUNTAS (EL SALVAVIDAS) ---
+        # Como solo estamos cargando Excel en producción ahora mismo,
+        # forzamos a que TODAS las preguntas existentes sean de Excel.
+        # Esto arregla el error "encontraron 0".
+        
+        self.stdout.write(self.style.NOTICE('Iniciando vinculación forzada de preguntas...'))
+        
+        # Actualizamos todas las preguntas para que apunten al Tema Padre de Excel
+        total_vinculadas = Pregunta.objects.all().update(tema=tema_padre_excel)
+        
+        self.stdout.write(self.style.SUCCESS(f'¡ÉXITO! Se forzó la etiqueta "{tema_padre_excel.nombre}" a {total_vinculadas} preguntas.'))
