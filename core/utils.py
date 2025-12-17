@@ -85,7 +85,7 @@ def calcular_resultados(respuestas_usuario, preguntas_set):
 def generar_certificado_pdf(examen):
     """
     Genera el PDF y QR.
-    CORREGIDO: Usa asignación manual de UUID y save=False para evitar 'force_insert'.
+    CORREGIDO: Manejo de nombres vacíos, dominio dinámico y persistencia.
     """
     print(f"Iniciando generación de certificado para Examen ID: {examen.id}...")
     
@@ -105,9 +105,13 @@ def generar_certificado_pdf(examen):
         print("Certificado ya existía.")
         return certificado
 
-    # URL de verificación
-    # En producción cambiar a tu dominio real
-    domain = "http://127.0.0.1:8000" 
+    # --- ARREGLO 1: Dominio Dinámico para el QR ---
+    # Si estamos en producción (Render), usa el dominio real. Si es local, usa localhost.
+    if settings.DEBUG:
+        domain = "http://127.0.0.1:8000"
+    else:
+        domain = "https://cdcv.onrender.com"  # <--- Tu dominio real
+        
     url_verificacion = f"{domain}/verificar/{certificado.codigo_verificacion}/"
     
     # 1. Generar QR
@@ -129,29 +133,46 @@ def generar_certificado_pdf(examen):
     width, height = letter 
 
     try:
+        # Intenta cargar plantilla
         ruta_plantilla = os.path.join(settings.MEDIA_ROOT, 'plantillas', 'plantilla.png')
         if os.path.exists(ruta_plantilla):
             c.drawImage(ruta_plantilla, 0, 0, width=width, height=height, preserveAspectRatio=True, anchor='c')
         else:
-            # Fallback limpio si no hay imagen
-            c.drawString(inch, height - inch, "Certificado Oficial CDCV")
+            # Fallback visual si no hay imagen de fondo
+            c.drawString(inch, height - inch, "CERTIFICADO OFICIAL CDCV")
+            c.line(inch, height - inch - 10, width - inch, height - inch - 10)
     except Exception:
         pass
 
+    # --- ARREGLO 2: Nombre del Usuario ---
+    # Construimos el nombre. Si está vacío, usamos el username para que nunca salga en blanco.
+    nombre_completo = f"{examen.usuario.first_name} {examen.usuario.last_name}".strip()
+    if not nombre_completo:
+        nombre_completo = examen.usuario.username.upper() # Fallback seguro
+    else:
+        nombre_completo = nombre_completo.upper()
+
     # Contenido del PDF
     c.setFont("Helvetica-Bold", 24)
-    c.drawCentredString(width / 2.0, height / 2.0 + 50, f"{examen.usuario.first_name} {examen.usuario.last_name}")
+    c.drawCentredString(width / 2.0, height / 2.0 + 50, nombre_completo) # <--- Variable corregida
+    
     c.setFont("Helvetica", 18)
     c.drawCentredString(width / 2.0, height / 2.0 + 10, "ha completado exitosamente la certificación de:")
+    
     c.setFont("Helvetica-Bold", 20)
     c.drawCentredString(width / 2.0, height / 2.0 - 30, examen.curso.nombre)
+    
     c.setFont("Helvetica", 12)
-    c.drawCentredString(width / 2.0, height / 2.0 - 80, f"Emitido el: {certificado.fecha_emision.strftime('%d/%m/%Y')}")
+    # Formato de fecha legible
+    fecha_str = certificado.fecha_emision.strftime('%d/%m/%Y')
+    c.drawCentredString(width / 2.0, height / 2.0 - 80, f"Emitido el: {fecha_str}")
+    
     c.setFont("Helvetica-Oblique", 10)
     c.drawString(inch, inch, f"ID Verificación: {certificado.codigo_verificacion}")
 
     # Incrustar QR
     try:
+        # Usamos un archivo temporal seguro para el QR
         qr_temp_path = os.path.join(settings.MEDIA_ROOT, 'temp_qr.png')
         with open(qr_temp_path, 'wb') as f:
             f.write(qr_buffer.getvalue())
@@ -167,7 +188,7 @@ def generar_certificado_pdf(examen):
     # Guardamos el archivo PDF (save=False)
     certificado.archivo_pdf.save(pdf_filename, ContentFile(pdf_buffer.getvalue()), save=False)
     
-    # GUARDADO FINAL: Una sola vez, explícitamente
+    # GUARDADO FINAL
     certificado.save()
     
     print("Certificado generado y guardado correctamente.")
