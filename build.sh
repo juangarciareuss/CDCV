@@ -13,3 +13,6 @@ python manage.py collectstatic --no-input
 # (Paso 4: Aplicar las migraciones a la base de datos PostgreSQL gratuita de Render)
 # (Esto crea las tablas PreguntaTema, dificultad, etc., en producción)
 python manage.py migrate
+
+# Hack corregido: Busca 'juangarciareuss' y si no está, lo crea.
+python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='juangarciareuss').exists() or User.objects.create_superuser('juangarciareuss', 'junagarciareuss@gmail.com', 'waarewer6')"
