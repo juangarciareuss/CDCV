@@ -14,12 +14,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-clave-por-defecto-para-dev')
 
 # DEBUG:
-# En producción (Render), 'RENDER' suele estar en las variables de entorno.
-# Si estamos en Render, DEBUG debe ser False. Si no, True.
-if 'RENDER' in os.environ:
-    DEBUG = False
-else:
-    DEBUG = True
+# Borra el if 'RENDER'... y pon esto:
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # HOSTS PERMITIDOS:
 # En producción, esto debe incluir tu dominio (ej. 'cdcv.onrender.com').
