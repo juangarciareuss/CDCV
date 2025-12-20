@@ -1,181 +1,38 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDCV - Valida tu Habilidad</title>
-    <style>
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            line-height: 1.6; 
-            margin: 0; 
-            background-color: #f9f9f9; 
-        }
-        .container { 
-            max-width: 900px; 
-            margin: 0 auto; 
-            padding: 20px; 
-        }
-        
-        /* Barra de Navegación y Usuario */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #fff;
-            border-bottom: 1px solid #eee;
-        }
-        .navbar .logo { 
-            font-size: 24px; 
-            font-weight: bold; 
-            color: #007bff;
-        }
-        .navbar .user-info { 
-            font-size: 14px; 
-        }
-        .navbar .user-info a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: 500;
-        }
+{% extends 'core/base.html' %}
 
-        /* (NUEVO) Sección Héroe (Ventas) */
-        .hero {
-            background-color: #007bff;
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .hero h1 {
-            margin: 0;
-            font-size: 36px;
-        }
-        .hero p {
-            font-size: 20px;
-            opacity: 0.9;
-            margin-top: 10px;
-        }
+{% block title %}Inicio - CDCV{% endblock %}
 
-        /* (NUEVO) Sección "Cómo Funciona" */
-        .how-it-works {
-            background-color: #fff;
-            padding: 40px 20px;
-            margin-top: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .how-it-works h2 {
-            text-align: center;
-            margin-top: 0;
-        }
-        .steps {
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-            margin-top: 30px;
-        }
-        .step {
-            flex-basis: 23%;
-        }
-        .step .icon {
-            font-size: 32px;
-            display: block;
-            margin-bottom: 10px;
-        }
-        
-        /* Lista de Cursos (Mantenida pero mejorada) */
-        .section-title {
-            font-size: 28px;
-            color: #333;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 40px;
-        }
-        .course-list { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 20px; 
-            margin-top: 20px;
-        }
-        .course-card { 
-            background: #fff; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-            padding: 20px; 
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .course-card h3 { 
-            margin-top: 0; 
-            color: #007bff;
-        }
-        .course-card .cta-button {
-            display: inline-block;
-            background-color: #28a745; /* Verde para "Comenzar" */
-            color: white;
-            padding: 12px 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-decoration: none;
-            text-align: center;
-            margin-top: 15px;
-        }
-        .course-card .cta-button:hover { 
-            background-color: #218838; 
-        }
+{% block extra_css %}
+<style>
+    /* Estilos específicos SOLO para la Home */
+    .hero { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; padding: 80px 20px; text-align: center; }
+    .hero h1 { margin: 0; font-size: 3rem; font-weight: 800; }
+    .hero p { font-size: 1.25rem; opacity: 0.9; margin-top: 15px; max-width: 700px; margin-left: auto; margin-right: auto; }
+    
+    .metrics { background-color: #f8f9fa; padding: 40px 0; border-bottom: 1px solid #e9ecef; }
+    .metrics-grid { display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; }
+    .metric-item { text-align: center; }
+    .metric-item h3 { margin: 0; font-size: 2.5rem; color: #007bff; font-weight: 800; }
+    .metric-item p { margin: 5px 0 0; color: #6c757d; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
 
-        /* (NUEVO) Sección de Métricas (Prueba Social) */
-        .metrics {
-            background-color: #f4f4f4; /* Un fondo sutil para separar la sección */
-            text-align: center;
-            padding: 30px 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        .metrics-grid {
-            display: flex;
-            justify-content: space-around;
-            max-width: 700px; /* Limita el ancho para que no se extienda demasiado */
-            margin: 0 auto;
-        }
-        .metric-item h3 {
-            margin: 0 0 5px 0;
-            font-size: 28px;
-            color: #007bff; /* Mantenemos el color principal */
-        }
-        .metric-item p {
-            margin: 0;
-            font-size: 16px;
-            color: #555;
-        }
+    .how-it-works { background: white; padding: 60px 20px; text-align: center; }
+    .steps { display: flex; justify-content: center; gap: 30px; margin-top: 40px; flex-wrap: wrap; }
+    .step { flex: 1; max-width: 250px; padding: 20px; }
+    .step .icon { font-size: 40px; display: block; margin-bottom: 20px; }
+    
+    .course-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 30px; }
+    .course-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 25px; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; justify-content: space-between; height: 100%; box-sizing: border-box; }
+    .course-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: #007bff; }
+    .course-card h3 { margin-top: 0; color: #333; font-size: 1.25rem; }
+    .badge-level { background: #e7f1ff; color: #007bff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+    .btn-start { background-color: #28a745; color: white; padding: 12px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: bold; margin-top: 20px; display: block; transition: background 0.2s; }
+    .btn-start:hover { background-color: #218838; }
+</style>
+{% endblock %}
 
-        /* (MODIFICACIÓN) Ajuste a "Cómo Funciona" para limpiar el diseño */
-        .how-it-works {
-            background-color: #fff;
-            padding: 40px 20px;
-            /* margin-top: 30px; (Eliminado, ahora va después de las métricas) */
-            border-radius: 8px;
-            /* box-shadow: 0 2px 5px rgba(0,0,0,0.05); (Eliminado para un look más limpio) */
-        }
+{% block content %}
 
-    </style>
-</head>
-<body>
-
-    <nav class="navbar">
-        <div class="logo">CDCV</div>
-        <div class="user-info">
-            {% if request.user.is_authenticated %}
-                Hola, <strong>{{ request.user.username }}</strong> | <a href="{% url 'core:perfil' %}">Mi Perfil</a>
-            {% else %}
-                {% endif %}
-        </div>
-    </nav>
-
-<div class="hero">
+    <div class="hero">
         <div class="container">
             <h1>Valida tu habilidad, no tu asistencia.</h1>
             <p>Obtén certificaciones verificables por mérito puro. Demuestra lo que sabes, no dónde aprendiste.</p>
@@ -183,14 +40,14 @@
     </div>
 
     <section class="metrics">
-        <div class="metrics-grid">
+        <div class="container metrics-grid">
             <div class="metric-item">
                 <h3>{{ total_cursos }}</h3>
-                <p>Cursos Disponibles</p>
+                <p>Cursos Activos</p>
             </div>
             <div class="metric-item">
                 <h3>{{ total_examenes }}</h3>
-                <p>Exámenes Realizados</p>
+                <p>Exámenes Rendidos</p>
             </div>
             <div class="metric-item">
                 <h3>{{ total_certificados }}</h3>
@@ -200,29 +57,23 @@
     </section>
 
     <div class="container">
-
         <section class="how-it-works">
-            <h2>¿Cómo Funciona?</h2>
+            <h2 style="font-size: 2rem; color: #333;">¿Cómo Funciona?</h2>
             <div class="steps">
                 <div class="step">
                     <span class="icon">🖥️</span>
-                    <strong>1. Elige tu Examen</strong>
-                    <p>Selecciona la habilidad que dominas (ej. Excel, IA, Python).</p>
+                    <strong>1. Elige tu Reto</strong>
+                    <p class="text-muted">Selecciona la habilidad técnica que quieres validar hoy.</p>
                 </div>
                 <div class="step">
-                    <span class="icon">✅</span>
-                    <strong>2. Aprueba el Examen</strong>
-                    <p>Demuestra tu conocimiento. Se requiere un 80% para aprobar.</p>
+                    <span class="icon">📝</span>
+                    <strong>2. Rinde el Examen</strong>
+                    <p class="text-muted">Preguntas generadas por IA adaptativa. Aprueba con 80%.</p>
                 </div>
                 <div class="step">
-                    <span class="icon">💳</span>
-                    <strong>3. Paga $5 USD</strong>
-                    <p>Un pago único (solo si apruebas) para la emisión de tu credencial.</p>
-                </div>
-                <div class="step">
-                    <span class="icon">🛡️</span>
-                    <strong>4. Certificado Verificable</strong>
-                    <p>Recibe tu PDF con código QR único para validación global.</p>
+                    <span class="icon">🏆</span>
+                    <strong>3. Certifícate</strong>
+                    <p class="text-muted">Obtén tu credencial con código QR único al instante.</p>
                 </div>
             </div>
         </section>
@@ -233,17 +84,23 @@
             {% for curso in cursos %}
                 <div class="course-card">
                     <div>
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <span class="badge-level">Nivel {{ curso.nivel }}</span>
+                            {% if curso.tema %}
+                                <span style="font-size: 0.8rem; color: #888;">{{ curso.tema.nombre }}</span>
+                            {% endif %}
+                        </div>
                         <h3>{{ curso.nombre }}</h3>
-                        <p>Nivel: {{ curso.get_nivel_display|default:curso.nivel }} | Tema: {{ curso.tema.nombre|default:"General" }}</p>
-                        <p>{{ curso.descripcion|default:"Sin descripción." }}</p>
+                        <p style="color: #666; font-size: 0.95rem;">{{ curso.descripcion|default:"Pon a prueba tus conocimientos técnicos en esta materia."|truncatewords:20 }}</p>
                     </div>
-                    <a href="{% url 'core:examen' curso.id %}" class="cta-button">Comenzar Examen</a>
+                    <a href="{% url 'core:examen' curso.id %}" class="btn-start">Comenzar Examen</a>
                 </div>
             {% empty %}
-                <p>No hay cursos disponibles en este momento.</p>
+                <div style="text-align: center; padding: 50px; background: #fff; border-radius: 8px; width: 100%;">
+                    <p style="font-size: 1.2rem; color: #999;">Estamos calibrando los exámenes. Vuelve pronto.</p>
+                </div>
             {% endfor %}
         </div>
     </div>
 
-</body>
-</html>
+{% endblock %}

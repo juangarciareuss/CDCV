@@ -43,6 +43,7 @@ class Tema(models.Model):
 # --- Curso (Con Receta de Examen) ---
 class Curso(models.Model):
     nombre = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=255, unique=True, null=True, blank=True)
     tema = models.ForeignKey(
         Tema, 
         on_delete=models.SET_NULL, 
@@ -53,6 +54,8 @@ class Curso(models.Model):
     nivel = models.IntegerField(default=1) 
     descripcion = models.TextField(blank=True, null=True)
     idioma = models.CharField(max_length=10, default='es')
+    score = models.IntegerField(default=0, help_text="Puntaje de calidad (0-30)")
+    status = models.CharField(max_length=20, default='PENDIENTE', help_text="Estado de curación")
     
     # Campo que define la "receta" de cómo se construye el examen
     estructura_examen = models.JSONField(
@@ -69,8 +72,8 @@ class Curso(models.Model):
 class Pregunta(models.Model):
     # Mantenemos 'curso' para compatibilidad con tus datos actuales y scripts
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, null=True, blank=True)
-    
     texto = models.TextField()
+    slug = models.SlugField(max_length=255, unique=True, null=True, blank=True)
     opciones = models.JSONField() 
     respuesta_correcta = models.CharField(max_length=1) 
     

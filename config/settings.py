@@ -34,8 +34,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # --- Tu App Principal ---
     'core',
+
+    # --- NUEVAS LIBRERÍAS (OBLIGATORIAS PARA GOOGLE) ---
+    'django.contrib.sites',  # Django necesita saber "qué sitio es este"
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google', # El conector específico de Google
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -46,6 +57,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # --- AGREGA ESTA LÍNEA AL FINAL ---
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -69,7 +83,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
-# --- BASE DE DATOS (CONFIGURACIÓN HÍBRIDA) ---
+# --- BASE DE DATOS (CONFIGURACIÓN HÍBRIDA INTELIGENTE) ---
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -77,11 +91,11 @@ DATABASES = {
     }
 }
 
-# Si existe la variable DATABASE_URL (que Render pone automáticamente para PostgreSQL),
-# sobrescribimos la configuración para usar esa base de datos real.
-db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
-
+# Solo si existe la variable DATABASE_URL (en Render), sobrescribimos.
+# Esto evita que en local se borre la configuración de SQLite.
+if os.getenv('DATABASE_URL'):
+    db_from_env = dj_database_url.config(conn_max_age=600)
+    DATABASES['default'].update(db_from_env)
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -132,3 +146,34 @@ if PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET:
     })
 else:
     print("ADVERTENCIA: Credenciales de PayPal no encontradas en variables de entorno.")
+
+
+
+# --- CONFIGURACIÓN DE LOGIN SOCIAL (ALLAUTH) ---
+SITE_ID = 1  # Obligatorio para django.contrib.sites
+
+# Esto le dice a Django: "Permite login normal (admin) Y login por Google"
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# A dónde redirigir al usuario cuando entra o sale
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# Configuración específica de Google (Pide email y perfil)
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+# Desactivar verificación de email obligatoria (Para evitar errores en desarrollo)
+ACCOUNT_EMAIL_VERIFICATION = "none"
