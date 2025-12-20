@@ -5,11 +5,16 @@ from django.conf.urls.static import static
 from django.views.static import serve # <--- Importante para servir archivos en prod
 
 urlpatterns = [
+    # 1. Panel de Administración
     path('admin/', admin.site.urls),
+
+    # 2. Rutas de Autenticación (Google, Login, Logout)
+    # ESTA ES LA LÍNEA CLAVE QUE FALTA O ESTÁ MAL PUESTA
+    path('accounts/', include('allauth.urls')),
+
+    # 3. Rutas de tu Aplicación Principal (CDCV)
     path('', include('core.urls')),
-    
-    # --- LA SOLUCIÓN ---
-    # Esta línea crea una ruta manual que atrapa todo lo que empiece por 'media/'
-    # y lo sirve usando la carpeta MEDIA_ROOT, sin importar si DEBUG es True o False.
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

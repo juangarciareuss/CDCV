@@ -1,11 +1,15 @@
 import random
 import uuid
 import os
+import logging
 from io import BytesIO
-from .models import Pregunta, Certificado, Examen, Curso, Tema
 
+# Imports de Django
 from django.core.files.base import ContentFile
 from django.conf import settings
+
+# Imports de Modelos (Asegúrate de que la ruta sea correcta)
+from .models import Pregunta, Certificado, Examen, Curso
 
 # --- Librerías de PDF y QR ---
 import qrcode
@@ -13,31 +17,25 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 
+# Configuración de logger para debugging
+logger = logging.getLogger(__name__)
 
 def generar_sets_examen(curso_id, num_sets=3, preguntas_por_set=10):
     """
-    Genera sets de examen. Intenta usar la 'receta' avanzada si existe,
-    si no, usa la lógica simple de compatibilidad.
+    Genera sets de examen seleccionando preguntas aleatorias del curso.
     """
     print(f"Buscando preguntas para curso ID: {curso_id}")
     try:
-        curso = Curso.objects.get(id=curso_id)
-        
-        # 1. LÓGICA AVANZADA (Si hay receta en estructura_examen)
-        if curso.estructura_examen and 'reglas' in curso.estructura_examen:
-            # (Aquí iría la lógica compleja de tu sprint 5 para filtrar por tags/dificultad)
-            # Por ahora, para mantener la estabilidad del MVP, usamos un fallback inteligente
-            # que podrías expandir luego.
-            pass 
-
-        # 2. LÓGICA ESTÁNDAR (Fallback robusto para MVP)
+        # 1. LÓGICA ESTÁNDAR (Fallback robusto para MVP)
         # Busca preguntas vinculadas directamente al curso
         banco_ids = list(Pregunta.objects.filter(curso_id=curso_id).values_list('id', flat=True))
         
+        # Validación de stock de preguntas
         if len(banco_ids) < preguntas_por_set:
             print(f"Error: No hay suficientes preguntas. Se necesitan {preguntas_por_set}, se encontraron {len(banco_ids)}")
             return []
         
+        # Generación de combinaciones aleatorias
         exam_sets_ids = []
         for _ in range(num_sets):
             set_ids = random.sample(banco_ids, preguntas_por_set)
@@ -54,6 +52,8 @@ def generar_sets_examen(curso_id, num_sets=3, preguntas_por_set=10):
 def calcular_resultados(respuestas_usuario, preguntas_set):
     """
     Compara las respuestas del usuario con las preguntas correctas.
+    Versión blindada: Funciona con diccionarios Y con texto simple.
+    Arregla el error 'str object has no attribute get'.
     """
     resultados = []
     total_correctas = 0
@@ -61,37 +61,68 @@ def calcular_resultados(respuestas_usuario, preguntas_set):
 
     for p in preguntas_set:
         id_str = f'pregunta_{p.id}'
+        
+        # 1. Obtenemos la letra que eligió el usuario (A, B, C...)
         respuesta_usr = respuestas_usuario.get(id_str, 'N/A')
+        
+        # 2. Verificar si es correcta
         es_correcta = (respuesta_usr == p.respuesta_correcta)
         
-        justificacion = "Respuesta incorrecta."
         if es_correcta:
             total_correctas += 1
-            justificacion = p.opciones.get(p.respuesta_correcta, {}).get('justificacion', '')
-        else:
-            justificacion = p.opciones.get(respuesta_usr, {}).get('justificacion', '')
 
+        # 3. RECUPERAR DATOS DE LA OPCIÓN (Aquí estaba el error)
+        # Obtenemos el dato crudo (puede ser texto o diccionario)
+        datos_opcion = p.opciones.get(respuesta_usr, "Opción no encontrada")
+        
+        texto_respuesta = ""
+        justificacion_especifica = ""
+
+        # Lógica Híbrida: ¿Es Diccionario o Texto?
+        if isinstance(datos_opcion, dict):
+            # Formato complejo (Diccionario)
+            texto_respuesta = datos_opcion.get('texto', str(datos_opcion))
+            justificacion_especifica = datos_opcion.get('justificacion', '')
+        else:
+            # Formato simple (Texto) -> Esto soluciona el crash
+            texto_respuesta = str(datos_opcion)
+            justificacion_especifica = ""
+
+        # 4. Determinar la justificación a mostrar
+        # Si la opción no tiene justificación específica, usamos la general de la pregunta
+        justificacion_final = justificacion_especifica
+        if not justificacion_final:
+             justificacion_final = getattr(p, 'justificacion', 'Revisa el material de estudio.')
+
+        # 5. Agregamos al reporte
         resultados.append({
-            'pregunta': p.texto,
-            'respuesta_usuario': f"{respuesta_usr}",
+            'pregunta': p,  # Objeto completo para el template
+            'respuesta_usuario': {
+                'key': respuesta_usr,
+                'texto': texto_respuesta
+            },
             'correcta': es_correcta,
-            'justificacion': justificacion
+            'justificacion': justificacion_final
         })
 
+    # Cálculo final
     porcentaje = (total_correctas / total_preguntas) * 100 if total_preguntas > 0 else 0
+    
+    # Devolvemos los 4 valores exactos que espera tu views.py
     return resultados, round(porcentaje, 2), total_correctas, total_preguntas
 
 
 def generar_certificado_pdf(examen):
     """
     Genera el PDF y QR.
-    CORREGIDO: Manejo de nombres vacíos, dominio dinámico y persistencia.
+    Maneja nombres vacíos, dominio dinámico y persistencia.
     """
     print(f"Iniciando generación de certificado para Examen ID: {examen.id}...")
     
-    # Generamos UUID manualmente
+    # Generamos UUID manualmente si no existe
     nuevo_uuid = uuid.uuid4()
     
+    # Buscamos o creamos el certificado
     certificado, created = Certificado.objects.get_or_create(
         examen=examen,
         defaults={
@@ -101,16 +132,16 @@ def generar_certificado_pdf(examen):
         }
     )
     
+    # Si ya existe y tiene PDF, lo retornamos (Evita re-generar)
     if not created and certificado.archivo_pdf:
         print("Certificado ya existía.")
         return certificado
 
-    # --- ARREGLO 1: Dominio Dinámico para el QR ---
-    # Si estamos en producción (Render), usa el dominio real. Si es local, usa localhost.
+    # --- Dominio Dinámico para el QR ---
     if settings.DEBUG:
         domain = "http://127.0.0.1:8000"
     else:
-        domain = "https://cdcv.onrender.com"  # <--- Tu dominio real
+        domain = "https://cdcv.onrender.com"  # Dominio producción
         
     url_verificacion = f"{domain}/verificar/{certificado.codigo_verificacion}/"
     
@@ -124,37 +155,36 @@ def generar_certificado_pdf(examen):
     qr_img.save(qr_buffer, format='PNG')
     qr_filename = f'qr_{certificado.codigo_verificacion}.png'
     
-    # save=False evita el guardado prematuro
+    # Guardar QR (save=False para no commitear todavía)
     certificado.codigo_qr.save(qr_filename, ContentFile(qr_buffer.getvalue()), save=False)
 
-    # 2. Generar PDF
+    # 2. Generar PDF con ReportLab
     pdf_buffer = BytesIO()
     c = canvas.Canvas(pdf_buffer, pagesize=letter)
     width, height = letter 
 
     try:
-        # Intenta cargar plantilla
+        # Intenta cargar plantilla de fondo
         ruta_plantilla = os.path.join(settings.MEDIA_ROOT, 'plantillas', 'plantilla.png')
         if os.path.exists(ruta_plantilla):
             c.drawImage(ruta_plantilla, 0, 0, width=width, height=height, preserveAspectRatio=True, anchor='c')
         else:
-            # Fallback visual si no hay imagen de fondo
+            # Fallback visual si no hay imagen
             c.drawString(inch, height - inch, "CERTIFICADO OFICIAL CDCV")
             c.line(inch, height - inch - 10, width - inch, height - inch - 10)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Error cargando plantilla: {e}")
 
-    # --- ARREGLO 2: Nombre del Usuario ---
-    # Construimos el nombre. Si está vacío, usamos el username para que nunca salga en blanco.
+    # --- Nombre del Usuario Seguro ---
     nombre_completo = f"{examen.usuario.first_name} {examen.usuario.last_name}".strip()
     if not nombre_completo:
-        nombre_completo = examen.usuario.username.upper() # Fallback seguro
+        nombre_completo = examen.usuario.username.upper()
     else:
         nombre_completo = nombre_completo.upper()
 
-    # Contenido del PDF
+    # Contenido del PDF (Textos)
     c.setFont("Helvetica-Bold", 24)
-    c.drawCentredString(width / 2.0, height / 2.0 + 50, nombre_completo) # <--- Variable corregida
+    c.drawCentredString(width / 2.0, height / 2.0 + 50, nombre_completo)
     
     c.setFont("Helvetica", 18)
     c.drawCentredString(width / 2.0, height / 2.0 + 10, "ha completado exitosamente la certificación de:")
@@ -163,16 +193,21 @@ def generar_certificado_pdf(examen):
     c.drawCentredString(width / 2.0, height / 2.0 - 30, examen.curso.nombre)
     
     c.setFont("Helvetica", 12)
-    # Formato de fecha legible
-    fecha_str = certificado.fecha_emision.strftime('%d/%m/%Y')
+    # Formato de fecha
+    if certificado.fecha_emision:
+        fecha_str = certificado.fecha_emision.strftime('%d/%m/%Y')
+    else:
+        # Fallback por si la fecha es None en creación
+        from django.utils import timezone
+        fecha_str = timezone.now().strftime('%d/%m/%Y')
+
     c.drawCentredString(width / 2.0, height / 2.0 - 80, f"Emitido el: {fecha_str}")
     
     c.setFont("Helvetica-Oblique", 10)
     c.drawString(inch, inch, f"ID Verificación: {certificado.codigo_verificacion}")
 
-    # Incrustar QR
+    # Incrustar QR en el PDF
     try:
-        # Usamos un archivo temporal seguro para el QR
         qr_temp_path = os.path.join(settings.MEDIA_ROOT, 'temp_qr.png')
         with open(qr_temp_path, 'wb') as f:
             f.write(qr_buffer.getvalue())
@@ -185,10 +220,10 @@ def generar_certificado_pdf(examen):
 
     pdf_filename = f'cert_{certificado.codigo_verificacion}.pdf'
     
-    # Guardamos el archivo PDF (save=False)
+    # Guardamos el archivo PDF final
     certificado.archivo_pdf.save(pdf_filename, ContentFile(pdf_buffer.getvalue()), save=False)
     
-    # GUARDADO FINAL
+    # GUARDADO FINAL EN BD
     certificado.save()
     
     print("Certificado generado y guardado correctamente.")
