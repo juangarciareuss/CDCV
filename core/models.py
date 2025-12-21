@@ -54,6 +54,7 @@ class Curso(models.Model):
     nivel = models.IntegerField(default=1) 
     descripcion = models.TextField(blank=True, null=True)
     idioma = models.CharField(max_length=10, default='es')
+    activo = models.BooleanField(default=False, verbose_name="¿Visible en Catálogo?")
     score = models.IntegerField(default=0, help_text="Puntaje de calidad (0-30)")
     status = models.CharField(max_length=20, default='PENDIENTE', help_text="Estado de curación")
     

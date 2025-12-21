@@ -34,7 +34,6 @@ def diagnosticar_y_pescar_preguntas(curso):
 
         # 2. Query Estricta: Curso + Tema + Rango de Dificultad
         candidatas = Pregunta.objects.filter(
-            curso=curso,
             temas=tema_obj,
             dificultad__gte=dif_min,
             dificultad__lte=dif_max
@@ -43,12 +42,19 @@ def diagnosticar_y_pescar_preguntas(curso):
         # 3. Validación de Stock
         count_disponible = candidatas.count()
         if count_disponible < cantidad:
-            # Si no hay suficientes, devolvemos lo que hay, pero avisamos en consola
-            print(f"⚠️ ADVERTENCIA: Se pidieron {cantidad} preguntas de '{tema_nombre}' pero solo hay {count_disponible}.", file=sys.stderr)
-            seleccion = list(candidatas) # Tomamos todas las que existan
-        else:
-            # Si hay de sobra, seleccionamos al azar
-            seleccion = list(candidatas.order_by('?')[:cantidad])
+            # En lugar de un print, construimos el reporte forense y retornamos ERROR
+            mensaje_error = (
+                f"⚠️ FALTA STOCK EN: '{tema_nombre}'\n\n"
+                f"📉 Diagnóstico:\n"
+                f"- El examen pide: {cantidad} preguntas.\n"
+                f"- Nivel exigido: {dif_min} al {dif_max}.\n"
+                f"- Stock encontrado: Solo {count_disponible} preguntas válidas.\n\n"
+                f"💡 Solución: Ve al Dashboard -> 'Completar con IA' o usa la Shell para barajar dificultades."
+            )
+            return [], mensaje_error # <--- AQUÍ SE DETIENE Y TE AVISA
+
+        # Si hay stock suficiente, seleccionamos al azar
+        seleccion = list(candidatas.order_by('?')[:cantidad])
         
         preguntas_seleccionadas.extend(seleccion)
         

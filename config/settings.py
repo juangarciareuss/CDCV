@@ -109,6 +109,12 @@ USE_TZ = True
 
 # --- ARCHIVOS ESTÁTICOS (CRÍTICO PARA PRODUCCIÓN) ---
 STATIC_URL = 'static/'
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder', # Añade esta línea
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Habilitar compresión y almacenamiento en caché de Whitenoise

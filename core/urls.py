@@ -13,5 +13,8 @@ urlpatterns = [
     path('perfil/', views.perfil_usuario, name='perfil_usuario'),
     path('dashboard-kpi/', views.dashboard_kpi, name='dashboard_kpi'), #ruta al dashboard
     path('accounts/', include('allauth.urls')),
-
+    path('dashboard/curar-ia/<int:curso_id>/', views.endpoint_curar_con_ia, name='curar_ia'),
+    path('dashboard/crear-curso/', views.endpoint_crear_curso_ia, name='crear_curso_ia'),
+    path('dashboard/toggle-status/<int:curso_id>/', views.toggle_estado_curso, name='toggle_status'),
 ]
+

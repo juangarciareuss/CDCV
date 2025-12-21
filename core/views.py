@@ -1,12 +1,15 @@
+import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from core.models import Curso, Examen, Certificado, Pregunta, Tema 
 from core.logic import engine, gateways, analytics
+from core.logic.ai_services import CDCVOrchestrator
+
 
 def homepage(request):
     # Usamos la lógica de analítica para las estadísticas
-    cursos = Curso.objects.filter(estructura_examen__isnull=False).order_by('nivel')
+    cursos = Curso.objects.filter(estructura_examen__isnull=False, activo=True).order_by('nivel')
     context = {"cursos": cursos, **analytics.obtener_stats_comerciales()}
     return render(request, "core/homepage.html", context)
 
@@ -53,7 +56,7 @@ def dashboard_kpi(request):
         return redirect('core:homepage')
     
     # Obtenemos los datos desde nuestro módulo de analítica
-    data = analytics.obtener_kpis_globales()
+    data = analytics.obtener_diagnostico_completo()
     return render(request, "core/dashboard.html", data)
 
 # --- PASARELA DE PAGOS ---
@@ -85,3 +88,71 @@ def pago_cancelado(request):
 def verificar_certificado(request, codigo_verificacion):
     certificado = get_object_or_404(Certificado, codigo_verificacion=codigo_verificacion)
     return render(request, 'core/verificacion.html', {'certificado': certificado})
+
+# --- ENDPOINTS DE IA (NUEVO) ---
+@login_required
+def endpoint_curar_con_ia(request, curso_id):
+    """
+    Recibe la petición del Dashboard para reparar un curso roto.
+    """
+    # Seguridad: Solo staff puede gastar tokens de IA
+    if not request.user.is_staff:
+        return JsonResponse({"status": "error", "message": "Acceso denegado"}, status=403)
+    
+    try:
+        # 1. Llamamos al Orquestador
+        orchestrator = CDCVOrchestrator()
+        
+        # 2. Ejecutamos la curación
+        # Esto llamará internamente al RefillerAgent para crear preguntas
+        resultado = orchestrator.curar_curso_roto(curso_id)
+        
+        # 3. Devolvemos el reporte al frontend
+        return JsonResponse(resultado)
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    
+@login_required
+def endpoint_crear_curso_ia(request):
+    """
+    Recibe un POST con el tema (ej: 'Excel Avanzado') y crea el curso desde cero.
+    """
+    if not request.user.is_staff:
+        return JsonResponse({"status": "error", "message": "Acceso denegado"}, status=403)
+    
+    if request.method == "POST":
+        try:
+            # Obtenemos el dato que envía el Javascript
+            data = json.loads(request.body)
+            nicho = data.get('nicho')
+
+            if not nicho:
+                return JsonResponse({"status": "error", "message": "Falta el nicho"})
+
+            # --- LLAMADA AL ORQUESTADOR ---
+            orchestrator = CDCVOrchestrator()
+            mensaje = orchestrator.crear_nuevo_producto(nicho) # <--- Aquí trabaja el Builder
+            
+            return JsonResponse({"status": "success", "message": mensaje})
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+            
+    return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+
+@login_required
+def toggle_estado_curso(request, curso_id):
+    """Cambia el curso de Activo (1) a Inactivo (0) y viceversa"""
+    if not request.user.is_staff:
+        return JsonResponse({"status": "error"}, status=403)
+    
+    curso = get_object_or_404(Curso, id=curso_id)
+    curso.activo = not curso.activo # Invierte el valor actual
+    curso.save()
+    
+    return JsonResponse({
+        "status": "success", 
+        "nuevo_estado": curso.activo,
+        "mensaje": "Curso ACTIVADO" if curso.activo else "Curso DESACTIVADO"
+    })
