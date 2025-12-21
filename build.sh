@@ -10,6 +10,7 @@ pip install -r requirements.txt
 # 2. Archivos estáticos (CSS, JS, Imágenes del diseño)
 python manage.py collectstatic --no-input
 
+
 # 3. Base de datos (Aplica los cambios nuevos: campo 'activo', tablas nuevas, etc.)
 python manage.py migrate
 
@@ -17,6 +18,13 @@ python manage.py migrate
 # Si tu 'seed_taxonomy' crea cursos de prueba viejos, bórralo también.
 # Si solo crea la estructura de niveles (Nivel 1, 2, 3...), déjalo.
 python manage.py seed_taxonomy
+# --- 🟢 AQUÍ ESTÁ EL TRUCO ---
+# Verificamos si el archivo existe y lo cargamos
+if [ -f "datos_iniciales.json" ]; then
+    echo "📦 Cargando datos de respaldo..."
+    python manage.py loaddata datos_iniciales.json
+fi
+# -----------------------------
 
 # --- SECCIÓN LIMPIA: ADIÓS A LOS JSON VIEJOS ---
 # Ya no importamos 'ia_excel_100.json' ni nada manual.
