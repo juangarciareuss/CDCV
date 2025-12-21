@@ -1,5 +1,7 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from . import views
+from django.conf import settings
+from django.views.static import serve
 
 app_name = 'core'
 
@@ -18,3 +20,9 @@ urlpatterns = [
     path('dashboard/toggle-status/<int:curso_id>/', views.toggle_estado_curso, name='toggle_status'),
 ]
 
+# AGREGA ESTO AL FINAL DEL ARCHIVO (FUERA DE URLPATTERNS ORIGINAL)
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {
+        'document_root': settings.MEDIA_ROOT,
+    }),
+]
