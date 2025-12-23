@@ -1,10 +1,11 @@
+{% load static %}
 {% load socialaccount %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDCV - {% block title %}Valida tu Habilidad{% endblock %}</title>
+    <title>CertUfy - {% block title %}Valida tu Habilidad{% endblock %}</title>
     <style>
         /* --- ESTILOS GLOBALES Y DE ESTRUCTURA --- */
         body { 
@@ -23,12 +24,12 @@
         /* --- NAVBAR PROFESIONAL --- */
         .navbar {
             background-color: #fff;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #D4AF37; /* Detalle Dorado */
             padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky; /* Se queda fija arriba */
+            position: sticky; 
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -37,7 +38,7 @@
         .navbar-brand {
             font-size: 1.5rem;
             font-weight: 800;
-            color: #007bff;
+            color: #0056D2; /* Azul CertUfy */
             text-decoration: none;
             letter-spacing: -0.5px;
             display: flex;
@@ -63,7 +64,7 @@
         }
         .nav-link:hover {
             background-color: #f0f4f8;
-            color: #007bff;
+            color: #0056D2;
         }
 
         .btn-outline {
@@ -96,8 +97,8 @@
 
         /* Dropdown simple para usuario */
         .user-badge {
-            background: #e7f1ff;
-            color: #007bff;
+            background: #E1F0FF;
+            color: #0056D2;
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 0.9rem;
@@ -107,15 +108,16 @@
         /* --- ESTILOS COMUNES PARA HIJOS --- */
         .section-title { font-size: 28px; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 40px; margin-bottom: 20px; }
         
-        /* Definimos bloques para CSS extra si hace falta */
-        {% block extra_css %}{% endblock %}
     </style>
+
+    {% block extra_css %}{% endblock %}
+
 </head>
 <body>
 
     <nav class="navbar">
-        <a href="/" class="navbar-brand">
-            🚀 CDCV <span style="font-size: 0.7rem; background: #28a745; color: white; padding: 2px 6px; border-radius: 4px; margin-left: 5px;">BETA</span>
+        <a href="{% url 'core:homepage' %}" class="logo">
+            <img src="{% static 'core/img/logo_reducido.png' %}" alt="CertUfy Logo" style="height: 80px; vertical-align: middle;">
         </a>
 
         <div class="navbar-menu">
@@ -156,7 +158,7 @@
     {% endblock %}
 
     <footer style="text-align: center; padding: 40px; color: #777; font-size: 0.9rem; border-top: 1px solid #eee; margin-top: 50px;">
-        <p>&copy; 2025 CDCV - Certified Digital Competency Validation.</p>
+        <p>&copy; 2025 CertUfy - Validación de Competencias Digitales.</p>
     </footer>
 
 </body>

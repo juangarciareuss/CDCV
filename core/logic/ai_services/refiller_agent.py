@@ -67,7 +67,7 @@ class RefillerAgent:
         temas_existentes = list(Tema.objects.values_list('nombre', flat=True))
         
         config_agente = {
-            "temperature": 0.7,
+            "temperature": 0,
             "response_mime_type": "application/json",
         }
 

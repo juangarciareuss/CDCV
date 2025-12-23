@@ -1,53 +1,159 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificación de Certificado - CDCV</title>
+    <title>Verificación Oficial - CertUfy</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f4f4; display: grid; place-items: center; min-height: 90vh; margin: 0; }
-        .card { background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 600px; padding: 40px; text-align: center; }
-        .logo { font-weight: bold; font-size: 24px; color: #333; margin-bottom: 20px; }
-        .success { color: #28a745; font-size: 28px; font-weight: bold; margin-bottom: 20px; }
-        .details { text-align: left; line-height: 1.6; font-size: 16px; margin-bottom: 30px; }
-        .details p { margin: 10px 0; }
-        .footer { margin-top: 30px; font-size: 12px; color: #888; }
-        .btn-download { display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: background-color 0.2s; }
-        .btn-download:hover { background-color: #0056b3; }
+        /* --- ESTILOS "PREMIUM TRUST" --- */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #F8FAFC; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px;
+        }
+
+        .card { 
+            background: #fff; 
+            border: 1px solid #E2E8F0; 
+            border-top: 5px solid #D4AF37; /* Borde superior Dorado */
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            width: 100%;
+            max-width: 500px; 
+            padding: 40px 30px; 
+            text-align: center; 
+            position: relative;
+        }
+
+        /* Logo Principal */
+        .logo-img {
+            height: 60px;
+            margin-bottom: 25px;
+        }
+
+        /* Insignia de Verificación */
+        .badge-verified {
+            background-color: #F0FFF4;
+            color: #0056D2; /* Azul Corporativo */
+            border: 1px solid #C6F6D5;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .check-icon {
+            color: #D4AF37; /* Check Dorado */
+            font-size: 1.2rem;
+        }
+
+        /* Detalles */
+        .details { 
+            text-align: left; 
+            background: #F7FAFC;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #EDF2F7;
+            margin-bottom: 30px;
+        }
+
+        .label {
+            font-size: 0.85rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .value {
+            font-size: 1.2rem;
+            color: #2D3748;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .value.highlight {
+            color: #0056D2; /* Azul para el curso */
+        }
+
+        /* Botón de Descarga (Igual al Login) */
+        .btn-download { 
+            display: block; 
+            width: 100%;
+            padding: 15px; 
+            background: linear-gradient(135deg, #0056D2 0%, #003c96 100%);
+            color: white; 
+            text-decoration: none; 
+            border-radius: 50px; 
+            font-weight: bold; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 6px rgba(0, 86, 210, 0.2);
+            box-sizing: border-box;
+        }
+        .btn-download:hover { 
+            background: linear-gradient(135deg, #D4AF37 0%, #F1C40F 100%); /* Hover Dorado */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .footer { 
+            margin-top: 30px; 
+            font-size: 0.8rem; 
+            color: #A0AEC0; 
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <div class="logo">CDCV</div>
+        <img src="{% static 'core/img/logo_certufy.png' %}" alt="CertUfy" class="logo-img">
         
-        <div class="success">✅ Certificado Válido</div>
-
-        <div class="details">
-            <p>Se certifica que:</p>
-            <h2 style="margin: 5px 0;">{{ certificado.usuario.first_name }} {{ certificado.usuario.last_name }}</h2>
-            <p>(Usuario: {{ certificado.usuario.username }})</p>
-            
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-            
-            <p>Ha completado exitosamente la certificación de:</p>
-            <h3 style="margin: 5px 0;">{{ certificado.curso.nombre }}</h3>
-            
-            <p><strong>Fecha de Emisión:</strong> {{ certificado.fecha_emision|date:"d \d\e F \d\e Y" }}</p>
-            <p><strong>ID de Verificación:</strong> <span style="font-family: monospace;">{{ certificado.codigo_verificacion }}</span></p>
+        <div>
+            <div class="badge-verified">
+                <span class="check-icon">✔</span> Certificado Auténtico
+            </div>
         </div>
 
-        {% if certificado.archivo_pdf %}
-            <a href="{{ certificado.archivo_pdf.url }}" class="btn-download" target="_blank">
-                Descargar Certificado (PDF)
-            </a>
-        {% else %}
-            <p style="color: #dc3545;">El archivo PDF no está disponible.</p>
-        {% endif %}
+        <div class="details">
+            <span class="label">Otorgado a:</span>
+            <span class="value">{{ certificado.usuario.first_name }} {{ certificado.usuario.last_name }}</span>
+            
+            <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 15px 0;">
+
+            <span class="label">Competencia Validada:</span>
+            <span class="value highlight">{{ certificado.curso.nombre }}</span>
+            
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <span class="label">Fecha Emisión:</span>
+                    <span style="font-size: 0.95rem; font-weight: 600;">{{ certificado.fecha_emision|date:"d M, Y" }}</span>
+                </div>
+                <div style="text-align: right;">
+                    <span class="label">Código ID:</span>
+                    <span style="font-family: monospace; font-size: 0.95rem; color: #4A5568;">{{ certificado.codigo_verificacion }}</span>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'core:descargar_certificado' certificado.codigo_verificacion %}" class="btn-download" target="_blank">
+            ⬇ Descargar Copia Oficial (PDF)
+        </a>
 
         <div class="footer">
-            Certified Digital Competency Validation<br>
-            Verificación Pública Oficial
+            Validado por el estándar académico <strong>CDCV</strong>.<br>
+            La autenticidad de este documento ha sido verificada digitalmente.
         </div>
     </div>
 

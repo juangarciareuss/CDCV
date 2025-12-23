@@ -1,103 +1,87 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
-{% block title %}Inicio - CDCV{% endblock %}
+{% block title %}Inicio - CertUfy{% endblock %}
 
 {% block extra_css %}
-<style>
-    /* Estilos específicos SOLO para la Home */
-    .hero { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; padding: 80px 20px; text-align: center; }
-    .hero h1 { margin: 0; font-size: 3rem; font-weight: 800; }
-    .hero p { font-size: 1.25rem; opacity: 0.9; margin-top: 15px; max-width: 700px; margin-left: auto; margin-right: auto; }
-    
-    .metrics { background-color: #f8f9fa; padding: 40px 0; border-bottom: 1px solid #e9ecef; }
-    .metrics-grid { display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; }
-    .metric-item { text-align: center; }
-    .metric-item h3 { margin: 0; font-size: 2.5rem; color: #007bff; font-weight: 800; }
-    .metric-item p { margin: 5px 0 0; color: #6c757d; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
-
-    .how-it-works { background: white; padding: 60px 20px; text-align: center; }
-    .steps { display: flex; justify-content: center; gap: 30px; margin-top: 40px; flex-wrap: wrap; }
-    .step { flex: 1; max-width: 250px; padding: 20px; }
-    .step .icon { font-size: 40px; display: block; margin-bottom: 20px; }
-    
-    .course-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 30px; }
-    .course-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 25px; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; justify-content: space-between; height: 100%; box-sizing: border-box; }
-    .course-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: #007bff; }
-    .course-card h3 { margin-top: 0; color: #333; font-size: 1.25rem; }
-    .badge-level { background: #e7f1ff; color: #007bff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
-    .btn-start { background-color: #28a745; color: white; padding: 12px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: bold; margin-top: 20px; display: block; transition: background 0.2s; }
-    .btn-start:hover { background-color: #218838; }
-</style>
+    <link rel="stylesheet" href="{% static 'core/css/homepage.css' %}">
 {% endblock %}
 
 {% block content %}
 
-    <div class="hero">
+    <section class="hero-section">
         <div class="container">
-            <h1>Valida tu habilidad, no tu asistencia.</h1>
-            <p>Obtén certificaciones verificables por mérito puro. Demuestra lo que sabes, no dónde aprendiste.</p>
-        </div>
-    </div>
+            <h1 class="hero-title">
+                Tu conocimiento es el <span class="text-highlight">centro</span>.
+            </h1>
+            <h2 class="hero-subtitle">
+                Nosotros lo certificamos.
+            </h2>
+            
+            <p class="hero-description">
+                Transforma tu experiencia y estudios previos en una credencial verificable. 
+                Sin cursos innecesarios, solo validación por mérito puro.
+            </p>
 
-    <section class="metrics">
-        <div class="container metrics-grid">
-            <div class="metric-item">
-                <h3>{{ total_cursos }}</h3>
-                <p>Cursos Activos</p>
-            </div>
-            <div class="metric-item">
-                <h3>{{ total_examenes }}</h3>
-                <p>Exámenes Rendidos</p>
-            </div>
-            <div class="metric-item">
-                <h3>{{ total_certificados }}</h3>
-                <p>Certificados Emitidos</p>
+            <div class="search-container">
+                <form action="{% url 'core:crear_curso_ia' %}" method="post" class="search-form">
+                    {% csrf_token %}
+                    <input type="text" 
+                           name="tema" 
+                           class="search-input" 
+                           placeholder="¿Qué dominas? Ej: Python, Liderazgo, Excel..." 
+                           required>
+                    <button type="submit" class="search-btn">
+                        Certificarme Ahora
+                    </button>
+                </form>
             </div>
         </div>
     </section>
 
-    <div class="container">
-        <section class="how-it-works">
-            <h2 style="font-size: 2rem; color: #333;">¿Cómo Funciona?</h2>
-            <div class="steps">
-                <div class="step">
-                    <span class="icon">🖥️</span>
-                    <strong>1. Elige tu Reto</strong>
-                    <p class="text-muted">Selecciona la habilidad técnica que quieres validar hoy.</p>
+    <section class="metrics-section">
+        <div class="container">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-number">{{ total_cursos }}</span>
+                    <span class="metric-label">Áreas Disponibles</span>
                 </div>
-                <div class="step">
-                    <span class="icon">📝</span>
-                    <strong>2. Rinde el Examen</strong>
-                    <p class="text-muted">Preguntas generadas por IA adaptativa. Aprueba con 80%.</p>
+                <div class="metric-card">
+                    <span class="metric-number">{{ total_examenes }}</span>
+                    <span class="metric-label">Validaciones</span>
                 </div>
-                <div class="step">
-                    <span class="icon">🏆</span>
-                    <strong>3. Certifícate</strong>
-                    <p class="text-muted">Obtén tu credencial con código QR único al instante.</p>
+                <div class="metric-card">
+                    <span class="metric-number">{{ total_certificados }}</span>
+                    <span class="metric-label">Profesionales</span>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <h2 class="section-title">Certificaciones Disponibles</h2>
+    <div class="courses-container">
+        <div class="section-header">
+            <h2 class="section-title">Certificaciones Destacadas</h2>
+            <p style="color: #718096;">Explora las áreas más demandadas o busca la tuya arriba.</p>
+        </div>
 
-        <div class="course-list">
+        <div class="course-grid">
             {% for curso in cursos %}
                 <div class="course-card">
                     <div>
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                            <span class="badge-level">Nivel {{ curso.nivel }}</span>
-                            {% if curso.tema %}
-                                <span style="font-size: 0.8rem; color: #888;">{{ curso.tema.nombre }}</span>
-                            {% endif %}
+                        <div class="course-header">
+                            <span class="badge">Nivel {{ curso.nivel }}</span>
+                            <span style="font-size: 1.5rem; opacity: 0.5;">📜</span>
                         </div>
-                        <h3>{{ curso.nombre }}</h3>
-                        <p style="color: #666; font-size: 0.95rem;">{{ curso.descripcion|default:"Pon a prueba tus conocimientos técnicos en esta materia."|truncatewords:20 }}</p>
+                        <h3 class="course-title">{{ curso.nombre }}</h3>
+                        <p class="course-desc">
+                            {{ curso.descripcion|default:"Pon a prueba tus conocimientos técnicos y obtén tu validación oficial."|truncatewords:20 }}
+                        </p>
                     </div>
-                    <a href="{% url 'core:examen' curso.id %}" class="btn-start">Comenzar Examen</a>
+                    <a href="{% url 'core:examen' curso.id %}" class="btn-card">Iniciar Evaluación</a>
                 </div>
             {% empty %}
-                <div style="text-align: center; padding: 50px; background: #fff; border-radius: 8px; width: 100%;">
-                    <p style="font-size: 1.2rem; color: #999;">Estamos calibrando los exámenes. Vuelve pronto.</p>
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #999; background: #f9f9f9; border-radius: 12px;">
+                    <p>Aún no hay certificaciones públicas. ¡Usa el buscador para crear la primera!</p>
                 </div>
             {% endfor %}
         </div>

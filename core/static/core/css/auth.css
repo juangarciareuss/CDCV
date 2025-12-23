@@ -1,0 +1,178 @@
+/* =========================================
+   ESTILOS DE AUTENTICACIÓN (LOGIN / SIGNUP)
+   Ruta: core/static/core/css/auth.css
+   ========================================= */
+
+/* --- Contenedor Principal Centrado --- */
+.auth-container {
+    min-height: calc(100vh - 200px); /* Altura completa menos header/footer */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background-color: #f8f9fa; /* Fondo gris muy suave */
+}
+
+/* --- Tarjeta de Login --- */
+.auth-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 450px; /* Ancho máximo elegante */
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Sombra suave premium */
+    border: 1px solid #E2E8F0; /* Borde plateado sutil */
+    text-align: center;
+}
+
+/* --- Tipografía --- */
+.auth-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1A202C; /* Azul muy oscuro */
+    margin-bottom: 10px;
+}
+
+.auth-subtitle {
+    color: #718096; /* Gris profesional */
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+/* --- Estilizando el Formulario de Django --- */
+/* Django renderiza esto en párrafos <p>, vamos a hacer que se vean bien */
+.login-form p {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+/* Etiquetas (Labels) */
+.login-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #4A5568;
+    font-size: 0.95rem;
+}
+
+/* Inputs de Texto y Contraseña */
+.login-form input[type="text"],
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 14px 20px;
+    border: 2px solid #E2E8F0; /* Borde plateado */
+    border-radius: 50px; /* Estilo píldora moderno */
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    color: #2D3748;
+}
+
+.login-form input:focus {
+    border-color: #0056D2; /* Foco azul intenso */
+    box-shadow: 0 0 0 3px rgba(0, 86, 210, 0.1);
+}
+
+/* Checkbox de "Recordarme" */
+#id_remember {
+    margin-right: 10px;
+}
+.remember-me-container {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #64748B;
+    margin-bottom: 20px;
+}
+
+/* Botón Principal (Dorado/Azul) */
+.btn-auth-primary {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #0056D2 0%, #003c96 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-auth-primary:hover {
+    background: linear-gradient(135deg, #D4AF37 0%, #F1C40F 100%); /* Efecto Dorado */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Enlaces Secundarios */
+.auth-secondary-links {
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.link-blue {
+    color: #0056D2;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+.link-blue:hover {
+    color: #003c96;
+    text-decoration: underline;
+}
+
+/* --- Separador Social --- */
+.social-divider {
+    margin: 30px 0;
+    position: relative;
+    text-align: center;
+}
+.social-divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #E2E8F0;
+    z-index: 1;
+}
+.social-divider span {
+    background: #fff;
+    padding: 0 15px;
+    color: #A0AEC0;
+    position: relative;
+    z-index: 2;
+    font-size: 0.9rem;
+}
+
+/* --- Botón de Google Grande --- */
+.btn-google-big {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px;
+    background: #fff;
+    color: #444;
+    border: 2px solid #E2E8F0;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+.btn-google-big:hover {
+    background-color: #f8f9fa;
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.google-icon-big {
+    width: 24px;
+    height: 24px;
+}   

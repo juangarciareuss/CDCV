@@ -1,9 +1,13 @@
-{% load static %} <!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Ingeniería CDCV</title>
+    
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
     <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
 </head>
 <body>
@@ -17,101 +21,27 @@
         <a href="{% url 'core:homepage' %}" class="btn-home">⬅ Volver a la Web</a>
     </div>
 
-<!--  Estadísticas -->
-
     <div class="stats-grid">
         <div class="stat-card"><h2>{{ total_preguntas }}</h2><p>Preguntas Totales</p></div>
         <div class="stat-card" style="border-color: var(--success);"><h2>{{ total_cursos }}</h2><p>Cursos Activos</p></div>
         <div class="stat-card" style="border-color: var(--warning);"><h2>{{ total_certificados }}</h2><p>Certificados</p></div>
     </div>
 
-
     <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px; border-left: 5px solid #6a11cb;">
-    <h2 style="margin-top: 0;">🏭 Fábrica de Cursos IA</h2>
-    <p>Escribe un nicho y la IA generará el Título, Descripción, Reglas y Preguntas iniciales.</p>
-    
-    <div style="display: flex; gap: 10px;">
-        <input type="text" id="inputNicho" placeholder="Ej: Excel para Contadores, Python para Data Science..." 
-               style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        <h2 style="margin-top: 0;">🏭 Fábrica de Cursos IA</h2>
+        <p>Escribe un nicho y la IA generará el Título, Descripción, Reglas y Preguntas iniciales.</p>
         
-        <button onclick="crearCursoNuevo()" id="btnCrear" 
-                style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-            ✨ Crear Producto
-        </button>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="inputNicho" placeholder="Ej: Excel para Contadores, Python para Data Science..." 
+                   style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            
+            <button onclick="crearCursoNuevo()" id="btnCrear" 
+                    style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                ✨ Crear Producto
+            </button>
+        </div>
     </div>
-</div>
 
-<!--  Curso Nuevo -->
-<script>
-async function crearCursoNuevo() {
-    const input = document.getElementById('inputNicho');
-    const btn = document.getElementById('btnCrear');
-    const nicho = input.value;
-
-    if (!nicho) {
-        alert("Por favor escribe un tema.");
-        return;
-    }
-
-    // 1. Estado de carga visual
-    btn.disabled = true;
-    btn.innerHTML = "🏗️ Construyendo... (Revisa Consola F12)";
-    btn.style.opacity = "0.7";
-    
-    console.log("🚀 Enviando petición al servidor para:", nicho);
-
-    try {
-        // 2. La llamada al servidor
-        const response = await fetch('/dashboard/crear-curso/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({ nicho: nicho })
-        });
-
-        // 3. AQUÍ ESTÁ EL CAMBIO "FORENSE":
-        // Primero leemos el texto crudo, no el JSON directo.
-        const textoCrudo = await response.text();
-        
-        console.log("📩 Estado HTTP:", response.status);
-        console.log("🔥 RESPUESTA CRUDA DEL SERVIDOR (RAW):", textoCrudo);
-
-        // 4. Intentamos convertir a JSON manualmente
-        let data;
-        try {
-            data = JSON.parse(textoCrudo);
-        } catch (e) {
-            console.error("❌ ERROR DE PARSEO JSON:", e);
-            console.error("Lo que llegó no es JSON. Probablemente es una página de error HTML de Django.");
-            alert("Error: El servidor devolvió HTML en vez de JSON. Mira la consola (F12) para ver el error real.");
-            throw new Error("Respuesta no válida");
-        }
-
-        // 5. Verificamos lógica de negocio
-        if (data.status === 'success') {
-            console.log("✅ Éxito:", data.message);
-            alert("¡ÉXITO! " + data.message);
-            location.reload(); 
-        } else {
-            console.warn("⚠️ El servidor respondió, pero con error lógico:", data);
-            alert("Error del sistema: " + data.message);
-        }
-
-    } catch (err) {
-        console.error("💀 ERROR FATAL EN EL FETCH:", err);
-        alert("Ocurrió un error en la conexión. Revisa la consola (F12) para ver los detalles.");
-    } finally {
-        // 6. Restaurar botón siempre
-        btn.disabled = false;
-        btn.innerHTML = "✨ Crear Producto";
-        btn.style.opacity = "1";
-    }
-}
-</script>
-
-<!--  Tabla con Cursos -->
     <div class="table-card">
         <table class="main-table">
             <thead>
@@ -120,12 +50,12 @@ async function crearCursoNuevo() {
                     <th style="width: 40%;">Cobertura</th>
                     <th style="width: 25%;">Estado</th>
                     <th style="width: 10%;">Activo</th>
+                    <th style="width: 10%;">Acciones</th> </tr>
                 </tr>
             </thead>
             <tbody>
                 {% for curso in detalle_cursos %}
                 <tr>
-                    <!--  Curso -->
                     <td>
                         <span class="course-name">{{ curso.nombre }}</span>
                         <button 
@@ -136,25 +66,21 @@ async function crearCursoNuevo() {
                         </button>
                     </td>
                     
-                    <!--  Cobertura -->
                     <td>
                         <div class="rules-grid">
                             {% for regla in curso.analisis_reglas %}
                             <div class="rule-row {% if regla.status == 'OK' %}ok{% else %}fail{% endif %}">
                                 <div style="font-weight: 500;">{{ regla.regla }}</div>
-                                
                                 <div style="text-align: center;">
                                     <span class="label-qty">Pide</span>
                                     <span class="val-qty">{{ regla.pide }}</span>
                                 </div>
-
                                 <div style="text-align: center;">
                                     <span class="label-qty">Tienes</span>
                                     <span class="val-qty {% if regla.status != 'OK' %}red{% endif %}">
                                         {{ regla.tengo }}
                                     </span>
                                 </div>
-
                                 <div style="text-align: right;">
                                     {% if regla.status == 'OK' %}✅{% else %}🛑{% endif %}
                                 </div>
@@ -163,32 +89,40 @@ async function crearCursoNuevo() {
                         </div>
                     </td>
 
-                    <!--  Estado -->
                     <td style="vertical-align: middle;">
                         {% if curso.es_saludable %}
                             <span class="badge badge-success">🟢 LISTO PARA PROD</span>
                         {% else %}
                             <span class="badge badge-danger">🔴 ROTO / INCOMPLETO</span>
                             <div style="margin-top: 10px; font-size: 12px; color: #dc3545;">
-                                Faltan ingredientes para completar la receta.
+                                Faltan ingredientes.
                             </div>
                         {% endif %}
                     </td>
 
-                    <!--  Activo -->
                     <td>
                         <label class="switch">
                             <input type="checkbox" 
-                                onchange="toggleCurso('{{ curso.id }}')" 
-                                {% if curso.activo %}checked{% endif %}>
+                                   onchange="toggleCurso('{{ curso.id }}')" 
+                                   {% if curso.activo %}checked{% endif %}>
                             <span class="slider"></span>
                         </label>
                     </td>
 
+                <td style="text-align: center;">
+                    <button 
+                        onclick="eliminarCurso('{{ curso.id }}', '{{ curso.nombre|escapejs }}')"
+                        style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"
+                        title="Eliminar Curso permanentemente">
+                        🗑️
+                    </button>
+                </td>
+                
+                
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="3" style="text-align:center; padding: 40px;">No hay datos disponibles.</td>
+                    <td colspan="4" style="text-align:center; padding: 40px;">No hay datos disponibles.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -196,66 +130,49 @@ async function crearCursoNuevo() {
     </div>
 </div>
 
-
-
-<script>
-    function ejecutarCuracion(cursoId) {
-        // 1. Feedback visual inmediato (para que sepas que sí hiciste clic)
-        const btn = document.getElementById(`btn-ia-${cursoId}`);
-        const textoOriginal = btn.innerHTML;
-        
-        btn.disabled = true;
-        btn.innerHTML = "⏳ Pensando... (Esto toma ~10s)";
-        btn.style.backgroundColor = "#6c757d"; // Gris mientras piensa
-
-        // 2. Llamada al servidor (El cable a Django)
-        fetch(`/dashboard/curar-ia/${cursoId}/`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la red o servidor');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.status === 'success') {
-                    // 3. Éxito: Mostramos reporte y recargamos
-                    alert("✅ ¡Misión Cumplida!\n\n" + data.reporte.join("\n"));
-                    location.reload(); // Recarga para ver los semáforos verdes
-                } else {
-                    alert("❌ Error del Agente: " + data.message);
-                    restaurarBoton(btn, textoOriginal);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("❌ Error de conexión. Revisa la consola (F12).");
-                restaurarBoton(btn, textoOriginal);
-            });
-    }
-
-    function restaurarBoton(btn, texto) {
-        btn.disabled = false;
-        btn.innerHTML = texto;
-        btn.style.backgroundColor = ""; // Vuelve al color original
-    }
-</script>
-
-<script>
-function toggleCurso(id) {
-    fetch(`/dashboard/toggle-status/${id}/`)
-    .then(r => r.json())
-    .then(data => {
-        if(data.status === 'success') {
-            // Opcional: Mostrar una notificación pequeña (Toast)
-            console.log(data.mensaje); 
-        } else {
-            alert("Error al cambiar estado");
-            location.reload(); // Revertir si falló
-        }
-    });
-}
-</script>
-
+<script src="{% static 'core/js/dashboard.js' %}"></script>
 
 </body>
 </html>
+
+<script>
+    // Esta función lee el token que dejaste en el <head>
+    function eliminarCurso(id, nombre) {
+        if(!confirm(`⚠️ ¿Estás SEGURO de eliminar el curso "${nombre}"?\n\nEsta acción borrará:\n- El curso\n- Sus preguntas\n- Los exámenes de usuarios vinculados.`)) {
+            return;
+        }
+
+        // Buscamos el token CSRF en la etiqueta meta
+        const metaToken = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = metaToken ? metaToken.getAttribute('content') : '';
+
+        fetch(`/dashboard/eliminar-curso/${id}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Si el servidor da error (ej: 403 o 500), lanzamos una excepción
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                alert("🗑️ Curso eliminado correctamente.");
+                location.reload();
+            } else {
+                alert("❌ Error: " + data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error al intentar eliminar. Revisa la consola (F12) para detalles.");
+        });
+    }
+
+    // Aquí puedes pegar también tus otras funciones (toggleCurso, ejecutarCuracion) si dejan de funcionar.
+</script>

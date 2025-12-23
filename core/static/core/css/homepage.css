@@ -1,0 +1,238 @@
+/* =========================================
+   LANDING PAGE (HOMEPAGE) STYLES
+   ========================================= */
+
+/* --- HERO SECTION: Limpieza y Autoridad --- */
+.hero-section {
+    background-color: #ffffff;
+    padding: 100px 20px 80px; /* Más aire arriba para separar del navbar */
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #1A202C;
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -1px;
+}
+
+.text-highlight {
+    color: #D4AF37; /* Tu Dorado Corporativo */
+    position: relative;
+}
+
+.hero-subtitle {
+    font-size: 1.8rem;
+    color: #718096; /* Gris profesional */
+    font-weight: 400;
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.hero-description {
+    font-size: 1.15rem;
+    color: #4A5568;
+    margin: 25px auto 0;
+    max-width: 650px;
+    line-height: 1.6;
+}
+
+/* --- SEARCH BAR: La "Píldora" Perfecta (Flexbox) --- */
+.search-container {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.search-form {
+    display: flex;
+    width: 100%;
+    max-width: 650px;
+    height: 65px; /* Altura fija maestra para input y botón */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Sombra suave elevadora */
+    border-radius: 50px;
+    transition: transform 0.2s ease;
+}
+
+.search-form:hover {
+    transform: translateY(-2px); /* Pequeña levitación al acercarse */
+}
+
+.search-input {
+    flex: 1; /* Ocupa todo el espacio disponible */
+    padding: 0 30px;
+    font-size: 1.1rem;
+    border: 2px solid #E2E8F0;
+    border-right: none; /* Sin borde derecho para unirse al botón */
+    border-radius: 50px 0 0 50px;
+    outline: none;
+    color: #2D3748;
+    background: #fff;
+    transition: border-color 0.3s;
+}
+
+.search-input:focus {
+    border-color: #0056D2; /* Azul al escribir */
+    z-index: 10; /* Se pone por encima para mostrar el borde completo */
+}
+
+.search-btn {
+    padding: 0 40px;
+    background: linear-gradient(135deg, #0056D2 0%, #004494 100%);
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 0 50px 50px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap; /* Evita que el texto se rompa */
+}
+
+.search-btn:hover {
+    background: linear-gradient(135deg, #D4AF37 0%, #F1C40F 100%); /* Efecto Dorado Hover */
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+}
+
+/* --- METRICS SECTION --- */
+.metrics-section {
+    background-color: #F8FAFC; /* Gris muy suave para separar secciones */
+    padding: 60px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.metrics-grid {
+    display: flex;
+    justify-content: center;
+    gap: 80px; /* Separación amplia entre números */
+    flex-wrap: wrap;
+}
+
+.metric-card {
+    text-align: center;
+}
+
+.metric-number {
+    display: block;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #0056D2;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.metric-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+/* --- COURSES SECTION --- */
+.courses-container {
+    padding: 80px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    color: #1A202C;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.course-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.course-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    border-color: #D4AF37; /* Borde dorado sutil */
+}
+
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 20px;
+}
+
+.badge {
+    background: #E1F0FF;
+    color: #0056D2;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.course-title {
+    font-size: 1.4rem;
+    color: #2D3748;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+}
+
+.course-desc {
+    color: #718096;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.btn-card {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    text-align: center;
+    background: transparent;
+    color: #0056D2;
+    border: 2px solid #0056D2;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-card:hover {
+    background: #0056D2;
+    color: #fff;
+}
+
+/* Responsive básico */
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.5rem; }
+    .search-form { flex-direction: column; height: auto; border-radius: 16px; overflow: hidden; }
+    .search-input { width: 100%; border-right: 2px solid #E2E8F0; border-radius: 16px 16px 0 0; padding: 20px; border-bottom: none; }
+    .search-btn { width: 100%; border-radius: 0 0 16px 16px; padding: 20px; }
+    .metrics-grid { gap: 40px; }
+}

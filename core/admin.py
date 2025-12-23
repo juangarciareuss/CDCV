@@ -66,13 +66,25 @@ class PreguntaAdmin(admin.ModelAdmin):
         return obj.texto[:75] + '...' if len(obj.texto) > 75 else obj.texto
     texto_corto.short_description = "Texto de la Pregunta"
 
-# --- Modelo de Curso (MODIFICADO para Receta) ---
+@admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'tema', 'nivel', 'idioma', 'tiene_receta')
+    # 1. En la lista verás la columna "Preguntas" para control rápido
+    list_display = ('nombre', 'tema', 'nivel', 'cantidad_preguntas', 'idioma', 'tiene_receta')
+    
     list_filter = ('nivel', 'idioma', 'tema')
     search_fields = ('nombre', 'descripcion')
-    # AÑADIDO: Campo editable para la estructura del examen
-    fields = ('nombre', 'tema', 'nivel', 'descripcion', 'idioma', 'estructura_examen')
+    
+    # 2. En el formulario de edición agregamos el campo al final
+    fields = (
+        'nombre', 
+        'tema', 
+        'nivel', 
+        'descripcion', 
+        'idioma', 
+        'estructura_examen', 
+        'cantidad_preguntas'  # <--- AQUÍ ESTÁ EL CAMPO NUEVO
+    )
+    
     autocomplete_fields = ['tema']
     
     def tiene_receta(self, obj):
@@ -98,7 +110,6 @@ class CertificadoAdmin(admin.ModelAdmin):
 admin.site.register(Usuario, CustomUserAdmin)
 # REEMPLAZADO: admin.site.register(Tema)
 admin.site.register(Tema, TemaAdmin)
-admin.site.register(Curso, CursoAdmin)
 # REEMPLAZADO: admin.site.register(Pregunta)
 admin.site.register(Pregunta, PreguntaAdmin)
 admin.site.register(Examen, ExamenAdmin)

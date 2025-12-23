@@ -149,10 +149,8 @@ if PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET:
 else:
     print("ADVERTENCIA: Credenciales de PayPal no encontradas en variables de entorno.")
 
-
-
 # --- CONFIGURACIÓN DE LOGIN SOCIAL (ALLAUTH) ---
-SITE_ID = 1  # Obligatorio para django.contrib.sites
+SITE_ID = 1
 
 # Esto le dice a Django: "Permite login normal (admin) Y login por Google"
 AUTHENTICATION_BACKENDS = [
@@ -160,22 +158,35 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-# A dónde redirigir al usuario cuando entra o sale
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-
-# Configuración específica de Google (Pide email y perfil)
+# Configuración específica de Google
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'}
     }
 }
 
-# Desactivar verificación de email obligatoria (Para evitar errores en desarrollo)
-ACCOUNT_EMAIL_VERIFICATION = "none"
+# --- REGLAS DE ORO PARA LA FUSIÓN DE CUENTAS ---
+# 1. Identificación
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_UNIQUE_EMAIL = True  # <--- ¡ESTA FALTABA! Es vital para el auto-connect.
+
+# 2. Comportamiento Social
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True # Orden de fusionar
+
+# 3. Redirecciones
+LOGIN_REDIRECT_URL = 'core:homepage'
+LOGOUT_REDIRECT_URL = 'core:homepage'
+LOGIN_URL = 'login'
+
+# 4. Parche para Localhost (HTTP)
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+
+# Activar nuestro adaptador personalizado de fusión
+SOCIALACCOUNT_ADAPTER = 'core.adapters.MySocialAccountAdapter'

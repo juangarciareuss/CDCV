@@ -18,6 +18,8 @@ urlpatterns = [
     path('dashboard/curar-ia/<int:curso_id>/', views.endpoint_curar_con_ia, name='curar_ia'),
     path('dashboard/crear-curso/', views.endpoint_crear_curso_ia, name='crear_curso_ia'),
     path('dashboard/toggle-status/<int:curso_id>/', views.toggle_estado_curso, name='toggle_status'),
+    path('dashboard/eliminar-curso/<int:curso_id>/', views.eliminar_curso, name='eliminar_curso'),
+    path('descargar-certificado/<str:codigo>/', views.generar_pdf_certificado, name='descargar_certificado'),
 ]
 
 # AGREGA ESTO AL FINAL DEL ARCHIVO (FUERA DE URLPATTERNS ORIGINAL)

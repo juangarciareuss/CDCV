@@ -1,14 +1,22 @@
 import json
+import os
+import io
+import base64
+import random  # <--- AGREGADO
+import qrcode
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+
 from core.models import Curso, Examen, Certificado, Pregunta, Tema 
 from core.logic import engine, gateways, analytics
 from core.logic.ai_services import CDCVOrchestrator
 
 
 def homepage(request):
-    # Usamos la lógica de analítica para las estadísticas
     cursos = Curso.objects.filter(estructura_examen__isnull=False, activo=True).order_by('nivel')
     context = {"cursos": cursos, **analytics.obtener_stats_comerciales()}
     return render(request, "core/homepage.html", context)
@@ -27,15 +35,22 @@ def examen(request, curso_id):
     
     if request.method == "GET":
         if session_key not in request.session:
-            # Llamamos al motor de "Rayos X"
-            preguntas, error = engine.diagnosticar_y_pescar_preguntas(curso)
+            preguntas_candidatas, error = engine.diagnosticar_y_pescar_preguntas(curso)
             if error: return render(request, "core/error.html", {"mensaje": error})
-            request.session[session_key] = [p.id for p in preguntas]
+            
+            limite = curso.cantidad_preguntas 
+            
+            if len(preguntas_candidatas) > limite:
+                preguntas_seleccionadas = random.sample(preguntas_candidatas, limite)
+            else:
+                preguntas_seleccionadas = preguntas_candidatas
+            
+            request.session[session_key] = [p.id for p in preguntas_seleccionadas]
         
         ids = request.session[session_key]
-        # Ahora Pregunta ya está importado correctamente
         preguntas_set = list(Pregunta.objects.filter(id__in=ids))
         preguntas_set.sort(key=lambda x: ids.index(x.id))
+        
         return render(request, "core/examen.html", {'curso': curso, 'preguntas': preguntas_set})
 
     if request.method == "POST":
@@ -43,23 +58,18 @@ def examen(request, curso_id):
         if not ids: return render(request, "core/error.html", {"mensaje": "Sesión expirada."})
         
         respuestas = {k: v for k, v in request.POST.items() if k.startswith('pregunta_')}
-        # El motor procesa los resultados
         data, error = engine.finalizar_examen(request.user, curso, ids, respuestas)
         
         if session_key in request.session: del request.session[session_key]
         return render(request, "core/examen.html", {'curso': curso, **data})
 
-# --- GESTIÓN DE KPIS (NUEVA VISTA) ---
 @login_required
 def dashboard_kpi(request):
     if not request.user.is_staff: 
         return redirect('core:homepage')
-    
-    # Obtenemos los datos desde nuestro módulo de analítica
     data = analytics.obtener_diagnostico_completo()
     return render(request, "core/dashboard.html", data)
 
-# --- PASARELA DE PAGOS ---
 @login_required
 def crear_pago_paypal(request, examen_id):
     examen_obj = get_object_or_404(Examen, id=examen_id)
@@ -79,7 +89,9 @@ def pago_exitoso(request):
     
     certificado, error = gateways.ejecutar_pago_y_certificar(payment_id, payer_id)
     if error: return render(request, "core/error.html", {"mensaje": f"Error: {error}"})
-    return redirect('core:verificar_certificado', codigo_verificacion=certificado.codigo_verificacion)
+    
+    # Redirige al perfil para ver el certificado nuevo
+    return redirect('core:perfil_usuario')
 
 @login_required
 def pago_cancelado(request):
@@ -89,53 +101,31 @@ def verificar_certificado(request, codigo_verificacion):
     certificado = get_object_or_404(Certificado, codigo_verificacion=codigo_verificacion)
     return render(request, 'core/verificacion.html', {'certificado': certificado})
 
-# --- ENDPOINTS DE IA (NUEVO) ---
 @login_required
 def endpoint_curar_con_ia(request, curso_id):
-    """
-    Recibe la petición del Dashboard para reparar un curso roto.
-    """
-    # Seguridad: Solo staff puede gastar tokens de IA
     if not request.user.is_staff:
         return JsonResponse({"status": "error", "message": "Acceso denegado"}, status=403)
-    
     try:
-        # 1. Llamamos al Orquestador
         orchestrator = CDCVOrchestrator()
-        
-        # 2. Ejecutamos la curación
-        # Esto llamará internamente al RefillerAgent para crear preguntas
         resultado = orchestrator.curar_curso_roto(curso_id)
-        
-        # 3. Devolvemos el reporte al frontend
         return JsonResponse(resultado)
-
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
     
 @login_required
 def endpoint_crear_curso_ia(request):
-    """
-    Recibe un POST con el tema (ej: 'Excel Avanzado') y crea el curso desde cero.
-    """
     if not request.user.is_staff:
         return JsonResponse({"status": "error", "message": "Acceso denegado"}, status=403)
     
     if request.method == "POST":
         try:
-            # Obtenemos el dato que envía el Javascript
             data = json.loads(request.body)
             nicho = data.get('nicho')
+            if not nicho: return JsonResponse({"status": "error", "message": "Falta el nicho"})
 
-            if not nicho:
-                return JsonResponse({"status": "error", "message": "Falta el nicho"})
-
-            # --- LLAMADA AL ORQUESTADOR ---
             orchestrator = CDCVOrchestrator()
-            mensaje = orchestrator.crear_nuevo_producto(nicho) # <--- Aquí trabaja el Builder
-            
+            mensaje = orchestrator.crear_nuevo_producto(nicho)
             return JsonResponse({"status": "success", "message": mensaje})
-
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
             
@@ -143,16 +133,66 @@ def endpoint_crear_curso_ia(request):
 
 @login_required
 def toggle_estado_curso(request, curso_id):
-    """Cambia el curso de Activo (1) a Inactivo (0) y viceversa"""
-    if not request.user.is_staff:
-        return JsonResponse({"status": "error"}, status=403)
-    
+    if not request.user.is_staff: return JsonResponse({"status": "error"}, status=403)
     curso = get_object_or_404(Curso, id=curso_id)
-    curso.activo = not curso.activo # Invierte el valor actual
+    curso.activo = not curso.activo
     curso.save()
+    return JsonResponse({"status": "success", "nuevo_estado": curso.activo})
+
+@login_required
+def eliminar_curso(request, curso_id):
+    if not request.user.is_staff: return JsonResponse({"status": "error"}, status=403)
+    if request.method == "POST":
+        curso = get_object_or_404(Curso, id=curso_id)
+        curso.delete() 
+        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=405)
+
+# --- GENERADOR DE PDF ---
+# --- GENERADOR DE PDF PREMIUM (Versión Definitiva con Logo Incrustado) ---
+@login_required
+def generar_pdf_certificado(request, codigo):
+    # 1. Buscar certificado
+    certificado = get_object_or_404(Certificado, codigo_verificacion=codigo)
     
-    return JsonResponse({
-        "status": "success", 
-        "nuevo_estado": curso.activo,
-        "mensaje": "Curso ACTIVADO" if curso.activo else "Curso DESACTIVADO"
-    })
+    # 2. Generar QR en memoria
+    url_validacion = request.build_absolute_uri(f'/verificar/{certificado.codigo_verificacion}/')
+    qr = qrcode.QRCode(version=1, box_size=10, border=4)
+    qr.add_data(url_validacion)
+    qr.make(fit=True)
+    img_qr = qr.make_image(fill='black', back_color='white')
+    
+    buffer = io.BytesIO()
+    img_qr.save(buffer, format="PNG")
+    qr_b64 = base64.b64encode(buffer.getvalue()).decode()
+
+    # 3. PROCESAR LOGO (El paso nuevo para que salga la foto)
+    # Definimos la ruta exacta donde guardaste tu logo
+    logo_file_path = os.path.join(settings.BASE_DIR, 'core', 'static', 'core', 'img', 'logo_reducido.png')
+    
+    logo_b64 = ""
+    try:
+        with open(logo_file_path, "rb") as image_file:
+            logo_b64 = base64.b64encode(image_file.read()).decode()
+    except FileNotFoundError:
+        print(f"ERROR: No encontré el logo en {logo_file_path}")
+        # Si no encuentra el logo, no se rompe, solo sale sin foto.
+
+    # 4. Contexto para el HTML
+    context = {
+        'certificado': certificado,
+        'qr_b64': qr_b64,     # El QR
+        'logo_b64': logo_b64, # <--- LA FOTO DEL LOGO ENVIADA COMO CÓDIGO
+    }
+
+    # 5. Renderizar HTML
+    html_string = render_to_string('core/certificate_pdf.html', context)
+    
+    # 6. Convertir a PDF
+    response = HttpResponse(content_type='application/pdf')
+    filename = f"Certificado_{certificado.codigo_verificacion}.pdf"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(response)
+    
+    return response

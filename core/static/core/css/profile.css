@@ -1,0 +1,167 @@
+/* =========================================
+   ESTILOS DE PERFIL DE USUARIO
+   Ruta: core/static/core/css/profile.css
+   ========================================= */
+
+/* --- Cabecera del Perfil --- */
+.profile-header {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #E2E8F0;
+    border-left: 5px solid #D4AF37; /* Acento Dorado */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-info h1 {
+    font-size: 2rem;
+    color: #1A202C;
+    margin: 0;
+}
+
+.profile-info p {
+    color: #718096;
+    margin-top: 5px;
+    font-size: 1rem;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 30px;
+}
+
+.stat-box {
+    text-align: center;
+}
+.stat-number {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #0056D2; /* Azul Corporativo */
+}
+.stat-label {
+    font-size: 0.8rem;
+    color: #A0AEC0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+/* --- Secciones de Contenido (Tarjetas) --- */
+.section-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 1.4rem;
+    color: #2D3748;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #F7FAFC;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- Tablas Profesionales --- */
+.table-container {
+    overflow-x: auto; /* Para móviles */
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.custom-table th {
+    text-align: left;
+    padding: 15px;
+    background-color: #F8FAFC;
+    color: #64748B;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    border-bottom: 2px solid #E2E8F0;
+}
+
+.custom-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDF2F7;
+    color: #4A5568;
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+.custom-table tr:last-child td {
+    border-bottom: none;
+}
+
+.custom-table tr:hover {
+    background-color: #FAFAFA;
+}
+
+/* --- Badges (Etiquetas de Estado) --- */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.badge-success {
+    background-color: #E6FFFA;
+    color: #2C7A7B; /* Verde profesional */
+    border: 1px solid #B2F5EA;
+}
+
+.badge-fail {
+    background-color: #FFF5F5;
+    color: #C53030; /* Rojo suave */
+    border: 1px solid #FED7D7;
+}
+
+/* --- Botones de Acción en Tabla --- */
+.btn-action-gold {
+    color: #D69E2E; /* Dorado oscuro para texto */
+    font-weight: 600;
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #D69E2E;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.btn-action-gold:hover {
+    background-color: #D69E2E;
+    color: #fff;
+}
+
+.btn-action-blue {
+    color: #0056D2;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.btn-action-blue:hover {
+    text-decoration: underline;
+}
+
+/* --- Estado Vacío --- */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #A0AEC0;
+}

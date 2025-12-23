@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificado Oficial</title>
+    <style>
+        /* --- CONFIGURACIÓN BASE PARA PDF (WeasyPrint) --- */
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            color: #1A202C;
+        }
+
+        /* --- EL MARCO DE VALOR (Dorado y Plata) --- */
+        .border-container {
+            position: absolute; top: 20px; left: 20px; right: 20px; bottom: 20px;
+            border: 2px solid #E2E8F0; padding: 5px;
+        }
+        .inner-border {
+            height: 100%;
+            border: 4px solid #D4AF37; /* Dorado Puro */
+            position: relative;
+            background: radial-gradient(circle at center, #fff 50%, #fcfcfc 100%);
+        }
+
+        /* --- CONTENIDO CENTRAL --- */
+        .content {
+            text-align: center;
+            padding-top: 50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* LOGO PRINCIPAL (Gestionado por Base64 para evitar errores) */
+        .main-logo {
+            height: 85px; /* Tamaño ajustado para presencia de marca */
+            margin-bottom: 25px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .title {
+            font-family: 'Georgia', serif;
+            font-size: 38px;
+            color: #2D3748;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+        .subtitle { 
+            font-size: 14px; 
+            color: #718096; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            margin-top: 5px;
+        }
+
+        /* ESTUDIANTE (El Héroe) */
+        .student-name {
+        /* ANTES: font-size: 42px; font-weight: 800; */
+        /* AHORA: Más pequeño, fuente elegante (serif) y menos pesada */
+        font-family: 'Georgia', serif; /* <--- Cambio Clave */
+        font-size: 32px;               /* <--- Reducido de 42px a 32px */
+        font-weight: normal;           /* <--- Quitamos el negrita pesado */
+        
+        color: #1A202C;
+        margin: 25px auto;             /* Un poco menos de margen */
+        padding-bottom: 5px;
+        border-bottom: 2px solid #D4AF37;
+        display: inline-block;
+        min-width: 200px;
+    }
+
+        /* CURSO (La Habilidad) */
+        .action-text { 
+            font-size: 16px; 
+            color: #4A5568; 
+            margin-bottom: 15px; 
+            font-style: italic; 
+        }
+
+        .course-title {
+        /* ANTES: font-size: 34px; font-weight: 700; color: #003366; */
+        /* AHORA: Gris oscuro, fuente elegante, tamaño terciario */
+        font-family: 'Georgia', serif; /* <--- Cambio Clave para integrar */
+        font-size: 24px;               /* <--- Reducido de 34px a 24px */
+        font-weight: normal;           /* <--- Quitamos el negrita */
+        
+        color: #2D3748;                /* <--- GRIS OSCURO ELEGANTE (Adios azul) */
+        
+        margin-bottom: 10px;
+        line-height: 1.2;
+        }
+        
+        .meta-info { 
+            color: #718096; 
+            font-size: 13px; 
+        }
+
+        /* --- FOOTER INSTITUCIONAL --- */
+        .footer {
+            position: absolute; bottom: 50px; left: 60px; right: 60px;
+            display: flex; justify-content: space-between; align-items: flex-end;
+        }
+
+        /* IZQUIERDA: Autoridad CDCV (Diseño Serio) */
+        .cdcv-authority-block {
+            text-align: left;
+            border-left: 4px solid #0056D2; /* Barra lateral azul */
+            padding-left: 15px;
+        }
+        .cdcv-label {
+            color: #0056D2; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; display: block;
+        }
+        .cdcv-full-name {
+            font-size: 16px; font-weight: 800; color: #2D3748;
+            margin: 5px 0; display: block;
+        }
+        .cdcv-standard {
+            font-size: 11px; color: #718096;
+        }
+
+        /* CENTRO: Espacio (Sin firma personal) */
+        .signature-spacer { flex-grow: 1; }
+
+        /* DERECHA: Validación QR */
+        .qr-block { text-align: center; }
+        .qr-img { 
+            width: 90px; height: 90px; 
+            margin-bottom: 5px; 
+            border: 2px solid #fff; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        .verify-code { 
+            font-family: 'Courier New', monospace; 
+            font-size: 11px; 
+            color: #4A5568; 
+            letter-spacing: 1px; 
+            font-weight: 600; 
+        }
+    </style>
+</head>
+<body>
+    <div class="border-container">
+        <div class="inner-border">
+            <div class="content">
+                <img src="data:image/png;base64,{{ logo_b64 }}" alt="CertUfy Global" class="main-logo">
+                
+                <h1 class="title">Certificación de Competencia</h1>
+                <p class="subtitle">CONFIERE EL PRESENTE TÍTULO A</p>
+
+                <div class="student-name">
+                    {{ certificado.usuario.first_name }} {{ certificado.usuario.last_name }}
+                </div>
+
+                <p class="action-text">Por la acreditación satisfactoria de los requisitos académicos y técnicos del programa:</p>
+
+                <div class="course-title">{{ certificado.curso.nombre }}</div>
+                <p class="meta-info">Nivel {{ certificado.curso.nivel }} | Fecha de Emisión: {{ certificado.fecha_emision|date:"d \d\e F \d\e Y" }}</p>
+            </div>
+
+            <div class="footer">
+                
+                <div class="cdcv-authority-block">
+                    <span class="cdcv-label">Validación Institucional</span>
+                    <span class="cdcv-full-name">Certified Digital Competency Validation</span>
+                    <span class="cdcv-standard">Bajo el estándar académico global CDCV-2025</span>
+                </div>
+
+                <div class="signature-spacer"></div>
+
+                <div class="qr-block">
+                    <img src="data:image/png;base64,{{ qr_b64 }}" class="qr-img" alt="Validación QR">
+                    <br>
+                    <span class="verify-code">ID: {{ certificado.codigo_verificacion }}</span>
+                    <div style="font-size: 9px; color: #A0AEC0; margin-top: 3px;">Escanea para verificar autenticidad</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
