@@ -158,7 +158,13 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-# Configuración específica de Google
+
+
+# ==========================================
+# CONFIGURACIÓN DEFINITIVA DE ALLAUTH (2025)
+# ==========================================
+
+# 1. Proveedores (Google)
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['profile', 'email'],
@@ -166,27 +172,33 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# --- REGLAS DE ORO PARA LA FUSIÓN DE CUENTAS ---
-# 1. Identificación
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# 2. Autenticación Moderna
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email']
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_UNIQUE_EMAIL = True  # <--- ¡ESTA FALTABA! Es vital para el auto-connect.
 
-# 2. Comportamiento Social
+# 3. Estrategia de Fusión
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_QUERY_EMAIL = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
+
+# 4. Verificación
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-SOCIALACCOUNT_QUERY_EMAIL = True
-SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True # Orden de fusionar
 
-# 3. Redirecciones
+# 5. Adaptador Personalizado
+SOCIALACCOUNT_ADAPTER = 'core.adapters.MySocialAccountAdapter'
+
+# 6. Redirecciones
 LOGIN_REDIRECT_URL = 'core:homepage'
 LOGOUT_REDIRECT_URL = 'core:homepage'
-LOGIN_URL = 'login'
+LOGIN_URL = 'account_login'
 
-# 4. Parche para Localhost (HTTP)
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
-
-# Activar nuestro adaptador personalizado de fusión
-SOCIALACCOUNT_ADAPTER = 'core.adapters.MySocialAccountAdapter'
+# 7. Protocolo (HTTPS en Render)
+import os
+if os.environ.get('RENDER'):
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+else:
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
