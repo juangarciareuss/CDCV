@@ -1,125 +1,124 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-# AÑADIMOS PreguntaTema
-from .models import Usuario, Tema, Curso, Pregunta, Examen, Certificado, PreguntaTema
+from django.utils.html import format_html
+import json
 
-# --- Modelo de Usuario Personalizado (Sin cambios) ---
+from .models import (
+    Usuario, 
+    MicroCompetencia, 
+    Tema, 
+    Curso, 
+    Pregunta, 
+    Examen, 
+    Certificado
+)
+
+# --- 1. Usuario Personalizado ---
 class CustomUserAdmin(UserAdmin):
     model = Usuario
     list_display = ['username', 'email', 'first_name', 'last_name', 'is_staff']
-    fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('idioma',)}),
-    )
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('idioma',)}),
-    )
+    fieldsets = UserAdmin.fieldsets + ((None, {'fields': ('idioma',)}),)
+    add_fieldsets = UserAdmin.add_fieldsets + ((None, {'fields': ('idioma',)}),)
 
-# --- INLINE para PreguntaTema (NUEVO) ---
-# Esto permite a los agentes (o a ti) editar la relación y el score 
-# directamente desde la página de la Pregunta.
-class PreguntaTemaInline(admin.TabularInline):
-    model = PreguntaTema
-    extra = 1 # Muestra 1 campo vacío por defecto
-    fields = ('tema', 'relevancia_score', 'revisado_por_agente') # Campos editables en el inline
-    autocomplete_fields = ['tema'] # Optimización para muchos temas
+admin.site.register(Usuario, CustomUserAdmin)
 
-# --- Modelo de Tema (MODIFICADO para Taxonomía) ---
-class TemaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'parent', 'descripcion') # AÑADIDO: 'parent'
-    list_filter = ('parent',) # AÑADIDO: filtro por 'parent'
-    search_fields = ('nombre',)
-    fields = ('nombre', 'parent', 'descripcion') # AÑADIDO: 'parent'
-    autocomplete_fields = ['parent'] # Optimización
+# --- MEJORA DE PRODUCTIVIDAD: Edición en línea ---
+# Esto te permite agregar preguntas directamente dentro de la MicroCompetencia
+class PreguntaInline(admin.StackedInline):
+    model = Pregunta
+    extra = 0
+    fields = ('texto', 'respuesta_correcta', 'dificultad', 'opciones')
+    show_change_link = True
+    classes = ['collapse'] # Se mantiene cerrado para no ensuciar la vista si hay muchas
 
-# --- Modelo de Pregunta (MODIFICADO para nueva estructura) ---
-class PreguntaAdmin(admin.ModelAdmin):
-    # ELIMINADO: 'curso'
-    # AÑADIDO: 'dificultad'
-    list_display = ('texto_corto', 'dificultad', 'idioma')
-    # ELIMINADO: 'curso'
-    # AÑADIDO: 'dificultad'
-    list_filter = ('dificultad', 'idioma', 'temas') # AÑADIDO: 'temas'
-    search_fields = ('texto', 'temas__nombre')
+# --- 2. EL ÁTOMO: MicroCompetencia ---
+@admin.register(MicroCompetencia)
+class MicroCompetenciaAdmin(admin.ModelAdmin):
+    list_display = ('icono', 'nombre', 'slug', 'total_preguntas')
+    search_fields = ('nombre', 'definicion_atomica')
+    prepopulated_fields = {'slug': ('nombre',)}
     
-    # AÑADIDO: El inline para el modelo intermediario robusto
-    inlines = [PreguntaTemaInline]
+    # Agregamos el Inline aquí
+    inlines = [PreguntaInline] 
+    
+    def total_preguntas(self, obj):
+        count = obj.preguntas_banco.count()
+        # Semáforo visual: Rojo si está vacío, Verde si tiene 10+
+        color = "green" if count >= 10 else "orange" if count > 0 else "red"
+        return format_html('<span style="color: {}; font-weight: bold;">{}</span>', color, count)
+    total_preguntas.short_description = "Banco Preguntas"
 
-    # Campos editables en el formulario. Se añade dificultad
-    # ELIMINADO: 'nivel' (campo legacy)
-    fieldsets = (
-        (None, {'fields': ('texto', 'opciones', 'respuesta_correcta', 'dificultad', 'idioma')}),
-        ('Información de Opciones (JSON)', {'fields': ('opciones_formateadas',), 'classes': ('collapse',)})
-    )
+# --- 3. LA PLAYLIST: Tema ---
+@admin.register(Tema)
+class TemaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'parent', 'slug')
+    list_filter = ('parent',)
+    search_fields = ('nombre',)
+    prepopulated_fields = {'slug': ('nombre',)}
+    autocomplete_fields = ['parent']
+    
+    # Selector visual potente para agregar átomos a la playlist
+    filter_horizontal = ('micro_competencias',) 
+
+# --- 4. EL PRODUCTO: Curso ---
+@admin.register(Curso)
+class CursoAdmin(admin.ModelAdmin):
+    # Aquí sí dejamos precio_usd porque decidiste mantenerlo en el modelo
+    list_display = ('nombre', 'precio_usd', 'activo', 'cantidad_preguntas', 'created_at')
+    list_filter = ('activo', 'created_at')
+    search_fields = ('nombre',)
+    prepopulated_fields = {'slug': ('nombre',)}
+    
+    # Selector visual potente para agregar playlists al producto
+    filter_horizontal = ('temas',) 
+
+# --- 5. EL REACTIVO: Pregunta ---
+@admin.register(Pregunta)
+class PreguntaAdmin(admin.ModelAdmin):
+    # Eliminamos 'auditoria_calidad' para evitar errores
+    list_display = ('texto_corto', 'micro_competencia', 'dificultad')
+    list_filter = ('dificultad', 'micro_competencia')
+    search_fields = ('texto', 'micro_competencia__nombre')
+    
     readonly_fields = ('opciones_formateadas',) 
+    
+    fieldsets = (
+        ('Contenido', {
+            'fields': ('micro_competencia', 'texto', 'respuesta_correcta', 'dificultad')
+        }),
+        ('Detalles JSON', {
+            'fields': ('opciones', 'opciones_formateadas', 'explicacion'),
+            'classes': ('collapse',)
+        }),
+        # Eliminamos la sección de 'Control' por ahora (Auditoría)
+    )
 
     def opciones_formateadas(self, obj):
-        import json
-        from django.utils.html import format_html
         try:
             opciones_str = json.dumps(obj.opciones, indent=2, ensure_ascii=False)
             return format_html("<pre>{}</pre>", opciones_str)
         except TypeError:
             return obj.opciones
-    opciones_formateadas.short_description = "Opciones (JSON)"
+    opciones_formateadas.short_description = "Vista Previa Opciones"
 
     def texto_corto(self, obj):
-        return obj.texto[:75] + '...' if len(obj.texto) > 75 else obj.texto
-    texto_corto.short_description = "Texto de la Pregunta"
+        return obj.texto[:60] + "..." if obj.texto else "Sin texto"
+    texto_corto.short_description = "Pregunta"
 
-@admin.register(Curso)
-class CursoAdmin(admin.ModelAdmin):
-    # 1. En la lista verás la columna "Preguntas" para control rápido
-    list_display = ('nombre', 'tema', 'nivel', 'cantidad_preguntas', 'idioma', 'tiene_receta')
-    
-    list_filter = ('nivel', 'idioma', 'tema')
-    search_fields = ('nombre', 'descripcion')
-    
-    # 2. En el formulario de edición agregamos el campo al final
-    fields = (
-        'nombre', 
-        'tema', 
-        'nivel', 
-        'descripcion', 
-        'idioma', 
-        'estructura_examen', 
-        'cantidad_preguntas'  # <--- AQUÍ ESTÁ EL CAMPO NUEVO
-    )
-    
-    autocomplete_fields = ['tema']
-    
-    def tiene_receta(self, obj):
-        # Verifica que la receta exista y no esté vacía
-        return bool(obj.estructura_examen)
-    tiene_receta.boolean = True
-    tiene_receta.short_description = "Receta Activa"
-
-# --- Modelo de Examen (Sin cambios) ---
+# --- 6. REGISTROS OPERATIVOS ---
+@admin.register(Examen)
 class ExamenAdmin(admin.ModelAdmin):
-    list_display = ('id', 'usuario', 'curso', 'puntaje', 'aprobado', 'fecha')
-    list_filter = ('aprobado', 'curso', 'fecha')
-    search_fields = ('usuario__username', 'curso__nombre')
+    list_display = ('usuario', 'curso', 'puntaje', 'aprobado', 'fecha')
+    list_filter = ('aprobado', 'fecha', 'curso')
+    # Agregamos búsqueda para encontrar exámenes rápido
+    search_fields = ('usuario__username', 'usuario__email', 'curso__nombre')
 
-# --- Modelo de Certificado (Sin cambios) ---
+@admin.register(Certificado)
 class CertificadoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'usuario', 'curso', 'fecha_emision', 'codigo_verificacion')
-    list_filter = ('curso', 'fecha_emision')
-    search_fields = ('usuario__username', 'curso__nombre')
-    readonly_fields = ('codigo_verificacion',)
+    list_display = ('codigo_verificacion', 'usuario', 'curso', 'fecha_emision')
+    readonly_fields = ('fecha_emision', 'codigo_verificacion')
+    search_fields = ('codigo_verificacion', 'usuario__username')
 
-# --- Registro de Modelos ---
-admin.site.register(Usuario, CustomUserAdmin)
-# REEMPLAZADO: admin.site.register(Tema)
-admin.site.register(Tema, TemaAdmin)
-# REEMPLAZADO: admin.site.register(Pregunta)
-admin.site.register(Pregunta, PreguntaAdmin)
-admin.site.register(Examen, ExamenAdmin)
-admin.site.register(Certificado, CertificadoAdmin)
-# AÑADIDO: El nuevo modelo intermedio (aunque ya se gestiona con el inline, se puede registrar)
-admin.site.register(PreguntaTema)
-
-
-# --- Personalización del Admin (Sin cambios) ---
-admin.site.site_header = "Administración de CDCV"
-admin.site.site_title = "Panel de Control CDCV"
-admin.site.index_title = "Bienvenido al Panel de Control"
-admin.site.site_url = "/"
+admin.site.site_header = "Administración CDCV (Modelo Spotify)"
+admin.site.site_title = "Panel de Control"
+admin.site.index_title = "Gestión de Activos Educativos"

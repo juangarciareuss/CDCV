@@ -25,6 +25,16 @@ class Tema(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
     
+    # 1. Agrega esto para arreglar el error de "slug not found"
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    
+    # 2. Agrega esto para arreglar el error de "filter_horizontal"
+    micro_competencias = models.ManyToManyField(
+        'MicroCompetencia', # Usamos comillas porque MicroCompetencia está definida más abajo
+        related_name='temas',
+        blank=True
+    )
+
     # Campo self-referential para la Taxonomía (padre/hijo)
     parent = models.ForeignKey(
         'self', 
@@ -40,17 +50,48 @@ class Tema(models.Model):
             return f"{self.parent.nombre} -> {self.nombre}"
         return self.nombre
 
+
+# --- NUEVO: El Átomo de Conocimiento (Cerebro de la IA) ---
+class MicroCompetencia(models.Model):
+    nombre = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=255, unique=True, null=True, blank=True)
+
+    # --- Campos para el Agente Auditor y Generador ---
+    definicion_atomica = models.TextField(
+        help_text="Define el límite exacto. Ej: 'Solo suma de celdas contiguas, no rangos'."
+    )
+    criterio_exito = models.TextField(
+        help_text="Regla binaria para la IA. Ej: 'El usuario llega al resultado sin usar mouse'."
+    )
+    prompt_validacion = models.TextField(
+        blank=True, null=True,
+        help_text="Instrucción base que se enviará a Gemini para evaluar esta competencia."
+    )
+    
+    # Para evitar duplicidad semántica (opcional por ahora, vital a futuro)
+    icono = models.CharField(max_length=50, default="🏆", help_text="Emoji o URL")
+    embedding_id = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"MC: {self.nombre}"
+
 # --- Curso (Con Receta de Examen) ---
 class Curso(models.Model):
     nombre = models.CharField(max_length=100)
     slug = models.SlugField(max_length=255, unique=True, null=True, blank=True)
-    tema = models.ForeignKey(
+
+    temas = models.ManyToManyField(
         Tema, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True,
-        help_text="El tema principal o categoría de este curso."
-    ) 
+        related_name='cursos',
+        help_text="Los módulos o temas que componen este curso."
+    )
+    precio_usd = models.DecimalField(max_digits=6, decimal_places=2, default=29.00)
+    micro_competencias = models.ManyToManyField(
+        MicroCompetencia,
+        through='CursoMicroCompetencia',
+        related_name='cursos',
+        help_text="Las competencias específicas que componen este curso."
+    )
     nivel = models.IntegerField(default=1) 
     descripcion = models.TextField(blank=True, null=True)
     idioma = models.CharField(max_length=10, default='es')
@@ -58,6 +99,8 @@ class Curso(models.Model):
     cantidad_preguntas = models.PositiveIntegerField(default=10, verbose_name="Preguntas por Examen") # <<< AGREGAR
     score = models.IntegerField(default=0, help_text="Puntaje de calidad (0-30)")
     status = models.CharField(max_length=20, default='PENDIENTE', help_text="Estado de curación")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     # Campo que define la "receta" de cómo se construye el examen
     estructura_examen = models.JSONField(
@@ -69,9 +112,31 @@ class Curso(models.Model):
     
     def __str__(self):
         return f"{self.nombre} - Nivel {self.nivel}"
+    
+
+
+# --- NUEVO: Tabla Intermedia para ordenar el aprendizaje ---
+class CursoMicroCompetencia(models.Model):
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    competencia = models.ForeignKey(MicroCompetencia, on_delete=models.CASCADE)
+    orden = models.PositiveIntegerField(default=0, help_text="Orden en que se enseña (1, 2, 3...)")
+    
+    class Meta:
+        ordering = ['orden']
+        unique_together = ('curso', 'competencia')
 
 # --- Pregunta (Modelo Robusto) ---
 class Pregunta(models.Model):
+    # --- NUEVO: Vinculación directa a la competencia ---
+    micro_competencia = models.ForeignKey(
+        MicroCompetencia,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='preguntas_banco',
+        help_text="La competencia exacta que valida esta pregunta."
+    )
+    
     # Mantenemos 'curso' para compatibilidad con tus datos actuales y scripts
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, null=True, blank=True)
     texto = models.TextField()
@@ -138,6 +203,29 @@ class Examen(models.Model):
 
     def __str__(self):
         return f"Examen de {self.usuario.username} para {self.curso.nombre}"
+    
+# --- NUEVO: Estado del Usuario (Mastery Learning) ---
+class ProgresoCompetencia(models.Model):
+    ESTADOS = [
+        ('LOCKED', 'Bloqueado'),        # Aún no llega aquí
+        ('PENDING', 'Pendiente'),       # Listo para evaluar
+        ('FAILED', 'Requiere Estudio'), # Falló, necesita repaso
+        ('VERIFIED', 'Validado'),       # Competencia dominada (100%)
+    ]
+
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    competencia = models.ForeignKey(MicroCompetencia, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, null=True) # Contexto del intento
+    
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='LOCKED')
+    intentos = models.PositiveIntegerField(default=0)
+    ultima_actualizacion = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('usuario', 'competencia', 'curso')
+
+    def __str__(self):
+        return f"{self.usuario} - {self.competencia}: {self.estado}"
 
 # --- Certificado (CORREGIDO) ---
 class Certificado(models.Model):
