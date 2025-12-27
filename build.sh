@@ -24,7 +24,7 @@ fi
 
 # 5. Asegurar Superusuario
 echo "👤 Asegurando cuenta de administrador..."
-python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='juangarciareuss').exists() or User.objects.create_superuser('juangarciareuss', 'junagarciareuss@gmail.com', 'waarewer6')"
+python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='juangarciareuss').exists() or User.objects.create_superuser('juangarciareuss', juangarciareuss@gmail.com', 'waarewer6')"
 
 # 6. Parche de Certificados
 python manage.py shell -c "from django.contrib.auth import get_user_model; u = get_user_model().objects.get(username='juangarciareuss'); u.first_name='JUAN IGNACIO'; u.last_name='GARCIA REUSS'; u.save()"
