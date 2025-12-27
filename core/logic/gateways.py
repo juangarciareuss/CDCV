@@ -18,12 +18,12 @@ def preparar_pago_paypal(request, examen):
                 "items": [{
                     "name": f"Certificación: {examen.curso.nombre}",
                     "sku": f"CDCV-{examen.id}",
-                    "price": "1.00",
+                    "price": "5.00",
                     "currency": "USD",
                     "quantity": 1
                 }]
             },
-            "amount": {"total": "1.00", "currency": "USD"},
+            "amount": {"total": "5.00", "currency": "USD"},
             "description": f"Emisión de certificado para el examen ID {examen.id}.",
             "custom": str(examen.id)
         }]

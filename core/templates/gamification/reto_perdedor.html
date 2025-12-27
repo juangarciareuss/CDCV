@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 60px auto; text-align: center;">
+
+    <div style="font-size: 5rem;">😓</div>
+    
+    <h1 style="color: #dc3545; margin-bottom: 10px;">Casi lo logras...</h1>
+    <p style="font-size: 1.2rem; color: #555;">
+        No has alcanzado el 100% necesario para ganar la insignia de <br>
+        <strong>{{ competencia.nombre }}</strong>.
+    </p>
+
+    <div style="background: white; padding: 30px; border-radius: 15px; margin: 30px 0; border: 1px solid #eee;">
+        <p>Recuerda revisar los conceptos de:</p>
+        <ul style="text-align: left; color: #666; max-width: 300px; margin: 0 auto;">
+            <li>{{ competencia.definicion_atomica|truncatewords:10 }}</li>
+            <li>{{ competencia.criterio_exito|truncatewords:10 }}</li>
+        </ul>
+    </div>
+
+    <a href="{{ request.path }}" style="display: inline-block; background: #6c757d; color: white; padding: 15px 40px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 1.1rem;">
+        🔄 Intentar de Nuevo
+    </a>
+
+</div>
+{% endblock %}

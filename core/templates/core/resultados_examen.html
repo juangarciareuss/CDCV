@@ -1,0 +1,99 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Resultados Oficiales - CertUfy{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/results.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="results-container">
+
+    <div class="card-official">
+        <img src="{% static 'core/img/logo_certufy.png' %}" alt="CertUfy Official" class="logo-img">
+
+        <div class="score-container">
+            <div class="score-ring {% if aprobado %}pass-gradient{% else %}fail-gradient{% endif %}">
+                <span class="score-val">{{ puntaje|floatformat:0 }}%</span>
+                <span class="score-lbl">Puntaje Final</span>
+            </div>
+        </div>
+
+        {% if aprobado %}
+            <div class="badge-status badge-success"><span>✔</span> Competencia Validada</div>
+            
+            <div class="details-box">
+                <div class="detail-row">
+                    <span class="d-label">Candidato:</span>
+                    <span class="d-value">{{ user.first_name }} {{ user.last_name }}</span>
+                </div>
+                <hr class="divider">
+                <div class="detail-row">
+                    <span class="d-label">Habilidad Técnica:</span>
+                    <span class="d-value highlight">{{ curso.nombre }}</span>
+                </div>
+            </div>
+
+            <a href="{% url 'core:crear_pago_paypal' examen_id|default:0 %}" class="btn-main">
+                🛡️ Emitir Certificado Oficial ($5 USD)
+            </a>
+        {% else %}
+            <div class="badge-status badge-fail"><span>⚠️</span> Validación No Completada</div>
+            
+            <p style="color: #718096; margin-bottom: 20px; font-size: 0.95rem;">
+                El estándar mínimo es del <strong>{{ curso.umbral|default:"70" }}%</strong>. 
+                Revisa el desglose abajo para aprender de los errores.
+            </p>
+
+            <a href="{% url 'core:examen' curso.id %}" class="btn-main">
+                🔄 Reintentar Evaluación
+            </a>
+        {% endif %}
+        
+        <a href="/" class="btn-secondary">Volver al Panel</a>
+    </div>
+
+    {% if detalles %}
+    <div class="review-section">
+        <h3 class="review-title">🔍 Desglose de Respuestas</h3>
+        
+        {% for item in detalles %}
+        <div class="review-item {% if item.es_correcta %}item-correct{% else %}item-incorrect{% endif %}">
+            
+            <div class="review-header">
+                <span class="review-number">#{{ forloop.counter }}</span>
+                <span class="review-status">
+                    {% if item.es_correcta %}✅ Correcta{% else %}❌ Incorrecta{% endif %}
+                </span>
+            </div>
+
+            <h4 class="review-question">{{ item.texto_pregunta }}</h4>
+
+            <div class="review-answer">
+                <span class="lbl">Tu respuesta:</span>
+                <span class="val {% if item.es_correcta %}text-green{% else %}text-red{% endif %}">
+                    {{ item.respuesta_usuario_texto|default:"(Sin respuesta)" }}
+                </span>
+            </div>
+
+            {% if not item.es_correcta %}
+            <div class="review-answer">
+                <span class="lbl">Respuesta Correcta:</span>
+                <span class="val text-green">{{ item.respuesta_correcta_texto }}</span>
+            </div>
+            
+            <div class="review-feedback">
+                <strong>💡 Justificación:</strong> {{ item.justificacion|default:"Repasa el material del curso para entender este concepto." }}
+            </div>
+            {% endif %}
+
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

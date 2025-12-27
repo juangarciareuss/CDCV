@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+        <h1 style="color: #333;">📦 Bodega de Cursos</h1>
+        <a href="{% url 'core:dashboard_crear' %}" class="btn-primary" style="background: #6a11cb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+            + Nuevo Curso IA
+        </a>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'core:dashboard_crear' %}" style="padding: 10px 20px; color: #555; text-decoration: none;">🏭 Fábrica</a>
+        <a href="{% url 'core:dashboard_administrar' %}" style="padding: 10px 20px; border-bottom: 3px solid #6a11cb; font-weight: bold; color: #000; text-decoration: none;">📦 Bodega</a>
+        <a href="{% url 'core:dashboard_usuarios' %}" style="padding: 10px 20px; color: #555; text-decoration: none;">👥 Usuarios</a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding: 15px; margin-bottom: 20px; border-radius: 5px; {% if message.tags == 'success' %}background-color: #d4edda; color: #155724;{% else %}background-color: #f8d7da; color: #721c24;{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead style="background-color: #f8f9fa;">
+                <tr>
+                    <th style="padding: 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Curso</th>
+                    <th style="padding: 15px; text-align: center; border-bottom: 2px solid #dee2e6;">Stock (Bodega)</th>
+                    <th style="padding: 15px; text-align: center; border-bottom: 2px solid #dee2e6; width: 180px;">Preguntas Examen</th>
+                    <th style="padding: 15px; text-align: center; border-bottom: 2px solid #dee2e6;">Estado</th>
+                    <th style="padding: 15px; text-align: center; border-bottom: 2px solid #dee2e6;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for curso in cursos %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 15px;">
+                        <strong style="color: #2c3e50; font-size: 1.1em;">{{ curso.nombre }}</strong>
+                        <br>
+                        <small style="color:#7f8c8d;">${{ curso.precio_usd }} | Nivel {{ curso.nivel }}</small>
+                    </td>
+                    
+                    <td style="padding: 15px; text-align: center;">
+                        <span style="font-size: 1.2em; color: #555; font-weight: bold;">{{ curso.cantidad_preguntas }}</span>
+                        <div style="font-size: 10px; color: #999;">preguntas totales</div>
+                    </td>
+
+                    <td style="padding: 15px; text-align: center; background: #fdfdfd; border-left: 2px solid #f0f0f0;">
+                        
+                        <form method="POST" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="actualizar_total" value="true">
+                            <input type="hidden" name="curso_id" value="{{ curso.id }}">
+                            
+                            <input type="number" 
+                                   name="nuevo_total" 
+                                   value="{{ curso.total_preguntas_examen }}" 
+                                   min="1" 
+                                   max="200"
+                                   style="width: 60px; text-align: center; font-weight: bold; font-size: 1.1em; border: 1px solid #ccc; border-radius: 4px; padding: 5px; color: #6a11cb;">
+                            
+                            <button type="submit" 
+                                    title="Guardar cambios"
+                                    style="background: #28a745; color: white; border: none; width: 32px; height: 32px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
+                                💾
+                            </button>
+                        </form>
+                        <div style="font-size: 10px; color: #aaa; margin-top: 4px;">Modificar y Guardar</div>
+                    </td>
+
+                    <td style="padding: 15px; text-align: center;">
+                        {% if curso.activo %}
+                            <span style="background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 600;">🟢 Activo</span>
+                        {% else %}
+                            <span style="background: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 600;">🔴 Inactivo</span>
+                        {% endif %}
+                    </td>
+
+                    <td style="padding: 15px; text-align: center;">
+                        <button style="background: none; border: 1px solid #dee2e6; padding: 5px 10px; border-radius: 4px; cursor: pointer; color: #555;">🗑️</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; color: #777;">
+                        📭 La bodega está vacía. ¡Crea tu primer curso en la Fábrica!
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

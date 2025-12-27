@@ -109,6 +109,14 @@ class Curso(models.Model):
         blank=True,
         help_text="JSON que define la 'receta' del examen."
     )
+
+    @property
+    def total_preguntas_examen(self):
+        """Calcula cuántas preguntas pide el examen sumando las reglas."""
+        if not self.estructura_examen:
+            return 0
+        reglas = self.estructura_examen.get('reglas_seleccion', [])
+        return sum(r.get('cantidad', 0) for r in reglas)
     
     def __str__(self):
         return f"{self.nombre} - Nivel {self.nivel}"
@@ -143,6 +151,12 @@ class Pregunta(models.Model):
     slug = models.SlugField(max_length=255, unique=True, null=True, blank=True)
     opciones = models.JSONField() 
     respuesta_correcta = models.CharField(max_length=1) 
+
+    # ✅ NUEVO CAMPO: Justificación Pedagógica
+    justificacion = models.TextField(
+        default="Respuesta basada en la definición de la competencia.",
+        help_text="Explicación que se muestra al alumno si falla."
+    )
     
     # Nivel de dificultad granular (1=Básico, 5=Experto)
     dificultad = models.IntegerField(
@@ -246,3 +260,18 @@ class Certificado(models.Model):
 
     def __str__(self):
         return f"Certificado de {self.usuario.username} para {self.curso.nombre}"
+    
+# En core/models.py (al final)
+
+class InsigniaUsuario(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='insignias')
+    competencia = models.ForeignKey(MicroCompetencia, on_delete=models.CASCADE)
+    fecha_obtenida = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('usuario', 'competencia') # Solo una medalla por tipo
+        verbose_name = "Insignia Ganada"
+        verbose_name_plural = "Insignias Ganadas"
+
+    def __str__(self):
+        return f"🏅 {self.usuario.username} - {self.competencia.nombre}"

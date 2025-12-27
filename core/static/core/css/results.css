@@ -1,0 +1,238 @@
+/* core/static/core/css/results.css */
+
+/* --- LAYOUT GENERAL --- */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #F8FAFC; /* Fondo gris muy claro profesional */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Ocultar elementos de navegación si existen en base.html */
+header, nav, footer, .navbar { display: none !important; }
+
+/* --- LA TARJETA MAESTRA (FUSIÓN) --- */
+.card-official {
+    background: #fff;
+    width: 100%;
+    max-width: 500px; /* Ancho controlado de tu código original */
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    
+    /* EL TOQUE DE ORO (Tu código) */
+    border-top: 5px solid #D4AF37; 
+    
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+    padding: 40px 30px;
+    text-align: center;
+    position: relative;
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- LOGO --- */
+.logo-img {
+    height: 50px;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+/* --- CÍRCULO DE NOTA (Del diseño anterior) --- */
+.score-container {
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+}
+
+.score-ring {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.score-val { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+.score-lbl { font-size: 0.7rem; text-transform: uppercase; margin-top: 4px; opacity: 0.9; }
+
+/* Estados */
+.pass-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F1C40F 100%); }
+.fail-gradient { background: linear-gradient(135deg, #718096 0%, #4a5568 100%); }
+
+/* --- BADGE DE ESTADO (Tu código mejorado) --- */
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+}
+
+.badge-success { background: #F0FFF4; color: #276749; border: 1px solid #C6F6D5; }
+.badge-fail { background: #FFF5F5; color: #C53030; border: 1px solid #FED7D7; }
+
+/* --- BLOQUE DE DETALLES TÉCNICOS (Tu código intacto) --- */
+.details-box {
+    text-align: left;
+    background: #F7FAFC;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #EDF2F7;
+    margin-bottom: 30px;
+}
+
+.detail-row { margin-bottom: 15px; }
+.detail-row:last-child { margin-bottom: 0; }
+
+.d-label {
+    font-size: 0.75rem;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.d-value {
+    font-size: 1.1rem;
+    color: #2D3748;
+    font-weight: 700;
+}
+
+.d-value.highlight { color: #1a365d; } /* Azul marca */
+
+.divider { border: 0; border-top: 1px solid #E2E8F0; margin: 15px 0; }
+
+/* --- BOTONES DE ACCIÓN --- */
+.btn-main {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #1a365d 0%, #2a4365 100%); /* Azul Oficial */
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(26, 54, 93, 0.2);
+    box-sizing: border-box;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-main:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(26, 54, 93, 0.3);
+}
+
+.btn-secondary {
+    display: block;
+    margin-top: 15px;
+    color: #718096;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.btn-secondary:hover { color: #2D3748; text-decoration: underline; }
+
+/* Footer Legal */
+.legal-footer {
+    margin-top: 25px;
+    font-size: 0.75rem;
+    color: #A0AEC0;
+    line-height: 1.4;
+}
+
+/* --- ESTILOS DE LA SECCIÓN DE REVISIÓN (SOLUCIONARIO) --- */
+
+/* Contenedor principal para que permita scroll si es muy largo */
+.results-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 50px;
+}
+
+.review-section {
+    width: 100%;
+    max-width: 600px; /* Un poco más ancho que la tarjeta principal */
+    margin-top: 40px;
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.review-title {
+    color: #2D3748;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.review-item {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-left: 5px solid #ccc;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+/* Colores de estado */
+.item-correct { border-left-color: #48BB78; background: #F0FFF4; }
+.item-incorrect { border-left-color: #F56565; background: #FFF5F5; }
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+.review-question {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    color: #1a202c;
+    line-height: 1.4;
+}
+
+.review-answer {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.lbl { font-weight: 600; color: #718096; margin-right: 5px; }
+.val { font-weight: 500; }
+
+.text-green { color: #2F855A; font-weight: bold; }
+.text-red { color: #C53030; text-decoration: line-through; }
+
+.review-feedback {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #4a5568;
+    border: 1px dashed #cbd5e0;
+}

@@ -1,3 +1,4 @@
+# core/agents/builder_agent.py
 import json
 import os
 import time
@@ -5,170 +6,110 @@ from google import genai
 from django.utils.text import slugify
 from core.models import Curso, Tema, MicroCompetencia, Pregunta
 
+# --- CAMBIO CLAVE: Importación relativa desde la misma carpeta ---
+from .prompts import prompt_plan_maestro, prompt_generacion_reactivos
+
 class BuilderAgent:
-    """
-    Agente Constructor V5 (Arquitectura Spotify).
-    Genera Cursos -> Temas -> MicroCompetencias -> Preguntas.
-    """
     def __init__(self):
-        # Usamos tu clave de entorno
         self.client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
-        # Mantenemos el modelo flash que te gusta por velocidad/costo
         self.model = "gemini-2.5-flash" 
 
-    def construir_curso(self, nicho_mercado):
-        print(f"\n🏗️  [ARQUITECTO] Diseñando Syllabus para: '{nicho_mercado}'...")
-
-        # --- PASO 1: EL ARQUITECTO (Diseño Jerárquico) ---
-        prompt_syllabus = f"""
-        ACTÚA COMO ARQUITECTO DE CURSOS.
-        Diseña un curso completo sobre: '{nicho_mercado}'.
+    # --- CAMBIO CLAVE: Aceptamos nivel_dificultad ---
+    def construir_curso(self, nicho_mercado, nivel_dificultad): 
         
-        ESTRUCTURA OBLIGATORIA (Modelo Spotify):
-        1. Curso: Título y descripción.
-        2. Temas (Playlists): Entre 3 y 4 temas grandes.
-        3. Micro-Competencias (Átomos): Dentro de cada tema, define 3 habilidades ultra-específicas.
-        
-        FORMATO JSON EXACTO:
-        {{
-          "curso": {{
-            "nombre": "Título Vendedor",
-            "descripcion": "Descripción comercial corta",
-            "precio_usd": 5.00
-          }},
-          "temas": [
-            {{
-              "nombre": "Nombre del Tema 1",
-              "micro_competencias": [
-                {{
-                  "nombre": "Nombre MicroCompetencia 1.1",
-                  "definicion": "Qué sabe hacer exactamente (ej: Usa SUMAR.SI)",
-                  "criterio": "Cómo se valida (ej: El resultado es exacto)",
-                  "icono": "📊"
-                }},
-                 {{ "nombre": "...", "definicion": "...", "criterio": "...", "icono": "..." }}
-              ]
-            }}
-          ]
-        }}
-        """
+        print(f"\n🏗️  [ARQUITECTO] Diseñando Nivel {nivel_dificultad} para: '{nicho_mercado}'...")
 
-        try:
-            # 1. Generar el Plan Maestro
-            response = self.client.models.generate_content(
-                model=self.model,
-                contents=prompt_syllabus,
-                config={"response_mime_type": "application/json"}
+        # 1. Plan Maestro (Pasamos el nivel obligatorio)
+        raw_prompt = prompt_plan_maestro(nicho_mercado, nivel=nivel_dificultad)
+        
+        plan = self._llamar_gemini_json(raw_prompt)
+        
+        if not plan: return None
+
+        # 2. Crear Curso
+        curso = Curso.objects.create(
+            nombre=plan['curso']['nombre'],
+            descripcion=plan['curso']['descripcion'],
+            precio_usd=plan['curso'].get('precio_usd', 5.00),
+            nivel=nivel_dificultad,  # Guardamos el nivel
+            activo=False
+        )
+        
+        total_preguntas = 0
+        reglas_seleccion = []
+
+        for t_data in plan['temas']:
+            tema_slug = slugify(t_data['nombre']) or f"tema-{int(time.time())}"
+            tema_obj, _ = Tema.objects.get_or_create(
+                nombre=t_data['nombre'], defaults={'slug': tema_slug}
             )
-            plan = json.loads(response.text)
+            curso.temas.add(tema_obj)
             
-            # --- PASO 2: LOS ALBAÑILES (Creación de DB) ---
-            print(f"✅ [DISEÑO APROBADO] Creando estructura en base de datos...")
-            
-            # A. Crear Curso
-            curso = Curso.objects.create(
-                nombre=plan['curso']['nombre'],
-                descripcion=plan['curso']['descripcion'],
-                precio_usd=plan['curso'].get('precio_usd', 5.00),
-                activo=False
-            )
-            
-            total_preguntas = 0
-            
-            # B. Iterar sobre Temas
-            for t_data in plan['temas']:
-                tema_obj, created = Tema.objects.get_or_create(
-                    nombre=t_data['nombre']
+            preguntas_tema = 0
+            for mc_data in t_data['micro_competencias']:
+                mc_obj, _ = MicroCompetencia.objects.get_or_create(
+                    nombre=mc_data['nombre'],
+                    defaults={
+                        'definicion_atomica': mc_data['definicion'],
+                        'criterio_exito': mc_data['criterio'],
+                        'icono': "🔧"
+                    }
                 )
-                # Vincular Tema al Curso (M2M)
-                curso.temas.add(tema_obj)
+                tema_obj.micro_competencias.add(mc_obj)
                 
-                print(f"\n📂 TEMA: {tema_obj.nombre}")
-                
-                # C. Iterar sobre Micro-Competencias
-                for mc_data in t_data['micro_competencias']:
-                    mc_obj, created = MicroCompetencia.objects.get_or_create(
-                        nombre=mc_data['nombre'],
-                        defaults={
-                            'definicion_atomica': mc_data['definicion'],
-                            'criterio_exito': mc_data['criterio'],
-                            'icono': mc_data.get('icono', '🏆')
-                        }
-                    )
-                    # Vincular MC al Tema (M2M)
-                    tema_obj.micro_competencias.add(mc_obj)
-                    
-                    # D. GENERACIÓN DE PREGUNTAS (El Átomo)
-                    # Generamos 3 preguntas por competencia para tener variedad
-                    print(f"   ⚡ MC: {mc_obj.nombre} -> Generando reactivos...", end="")
-                    preguntas_creadas = self._generar_preguntas_atomicas(mc_obj, cantidad=3)
-                    
-                    if preguntas_creadas:
-                        print(f" ✅ ({preguntas_creadas} preguntas)")
-                        total_preguntas += preguntas_creadas
-                    else:
-                        print(f" ❌ Falló generación")
-                    
-                    time.sleep(1) # Respetar rate limits
+                # Pasamos el nivel a la generación de preguntas
+                creadas = self._generar_preguntas(mc_obj, tema_obj, nivel_dificultad)
+                if creadas:
+                    total_preguntas += creadas
+                    preguntas_tema += creadas
+                time.sleep(0.5)
 
-            # Finalizar
-            curso.cantidad_preguntas = total_preguntas
-            curso.activo = True
-            curso.save()
-            
-            print(f"\n🚀 [FIN] Curso '{curso.nombre}' creado con {total_preguntas} preguntas.")
-            return f"Curso creado ID: {curso.id}"
+            reglas_seleccion.append({
+                "tema_nombre": tema_obj.nombre,
+                "cantidad": max(1, int(preguntas_tema * 0.6)),
+                "dificultad_min": nivel_dificultad, # Candado de nivel
+                "dificultad_max": nivel_dificultad
+            })
 
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            return f"🔥 Error Fatal: {str(e)}"
+        curso.cantidad_preguntas = total_preguntas
+        curso.estructura_examen = {
+            "reglas_seleccion": reglas_seleccion,
+            "nota_aprobacion": 70,
+            "nivel_tecnico": nivel_dificultad
+        }
+        curso.activo = True
+        curso.save()
+        
+        return curso
 
-    def _generar_preguntas_atomicas(self, mc_obj, cantidad=3):
-        """
-        Genera preguntas específicas para una MicroCompetencia.
-        """
-        prompt_preguntas = f"""
-        Eres un Experto Evaluador.
-        Crea {cantidad} preguntas de selección múltiple PARA VALIDAR ESTA COMPETENCIA:
+    def _generar_preguntas(self, mc_obj, tema_obj, nivel):
+        # Usamos el prompt importado con el nivel correcto
+        prompt = prompt_generacion_reactivos(mc_obj, nivel)
+        preguntas_data = self._llamar_gemini_json(prompt)
         
-        COMPETENCIA: "{mc_obj.nombre}"
-        DEFINICIÓN: "{mc_obj.definicion_atomica}"
-        CRITERIO ÉXITO: "{mc_obj.criterio_exito}"
+        if not preguntas_data: return 0
         
-        FORMATO JSON (Array de objetos):
-        [
-          {{
-            "texto": "¿Pregunta situacional?",
-            "opciones": {{"A": "Mal", "B": "Bien", "C": "Mal", "D": "Mal"}},
-            "respuesta_correcta": "B",
-            "explicacion": "Por qué B es correcta basada en la definición.",
-            "dificultad": 3
-          }}
-        ]
-        """
-        
+        count = 0
+        for p_data in preguntas_data:
+            p = Pregunta.objects.create(
+                micro_competencia=mc_obj,
+                texto=p_data['texto'],
+                opciones=p_data['opciones'],
+                respuesta_correcta=p_data['respuesta_correcta'],
+                justificacion=p_data.get('justificacion', 'IA'),
+                dificultad=nivel
+            )
+            p.temas.add(tema_obj)
+            count += 1
+        return count
+
+    def _llamar_gemini_json(self, prompt):
         try:
             response = self.client.models.generate_content(
                 model=self.model,
-                contents=prompt_preguntas,
+                contents=prompt,
                 config={"response_mime_type": "application/json"}
             )
-            preguntas_json = json.loads(response.text)
-            
-            count = 0
-            for p_data in preguntas_json:
-                Pregunta.objects.create(
-                    micro_competencia=mc_obj, # VINCULACIÓN DIRECTA AL ÁTOMO
-                    texto=p_data['texto'],
-                    opciones=p_data['opciones'],
-                    respuesta_correcta=p_data['respuesta_correcta'],
-                    explicacion=p_data['explicacion'],
-                    dificultad=p_data.get('dificultad', 3)
-                )
-                count += 1
-            return count
-            
-        except Exception as e:
-            print(f"Error generando preguntas: {e}")
-            return 0
+            return json.loads(response.text)
+        except:
+            return None

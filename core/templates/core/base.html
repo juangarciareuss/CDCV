@@ -122,10 +122,12 @@
 
         <div class="navbar-menu">
             {% if user.is_authenticated %}
-                {% if user.is_staff %}
-                    <a href="{% url 'core:dashboard_kpi' %}" class="nav-link" style="color: #6610f2;">📊 Dashboard</a>
-                    <a href="/admin/" class="nav-link" target="_blank">🔧 Admin</a>
-                {% endif %}
+            {% if user.is_staff %}
+                <a href="{% url 'core:dashboard_crear' %}" class="nav-link" style="color: #6a11cb; font-weight: bold;">
+                    🏭 Dashboard
+                </a>
+                <a href="/admin/" class="nav-link" target="_blank">🔧 Admin</a>
+            {% endif %}
 
                 <span class="user-badge">{{ user.username }}</span>
                 

@@ -49,8 +49,10 @@ class CDCVOrchestrator:
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
-    def crear_nuevo_producto(self, nicho_mercado):
+def crear_nuevo_producto(self, nicho_mercado, nivel):
         """
-        Llama al Builder para crear un curso desde cero.
+        Llama al Builder para crear un curso.
+        El argumento 'nivel' es requerido estrictamente.
         """
-        return self.builder.construir_negocio(nicho_mercado)
+        # Pasamos el nivel explícitamente. Si falta, explota aquí.
+        return self.builder.construir_curso(nicho_mercado, nivel_dificultad=nivel)

@@ -121,3 +121,32 @@ body {
 }
 input:checked + .slider { background-color: #28a745; } /* Verde cuando está activo */
 input:checked + .slider:before { transform: translateX(18px); }
+
+/* --- NUEVO: Estilos para el Menú de Pestañas --- */
+.dashboard-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0;
+}
+
+.nav-tab {
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #666;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-tab:hover {
+    color: #6a11cb;
+    background-color: #f8f9fa;
+    border-radius: 5px 5px 0 0;
+}
+
+.nav-tab.active {
+    color: #6a11cb;
+    border-bottom: 3px solid #6a11cb;
+}

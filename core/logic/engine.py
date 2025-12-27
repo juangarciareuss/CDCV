@@ -21,18 +21,17 @@ def diagnosticar_y_pescar_preguntas(curso):
         tema_nombre = regla.get('tema_nombre')
         cantidad = regla.get('cantidad', 10)
         dif_min = regla.get('dificultad_min', 1)
-        dif_max = regla.get('dificultad_max', 5) # Aceptamos todo el rango por defecto
+        dif_max = regla.get('dificultad_max', 5)
         
         # 1. Buscamos el objeto Tema
         tema_obj = Tema.objects.filter(nombre__iexact=tema_nombre).first()
         if not tema_obj:
-            # Intento secundario por coincidencia parcial si el nombre exacto falla
             tema_obj = Tema.objects.filter(nombre__icontains=tema_nombre).first()
 
         if not tema_obj:
-            return None, f"Error de configuración: El tema '{tema_nombre}' no existe en la base de datos."
+            return None, f"Error de configuración: El tema '{tema_nombre}' no existe en la BD."
 
-        # 2. Query Estricta: Curso + Tema + Rango de Dificultad
+        # 2. Query Estricta
         candidatas = Pregunta.objects.filter(
             temas=tema_obj,
             dificultad__gte=dif_min,
@@ -42,55 +41,79 @@ def diagnosticar_y_pescar_preguntas(curso):
         # 3. Validación de Stock
         count_disponible = candidatas.count()
         if count_disponible < cantidad:
-            # En lugar de un print, construimos el reporte forense y retornamos ERROR
             mensaje_error = (
-                f"⚠️ FALTA STOCK EN: '{tema_nombre}'\n\n"
-                f"📉 Diagnóstico:\n"
-                f"- El examen pide: {cantidad} preguntas.\n"
-                f"- Nivel exigido: {dif_min} al {dif_max}.\n"
-                f"- Stock encontrado: Solo {count_disponible} preguntas válidas.\n\n"
-                f"💡 Solución: Ve al Dashboard -> 'Completar con IA' o usa la Shell para barajar dificultades."
+                f"⚠️ FALTA STOCK EN: '{tema_nombre}'\n"
+                f"- Se piden: {cantidad}. Hay: {count_disponible}.\n"
+                f"💡 Solución: Genera más preguntas con IA."
             )
-            return [], mensaje_error # <--- AQUÍ SE DETIENE Y TE AVISA
+            return [], mensaje_error
 
-        # Si hay stock suficiente, seleccionamos al azar
+        # Selección al azar
         seleccion = list(candidatas.order_by('?')[:cantidad])
-        
         preguntas_seleccionadas.extend(seleccion)
         
-        # Guardamos IDs para no repetir en siguientes reglas
         for p in seleccion:
             ids_ya_usados.add(p.id)
 
-    # Validación final
     if not preguntas_seleccionadas:
-        return None, "No se encontraron preguntas válidas para generar el examen."
+        return None, "No se encontraron preguntas válidas."
 
     return preguntas_seleccionadas, None
 
 
 def finalizar_examen(user, curso, preguntas_ids, respuestas_usuario):
     """
-    Procesa las respuestas, calcula la nota y guarda el registro.
+    Procesa las respuestas, calcula nota, genera el reporte detallado y guarda.
     """
-    # Recuperamos las preguntas de la BD
+    # 1. Recuperar preguntas
     preguntas_set = list(Pregunta.objects.filter(id__in=preguntas_ids))
     
-    # Reordenamos para que coincidan con el orden en que se mostraron
+    # 2. Reordenar según el orden original del examen
     preguntas_map = {p.id: p for p in preguntas_set}
     preguntas_ordenadas = []
     for pid in preguntas_ids:
         if pid in preguntas_map:
             preguntas_ordenadas.append(preguntas_map[pid])
 
-    # Calculamos resultados usando tu utilidad
-    resultados, porcentaje, total_correctas, total_preguntas = calcular_resultados(respuestas_usuario, preguntas_ordenadas)
+    # 3. Calcular Resultados Matemáticos
+    # (Asumimos que utils hace el cálculo crudo)
+    resultados_raw, porcentaje, total_correctas, total_preguntas = calcular_resultados(respuestas_usuario, preguntas_ordenadas)
     
-    # Determinamos aprobación
+    # 4. CONSTRUCCIÓN DEL SOLUCIONARIO (LO QUE FALTABA)
+    detalles_para_html = []
+    
+    for pregunta in preguntas_ordenadas:
+        # ID de la respuesta del usuario (ej: 'a', 'b')
+        # Nota: request.POST usa 'pregunta_123', aqui limpiamos la clave si es necesario
+        key_post = f"pregunta_{pregunta.id}"
+        respuesta_user_id = respuestas_usuario.get(key_post)
+        
+        # Texto de la respuesta del usuario
+        # Buscamos en el JSON de opciones: {'a': 'Texto A', 'b': 'Texto B'}
+        texto_usuario = "Sin responder"
+        if respuesta_user_id and respuesta_user_id in pregunta.opciones:
+            texto_usuario = pregunta.opciones[respuesta_user_id]
+            
+        # Texto de la respuesta correcta
+        correcta_id = pregunta.respuesta_correcta # ej: 'c'
+        texto_correcta = pregunta.opciones.get(correcta_id, "Error en datos")
+        
+        # Verificación individual
+        es_correcta = (str(respuesta_user_id) == str(correcta_id))
+        
+        detalles_para_html.append({
+            'texto_pregunta': pregunta.texto,
+            'es_correcta': es_correcta,
+            'respuesta_usuario_texto': texto_usuario,
+            'respuesta_correcta_texto': texto_correcta,
+            'justificacion': pregunta.justificacion
+        })
+
+    # 5. Determinamos aprobación
     umbral = curso.estructura_examen.get('nota_aprobacion', 70) if curso.estructura_examen else 70
     examen_aprobado = porcentaje >= umbral
     
-    # Guardamos el intento
+    # 6. Guardar en BD
     examen_obj = Examen.objects.create(
         usuario=user,
         curso=curso,
@@ -100,11 +123,11 @@ def finalizar_examen(user, curso, preguntas_ids, respuestas_usuario):
         aprobado=examen_aprobado
     )
     
+    # 7. RETORNO PARA EL TEMPLATE (Con las llaves correctas)
     return {
-        'preguntas': preguntas_ordenadas,
-        'resultados': resultados,
-        'porcentaje': porcentaje,
-        'total_correctas': total_correctas,
-        'total_preguntas': total_preguntas,
-        'examen': examen_obj
+        'aprobado': examen_aprobado,
+        'puntaje': porcentaje,       # Para el círculo de nota
+        'detalles': detalles_para_html, # Para el solucionario
+        'examen_id': examen_obj.id,  # Para el link de pago
+        'curso': curso
     }, None

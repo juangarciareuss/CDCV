@@ -1,140 +1,71 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
-{% block title %}Examen: {{ curso.nombre }}{% endblock %}
+{% block title %}Evaluación Oficial | CertUfy{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/exam.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 800px; margin-top: 40px; margin-bottom: 80px;">
 
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 30px;">
-        <div>
-            <h1 style="margin: 0; color: #007bff; font-size: 1.8rem;">{{ curso.nombre }}</h1>
-            {% if not resultados %}
-                <p style="margin: 5px 0 0; color: #666;">Responde con cuidado. Necesitas 80% para aprobar.</p>
-            {% else %}
-                <p style="margin: 5px 0 0; color: #666;">Resultados de tu evaluación.</p>
-            {% endif %}
-        </div>
-        
-        {% if not resultados %}
-            <a href="{% url 'core:homepage' %}" style="text-decoration: none; color: #dc3545; border: 1px solid #dc3545; padding: 6px 12px; border-radius: 5px; font-weight: 500; font-size: 0.9rem; transition: all 0.2s;">
-                ✕ Cancelar
-            </a>
-        {% else %}
-            <a href="{% url 'core:homepage' %}" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; padding: 6px 12px; border-radius: 5px; font-weight: 500; transition: all 0.2s;">
-                ← Volver al Inicio
-            </a>
-        {% endif %}
-    </div>
-
-    {% if not resultados %}
-        <form method="post">
-            {% csrf_token %}
-            
-            {% for pregunta in preguntas %}
-                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e0e0e0;">
-                    
-                    <p style="font-weight: bold; font-size: 1.1rem; margin-top: 0; color: #333;">
-                        {{ forloop.counter }}. {{ pregunta.texto }}
-                    </p>
-                    
-                    <div style="margin-left: 10px;">
-                        {% for key, opcion in pregunta.opciones.items %}
-                            <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                
-                                <input type="radio" 
-                                       id="opcion_{{ pregunta.id }}_{{ key }}" 
-                                       name="pregunta_{{ pregunta.id }}" 
-                                       value="{{ key }}" 
-                                       required 
-                                       style="width: 18px; height: 18px; cursor: pointer; margin-top: 3px;">
-                                
-                                <label for="opcion_{{ pregunta.id }}_{{ key }}" style="cursor: pointer; margin-left: 10px; font-size: 1rem; color: #555; line-height: 1.4;">
-                                    
-                                    <span style="font-weight: bold; color: #007bff;">{{ key }}.</span> 
-                                    
-                                    {{ opcion.texto|default:opcion }}
-
-                                </label>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% empty %}
-                <div style="text-align: center; padding: 40px; background: #fff; border-radius: 8px;">
-                    <h3>⚠️ No se encontraron preguntas</h3>
-                    <p>Parece que hubo un error cargando el contenido. Por favor contacta a soporte.</p>
-                </div>
-            {% endfor %}
-
-            {% if preguntas %}
-                <div style="text-align: center; margin-top: 40px;">
-                    <button type="submit" style="background-color: #28a745; color: white; border: none; padding: 15px 50px; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: background 0.2s;">
-                        🚀 Enviar Respuestas
-                    </button>
-                </div>
-            {% endif %}
-        </form>
-    {% endif %}
-
-
-    {% if resultados %}
-        <div class="resultados-section">
-            
-            {% if examen.aprobado %}
-                <div style="text-align: center; padding: 40px; background-color: #d4edda; border: 2px solid #c3e6cb; border-radius: 10px; color: #155724; margin-bottom: 30px;">
-                    <h2 style="margin-top: 0; font-size: 2rem;">🎉 ¡Felicidades, {{ request.user.username }}!</h2>
-                    <p style="font-size: 1.2rem; margin: 10px 0;">Has aprobado con un <strong>{{ porcentaje }}%</strong> de respuestas correctas.</p>
-                    <p>Has validado tu competencia técnica. Ahora puedes obtener tu certificado oficial.</p>
-                    
-                    <a href="{% url 'core:crear_pago_paypal' examen.id %}" style="display: inline-block; background-color: #ffc439; color: #003087; padding: 15px 30px; border-radius: 50px; font-weight: bold; text-decoration: none; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 25px; transition: transform 0.2s;">
-                        <span style="font-style: italic; font-weight: 800;">PayPal</span> Pagar $1.00 USD y Certificarme
-                    </a>
-                </div>
-
-            {% else %}
-                <div style="text-align: center; padding: 40px; background-color: #f8d7da; border: 2px solid #f5c6cb; border-radius: 10px; color: #721c24; margin-bottom: 30px;">
-                    <h2 style="margin-top: 0;">😓 Lo sentimos, no has aprobado.</h2>
-                    <p style="font-size: 1.2rem;">Tu puntaje: <strong>{{ porcentaje }}%</strong></p>
-                    <p style="font-size: 0.9rem;">(Se requiere un 80% mínimo para certificar)</p>
-                    <p>No te rindas. Revisa la justificación de tus errores abajo y vuelve a intentarlo.</p>
-                    
-                    <a href="{% url 'core:examen' curso.id %}" style="display: inline-block; background: #721c24; color: white; padding: 10px 25px; text-decoration: none; border-radius: 5px; margin-top: 15px; font-weight: bold;">
-                        🔄 Reintentar Examen
-                    </a>
-                </div>
-            {% endif %}
-
-            <h3 style="border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 50px; color: #333;">📝 Revisión Detallada</h3>
-            
-            {% for r in resultados %}
-                <div style="background: white; border-radius: 8px; padding: 20px; margin-bottom: 15px; border-left: 6px solid {% if r.correcta %}#28a745{% else %}#dc3545{% endif %}; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
-                    
-                    <p style="font-weight: bold; margin-top: 0; font-size: 1.05rem;">
-                        {{ forloop.counter }}. {{ r.pregunta.texto }}
-                    </p>
-                    
-                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; font-size: 0.95rem; margin-top: 10px;">
-                        Tu respuesta: 
-                        {% if r.correcta %}
-                            <span style="color: #28a745; font-weight: bold;">✅ {{ r.respuesta_usuario.texto|default:r.respuesta_usuario }}</span>
-                        {% else %}
-                            <span style="color: #dc3545; font-weight: bold;">❌ {{ r.respuesta_usuario.texto|default:r.respuesta_usuario }}</span>
-                        {% endif %}
-                    </div>
-
-                    {% if r.justificacion %}
-                        <div style="margin-top: 12px; font-size: 0.9rem; color: #555; display: flex; gap: 8px;">
-                            <span>💡</span>
-                            <div>
-                                <strong>Explicación:</strong> {{ r.justificacion }}
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-            
-        </div>
-    {% endif %}
-
+<div class="progress-fixed">
+    <div class="progress-fill" id="progressBar"></div>
 </div>
+
+<div class="timer-badge" id="timerBadge">
+    <span>⏳</span>
+    <span id="timeDisplay">--:--</span>
+</div>
+
+<div class="exam-container">
+    <form method="post" id="examForm" action=".">
+        {% csrf_token %}
+
+        {% for pregunta in preguntas %}
+        <div class="question-card" data-index="{{ forloop.counter0 }}">
+            
+            <div class="question-meta">
+                Pregunta {{ forloop.counter }} de {{ preguntas|length }}
+            </div>
+            
+            <h3 class="question-text">{{ pregunta.texto }}</h3>
+
+            <div class="options-grid">
+                {% for letra, texto_opcion in pregunta.opciones.items %}
+                <label class="option-item" onclick="selectVisual(this)">
+                    <input type="radio" name="pregunta_{{ pregunta.id }}" value="{{ letra }}" required>
+                    
+                    <span class="key-hint">{{ letra|upper }}</span>
+                    <span class="option-text">{{ texto_opcion }}</span>
+                </label>
+                {% empty %}
+                    <p style="color: red;">⚠️ Error de datos en opciones.</p>
+                {% endfor %}
+            </div>
+
+            <div class="action-bar">
+                <button type="button" class="btn-nav btn-prev" onclick="prevQuestion()" 
+                        style="visibility: {% if forloop.first %}hidden{% else %}visible{% endif %};">
+                    ← Anterior
+                </button>
+
+                {% if not forloop.last %}
+                    <button type="button" class="btn-nav btn-next" onclick="nextQuestion()">
+                        Siguiente →
+                    </button>
+                {% else %}
+                    <button type="button" class="btn-nav btn-finish" onclick="submitExam()">
+                        ✅ Finalizar Examen
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+    </form>
+</div>
+
+<script src="{% static 'core/js/exam.js' %}"></script>
+
 {% endblock %}

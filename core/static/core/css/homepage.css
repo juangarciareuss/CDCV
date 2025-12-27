@@ -236,3 +236,35 @@
     .search-btn { width: 100%; border-radius: 0 0 16px 16px; padding: 20px; }
     .metrics-grid { gap: 40px; }
 }
+
+.hero-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    min-height: 520px;
+}
+
+/* CONTENEDOR IMAGEN */
+.hero-image {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* IMAGEN COMO FIGURA, NO COMO CARD */
+.hero-image img {
+    height: 480px;
+    width: auto;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 0;
+    box-shadow: none;
+    transform: translateX(40px); /* la empuja al borde derecho */
+}

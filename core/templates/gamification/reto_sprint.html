@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Reto: {{ competencia.nombre }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 50px auto; text-align: center;">
+
+    <div style="margin-bottom: 30px;">
+        <span style="font-size: 3rem;">⚔️</span>
+        <h1 style="color: #6a11cb; margin: 10px 0;">Reto Rápido: {{ competencia.nombre }}</h1>
+        <p style="font-size: 1.2rem; color: #666;">
+            Demuestra tu habilidad. 3 Preguntas. <br>
+            <strong>¿Podrás ganar la insignia? 🏅</strong>
+        </p>
+    </div>
+
+    <form method="post" style="text-align: left; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+        {% csrf_token %}
+        
+        {% for pregunta in preguntas %}
+            <div style="margin-bottom: 30px; border-bottom: 1px dashed #ddd; padding-bottom: 20px;">
+                <p style="font-weight: bold; font-size: 1.1rem; color: #333;">
+                    <span style="color: #6a11cb;">{{ forloop.counter }}.</span> {{ pregunta.texto }}
+                </p>
+                
+                <div style="display: grid; gap: 10px;">
+                    {% for key, opcion in pregunta.opciones.items %}
+                    <label style="display: flex; align-items: center; padding: 10px; border: 2px solid #f0f0f0; border-radius: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#6a11cb'" onmouseout="this.style.borderColor='#f0f0f0'">
+                        <input type="radio" name="pregunta_{{ pregunta.id }}" value="{{ key }}" required style="margin-right: 10px;">
+                        {{ opcion }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <button type="submit" style="width: 100%; background: linear-gradient(45deg, #6a11cb, #2575fc); color: white; border: none; padding: 15px; font-size: 1.2rem; font-weight: bold; border-radius: 10px; cursor: pointer; transition: transform 0.2s;">
+            🚀 Validar mis Respuestas
+        </button>
+    </form>
+    
+    <p style="margin-top: 20px; font-size: 0.9rem; color: #999;">
+        ⏱️ Tiempo estimado: 2 minutos
+    </p>
+</div>
+{% endblock %}

@@ -5,36 +5,103 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'core/css/homepage.css' %}">
+    <style>
+        /* ESTILOS ESPECÍFICOS PARA LA INTEGRACIÓN DE HANNAH Y BEN */
+        .hero-container-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        .hero-content-left {
+            flex: 1;
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .hero-image-right {
+            flex: 0.8;
+            display: flex;
+            justify-content: flex-end;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Estilo "High-End" para la imagen */
+        .executive-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 450px; /* Tamaño controlado para no invadir */
+            border-radius: 20px; /* Suaviza los bordes */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); /* Sombra de profundidad */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil premium */
+            transform: perspective(1000px) rotateY(-5deg); /* Ligera inclinación 3D hacia el texto */
+            transition: transform 0.3s ease;
+        }
+
+        .executive-image:hover {
+            transform: perspective(1000px) rotateY(0deg) scale(1.02); /* Efecto interactivo sutil */
+        }
+
+        /* Ajustes para Móvil */
+        @media (max-width: 992px) {
+            .hero-container-flex {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero-image-right {
+                display: none; /* Ocultamos la imagen en móviles pequeños para priorizar carga y buscador */
+            }
+            .hero-content-left {
+                margin: 0 auto;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 
-    <section class="hero-section">
-        <div class="container">
-            <h1 class="hero-title">
-                Tu conocimiento es el <span class="text-highlight">centro</span>.
-            </h1>
-            <h2 class="hero-subtitle">
-                Nosotros lo certificamos.
-            </h2>
+    <section class="hero-section" style="overflow: hidden;"> <div class="container">
             
-            <p class="hero-description">
-                Transforma tu experiencia y estudios previos en una credencial verificable. 
-                Sin cursos innecesarios, solo validación por mérito puro.
-            </p>
+            <div class="hero-container-flex">
+                
+                <div class="hero-content-left">
+                    <h1 class="hero-title">
+                        Tu conocimiento es el <span class="text-highlight">centro</span>.
+                    </h1>
+                    <h2 class="hero-subtitle">
+                        Nosotros lo certificamos.
+                    </h2>
+                    
+                    <p class="hero-description">
+                        Transforma tu experiencia y estudios previos en una credencial verificable. 
+                        Sin cursos innecesarios, solo validación por mérito puro.
+                    </p>
 
-            <div class="search-container">
-                <form action="{% url 'core:crear_curso_ia' %}" method="post" class="search-form">
-                    {% csrf_token %}
-                    <input type="text" 
-                           name="tema" 
-                           class="search-input" 
-                           placeholder="¿Qué dominas? Ej: Python, Liderazgo, Excel..." 
-                           required>
-                    <button type="submit" class="search-btn">
-                        Certificarme Ahora
-                    </button>
-                </form>
+                    <div class="search-container">
+                        <form action="{% url 'core:buscar_cursos' %}" method="get" class="search-form">
+                            {% csrf_token %}
+                            <input type="text" 
+                                   name="tema" 
+                                   class="search-input" 
+                                   placeholder="¿Qué dominas? Ej: Python, Liderazgo, Excel..." 
+                                   required>
+                            <button type="submit" class="search-btn">
+                                Certificarme Ahora
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="hero-image-right">
+                    <img src="{% static 'core/img/Hannah y Ben.png' %}" 
+                         alt="Validación Profesional CertUfy" 
+                         class="executive-image">
+                </div>
+
             </div>
         </div>
     </section>
@@ -58,33 +125,98 @@
         </div>
     </section>
 
-    <div class="courses-container">
-        <div class="section-header">
-            <h2 class="section-title">Certificaciones Destacadas</h2>
-            <p style="color: #718096;">Explora las áreas más demandadas o busca la tuya arriba.</p>
+
+    <div class="container" style="padding-top: 40px;">
+        
+        <div style="border-left: 4px solid #D4AF37; padding-left: 15px; margin-bottom: 25px;">
+            <span style="background: #D4AF37; color: #fff; font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; letter-spacing: 1px;">GRATIS</span>
+            <h2 style="font-size: 1.5rem; margin: 5px 0 0; color: #1a202c;">⚡ Retos de Habilidad (Sprints)</h2>
+            <p style="margin: 0; color: #718096; font-size: 0.9rem;">Valida micro-competencias en 2 minutos.</p>
         </div>
 
-        <div class="course-grid">
-            {% for curso in cursos %}
-                <div class="course-card">
-                    <div>
-                        <div class="course-header">
-                            <span class="badge">Nivel {{ curso.nivel }}</span>
-                            <span style="font-size: 1.5rem; opacity: 0.5;">📜</span>
-                        </div>
-                        <h3 class="course-title">{{ curso.nombre }}</h3>
-                        <p class="course-desc">
-                            {{ curso.descripcion|default:"Pon a prueba tus conocimientos técnicos y obtén tu validación oficial."|truncatewords:20 }}
-                        </p>
+        {% if retos %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 60px;">
+                {% for reto in retos %}
+                <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); position: relative; overflow: hidden;" 
+                     onmouseover="this.style.borderColor='#D4AF37'; this.style.transform='translateY(-3px)'" 
+                     onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)'">
+                    
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: #D4AF37;"></div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                        <span style="font-size: 1.5rem;">🛡️</span>
+                        <span style="font-size: 0.7rem; color: #718096; background: #f7fafc; padding: 2px 6px; border-radius: 4px;">Sprint</span>
                     </div>
-                    <a href="{% url 'core:examen' curso.id %}" class="btn-card">Iniciar Evaluación</a>
+                    
+                    <h3 style="font-size: 0.95rem; margin: 0 0 10px 0; color: #2d3748; line-height: 1.3; font-weight: 600;">
+                        {{ reto.nombre|truncatechars:40 }}
+                    </h3>
+                    
+                    <a href="{% url 'core:reto_microcompetencia' reto.slug %}" style="display: block; text-align: center; font-size: 0.8rem; color: #D4AF37; border: 1px solid #D4AF37; border-radius: 4px; padding: 5px; text-decoration: none; font-weight: bold; transition: background 0.2s;"
+                       onmouseover="this.style.background='#D4AF37'; this.style.color='white'"
+                       onmouseout="this.style.background='transparent'; this.style.color='#D4AF37'">
+                        Jugar Ahora
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 8px; margin-bottom: 40px; border: 1px dashed #cbd5e0;">
+                <p style="color: #718096; font-size: 0.9rem;">⚙️ Calibrando nuevos retos...</p>
+            </div>
+        {% endif %}
+
+
+        <div style="border-left: 4px solid #1a365d; padding-left: 15px; margin-bottom: 25px;">
+            <span style="background: #1a365d; color: #fff; font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; letter-spacing: 1px;">OFICIAL</span>
+            <h2 style="font-size: 1.5rem; margin: 5px 0 0; color: #1a202c;">🎓 Certificaciones Profesionales</h2>
+            <p style="margin: 0; color: #718096; font-size: 0.9rem;">Exámenes completos con diploma de validación técnica.</p>
+        </div>
+
+        <div class="course-grid"> 
+            {% for curso in cursos %}
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.04);">
+                    
+                    <div style="height: 80px; background: linear-gradient(135deg, #1a365d 0%, #2a4365 100%); display: flex; align-items: center; justify-content: center; position: relative;">
+                        <span style="font-size: 2.5rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">📜</span>
+                        <span style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; backdrop-filter: blur(4px);">
+                            Nivel {{ curso.nivel }}
+                        </span>
+                    </div>
+
+                    <div style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column;">
+                        <h3 class="course-title" style="margin-bottom: 10px; font-size: 1.1rem; color: #2d3748;">{{ curso.nombre }}</h3>
+                        
+                        <p class="course-desc" style="font-size: 0.9rem; color: #718096; line-height: 1.5; margin-bottom: 20px;">
+                            {{ curso.descripcion|default:"Valida tus conocimientos técnicos y obtén certificación oficial."|truncatewords:15 }}
+                        </p>
+                        
+                        <div style="margin-top: auto; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f0f0f0; padding-top: 15px;">
+                            
+                            <div style="display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2;">
+                                <span style="text-decoration: line-through; color: #a0aec0; font-size: 0.85rem;">
+                                    $15.00 USD
+                                </span>
+                                <span style="font-weight: 800; color: #27ae60; font-size: 1.3rem;">
+                                    $5.00 USD
+                                </span>
+                            </div>
+                            <a href="{% url 'core:examen' curso.id %}" style="background: #1a365d; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: background 0.2s;"
+                            onmouseover="this.style.background='#2c5282'"
+                            onmouseout="this.style.background='#1a365d'">
+                                Iniciar
+                            </a>
+                        </div>
+                    </div>
                 </div>
             {% empty %}
                 <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #999; background: #f9f9f9; border-radius: 12px;">
-                    <p>Aún no hay certificaciones públicas. ¡Usa el buscador para crear la primera!</p>
+                    <p>Aún no hay certificaciones públicas. ¡Usa el buscador IA arriba!</p>
                 </div>
             {% endfor %}
         </div>
+        
+        <div style="height: 60px;"></div> 
     </div>
 
 {% endblock %}

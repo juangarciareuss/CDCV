@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 60px auto; text-align: center;">
+
+    <div style="font-size: 5rem; animation: bounce 1s infinite;">🏆</div>
+    
+    <h1 style="color: #28a745; font-size: 2.5rem; margin-bottom: 10px;">¡RETO SUPERADO!</h1>
+    <p style="font-size: 1.3rem; color: #555;">
+        Has demostrado dominio en <br>
+        <strong>{{ competencia.nombre }}</strong>
+    </p>
+
+    <div style="background: #fff3cd; border: 2px solid #ffeeba; padding: 20px; border-radius: 15px; margin: 30px 0;">
+        <h3 style="margin: 0; color: #856404;">🏅 Insignia Desbloqueada</h3>
+        <p style="margin: 5px 0 0;">Se ha añadido a tu perfil profesional.</p>
+    </div>
+
+    {% if curso_sugerido %}
+    <div style="background: white; border: 1px solid #ddd; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <p style="color: #666; font-size: 1.1rem;">
+            Ya tienes <strong>1 victoria</strong>. <br>
+            Completa las micro-competencias restantes para obtener tu:
+        </p>
+        
+        <h2 style="color: #0056b3; margin: 10px 0;">{{ curso_sugerido.nombre }}</h2>
+        
+        <div style="margin: 20px 0;">
+            <span style="text-decoration: line-through; color: #999;">$100.00 USD</span>
+            <span style="font-size: 1.5rem; font-weight: bold; color: #28a745; margin-left: 10px;">
+                ${{ curso_sugerido.precio_usd }} USD
+            </span>
+        </div>
+
+        <a href="{% url 'core:examen' curso_sugerido.id %}" style="display: inline-block; background: #0056b3; color: white; padding: 15px 40px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,91,187,0.3);">
+            👉 Ir por la Certificación Completa
+        </a>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 30px;">
+        <a href="{% url 'core:perfil_usuario' %}" style="color: #666;">Ver mi colección de insignias</a>
+    </div>
+
+</div>
+
+<style>
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+</style>
+{% endblock %}

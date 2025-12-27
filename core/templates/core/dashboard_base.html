@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Ingeniería CDCV</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div>
+            <h1>🚀 Control de Activos Digitales</h1>
+            <span style="font-size: 13px; color: #777;">Sistema de Gestión CDCV</span>
+        </div>
+        <a href="{% url 'core:homepage' %}" class="btn-home">⬅ Volver a la Web</a>
+    </div>
+
+    <nav class="dashboard-nav">
+        <a href="{% url 'core:dashboard_crear' %}" 
+           class="nav-tab {% if active_tab == 'crear' %}active{% endif %}">
+           🏭 Fábrica (Crear)
+        </a>
+
+        <a href="{% url 'core:dashboard_administrar' %}" 
+           class="nav-tab {% if active_tab == 'administrar' %}active{% endif %}">
+           📦 Bodega (Administrar)
+        </a>
+
+        <a href="{% url 'core:dashboard_usuarios' %}" 
+       class="nav-tab {% if active_tab == 'usuarios' %}active{% endif %}">
+       👥 Usuarios
+        </a>
+
+
+        </nav>
+
+    {% block dashboard_content %}
+    {% endblock %}
+
+</div>
+
+<script src="{% static 'core/js/dashboard.js' %}"></script>
+{% block extra_scripts %}{% endblock %}
+
+</body>
+</html>
