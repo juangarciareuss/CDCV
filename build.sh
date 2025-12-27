@@ -19,7 +19,7 @@ python manage.py migrate
 # Carga de datos de respaldo (solo si existe)
 if [ -f "datos_iniciales.json" ]; then
     echo "📦 Cargando datos de respaldo..."
-    python manage.py loaddata datos_iniciales.json
+    #python manage.py loaddata datos_iniciales.json
 fi
 
 # 5. Asegurar Superusuario
