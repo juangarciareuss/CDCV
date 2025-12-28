@@ -4,14 +4,15 @@ import base64
 import json
 import qrcode
 from django.db.models import Q
-from django.db.models import Count  # 👈 NUEVO IMPORT NECESARIO
+from django.db.models import Count
 from django.conf import settings
-from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
-from django.template.loader import render_to_string
 from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
 from core.models import Curso
+
 
 
 # 👇 AGREGAMOS MicroCompetencia AQUI
@@ -38,8 +39,18 @@ def homepage(request):
         num_preguntas=Count('preguntas_banco')
     ).filter(num_preguntas__gte=3).order_by('?')[:6]
 
-    # C. ESTADÍSTICAS
-    stats = analytics.obtener_stats_comerciales()
+    # C. ESTADÍSTICAS (CON PROTECCIÓN)
+    # Intentamos cargar las stats reales. Si falla (porque la DB está vacía), ponemos ceros.
+    try:
+        stats = analytics.obtener_stats_comerciales()
+    except Exception as e:
+        print(f"⚠️ Alerta: Analytics falló (normal si la DB es nueva): {e}")
+        # Datos 'dummy' para que el HTML no se rompa
+        stats = {
+            'total_alumnos': 0,
+            'cursos_completados': 0,
+            'satisfaccion_promedio': 100
+        }
 
     context = {
         "cursos": cursos,
