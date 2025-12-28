@@ -13,43 +13,45 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from core.models import Curso
 
-
-
 # 👇 AGREGAMOS MicroCompetencia AQUI
 from core.models import Curso, Examen, Certificado, InsigniaUsuario, MicroCompetencia
-from core.logic import analytics
+#from core.logic import analytics
 from agents.ai_services import CDCVOrchestrator
 
 # --- PÚBLICO (VITRINA COMERCIAL) ---
 def homepage(request):
     """
-    Portada Comercial Renovada ($300K Look):
-    1. Cursos: Productos principales (Certificaciones de pago).
-    2. Retos: Lead Magnets (Micro-Competencias jugables gratis).
+    Portada Comercial Renovada ($300K Look)
     """
     
-# A. LOS PRODUCTOS (Versión "Muéstralo todo")
-    # Quitamos .filter(activo=True) para probar
+    # A. LOS PRODUCTOS
     cursos = Curso.objects.all().order_by('nivel')
 
-    # B. EL GANCHO (Micro-Competencias listas para jugar)
-    # Filtramos solo las que tienen stock de preguntas >= 3
-    # Mostramos 6 al azar para dinamismo
-    retos = MicroCompetencia.objects.annotate(
-        num_preguntas=Count('preguntas_banco')
-    ).filter(num_preguntas__gte=3).order_by('?')[:6]
-
-    # C. ESTADÍSTICAS (CON PROTECCIÓN)
-    # Intentamos cargar las stats reales. Si falla (porque la DB está vacía), ponemos ceros.
+    # B. EL GANCHO (Micro-Competencias)
     try:
+        retos = MicroCompetencia.objects.annotate(
+            num_preguntas=Count('preguntas_banco')
+        ).filter(num_preguntas__gte=3).order_by('?')[:6]
+    except Exception:
+        # Si falla (ej: tabla no existe aún), mostramos lista vacía
+        retos = []
+
+    # C. ESTADÍSTICAS (CON IMPORTACIÓN TARDÍA Y SEGURA)
+    try:
+        # 1. Intentamos importar el archivo AQUÍ dentro
+        from core.logic import analytics
+        
+        # 2. Si importa bien, pedimos los datos
         stats = analytics.obtener_stats_comerciales()
+        
     except Exception as e:
-        print(f"⚠️ Alerta: Analytics falló (normal si la DB es nueva): {e}")
-        # Datos 'dummy' para que el HTML no se rompa
+        # 3. Si falla CUALQUIER cosa (No existe archivo, falta __init__, DB vacía, etc.)
+        # Imprimimos el error en la consola de Render para que lo veas, pero NO rompemos la web.
+        print(f"⚠️ Aviso: No se pudieron cargar las stats: {e}")
         stats = {
-            'total_alumnos': 0,
-            'cursos_completados': 0,
-            'satisfaccion_promedio': 100
+            "total_cursos": 0,
+            "total_examenes": 0,
+            "total_certificados": 0
         }
 
     context = {
