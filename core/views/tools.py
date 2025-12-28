@@ -27,11 +27,9 @@ def homepage(request):
     2. Retos: Lead Magnets (Micro-Competencias jugables gratis).
     """
     
-    # A. LOS PRODUCTOS (Cursos completos activos)
-    cursos = Curso.objects.filter(
-        estructura_examen__isnull=False, 
-        activo=True
-    ).order_by('nivel')
+# A. LOS PRODUCTOS (Versión "Muéstralo todo")
+    # Quitamos .filter(activo=True) para probar
+    cursos = Curso.objects.all().order_by('nivel')
 
     # B. EL GANCHO (Micro-Competencias listas para jugar)
     # Filtramos solo las que tienen stock de preguntas >= 3
