@@ -24,8 +24,10 @@ def homepage(request):
     Portada Comercial Renovada ($300K Look)
     """
     
-    # A. LOS PRODUCTOS
-    cursos = Curso.objects.all().order_by('nivel')
+    # A. LOS PRODUCTOS (SOLO ACTIVOS)
+    # 🔴 CORRECCIÓN: Usamos .filter(activo=True) en lugar de .all()
+    # Esto hace que si desmarcas el tic "Activo" en el admin (o lo borras), desaparezca de aquí.
+    cursos = Curso.objects.filter(activo=True).order_by('nivel')
 
     # B. EL GANCHO (Micro-Competencias)
     try:
@@ -46,7 +48,6 @@ def homepage(request):
         
     except Exception as e:
         # 3. Si falla CUALQUIER cosa (No existe archivo, falta __init__, DB vacía, etc.)
-        # Imprimimos el error en la consola de Render para que lo veas, pero NO rompemos la web.
         print(f"⚠️ Aviso: No se pudieron cargar las stats: {e}")
         stats = {
             "total_cursos": 0,
