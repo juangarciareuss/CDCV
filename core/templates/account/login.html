@@ -7,6 +7,35 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'core/css/auth.css' %}">
+    <style>
+        /* ESTILOS MANUALES PARA ASEGURAR VISIBILIDAD */
+        .manual-input {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border: 2px solid #cbd5e0 !important; /* Borde gris visible */
+            border-radius: 8px;
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            font-size: 16px;
+            box-sizing: border-box;
+            height: 50px; /* Altura forzada */
+        }
+        
+        .manual-input:focus {
+            border-color: #3182ce !important;
+            outline: none;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2d3748;
+            text-align: left;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -18,19 +47,56 @@
         <form class="login login-form" method="POST" action="{% url 'account_login' %}">
             {% csrf_token %}
             
-            {{ form.as_p }}
+            {% if form.non_field_errors %}
+                <div style="background: #fff5f5; border: 1px solid #fc8181; color: #c53030; padding: 10px; margin-bottom: 20px;">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="input-label">Correo o Usuario</label>
+                <input type="text" 
+                       name="login" 
+                       class="manual-input" 
+                       placeholder="Escribe tu correo aquí..." 
+                       required 
+                       id="id_login">
+                
+                {% if form.login.errors %}
+                    <div style="color: red; font-size: 0.8rem;">{{ form.login.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <label class="input-label">Contraseña</label>
+                    <a class="link-blue" href="{% url 'account_reset_password' %}" style="font-size: 0.8rem;">
+                        ¿Olvidaste?
+                    </a>
+                </div>
+                
+                <input type="password" 
+                       name="password" 
+                       class="manual-input" 
+                       placeholder="Escribe tu contraseña..." 
+                       required 
+                       id="id_password">
+
+                {% if form.password.errors %}
+                    <div style="color: red; font-size: 0.8rem;">{{ form.password.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <input type="checkbox" name="remember" id="id_remember" style="width: auto;">
+                <label for="id_remember" style="margin:0;">No cerrar sesión</label>
+            </div>
 
             {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
             {% endif %}
 
             <button class="btn-auth-primary" type="submit">{% trans "Iniciar Sesión" %}</button>
-            
-            <div class="auth-secondary-links" style="margin-bottom: 0;">
-                <a class="link-blue" href="{% url 'account_reset_password' %}" style="font-size: 0.9rem;">
-                    ¿Olvidaste tu contraseña?
-                </a>
-            </div>
         </form>
         
         {% get_providers as socialaccount_providers %}
@@ -48,13 +114,13 @@
                         <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
                         <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
                     </svg>
-                   Google
+                    Google
                 </a>
             {% endfor %}
         </div>
         {% endif %}
 
-         <div class="auth-secondary-links" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+        <div class="auth-secondary-links" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
             <p style="color: #718096;">¿Aún no tienes cuenta? <a href="{{ signup_url }}" class="link-blue">Regístrate aquí</a></p>
         </div>
     </div>

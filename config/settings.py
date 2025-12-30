@@ -63,7 +63,9 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': 
+            BASE_DIR / 'templates',         # 1. Busca aquí primero (Carpeta raíz)
+            
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -201,3 +203,14 @@ if os.environ.get('RENDER'):
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 else:
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+
+# =======================================================
+# ARREGLO DE EMERGENCIA PARA LOGIN LOCAL (EVITA ERROR 10061)
+# =======================================================
+
+# 1. Esto simula el servidor de correos.
+# En lugar de intentar enviarlo (y fallar), solo lo escribe en tu terminal negra.
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# 2. Esto asegura que no pida confirmación para entrar.
+ACCOUNT_EMAIL_VERIFICATION = 'none'

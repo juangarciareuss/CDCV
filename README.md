@@ -1,205 +1,196 @@
-CDCV (Certified Digital Competency Validation)
+📋 Inventario Maestro de Funcionalidades - CDCV
+Este documento actúa como el mapa de ruta técnico del proyecto. Cada funcionalidad está listada para ser verificada ([x]) a medida que se implementa y prueba.
 
-Estado del Proyecto: MVP Funcional (Fase de Pre-Lanzamiento)
-Visión: Democratizar la certificación de competencias mediante validación de mérito puro, automatizada por IA y accesible ($5 USD).
+🛠️ Módulo 1: Administración y Gestión de Contenido (Backoffice)
+Funciones para el administrador y la gestión de la "Fábrica de Cursos".
 
-# 1. Whitepaper / Resumen Ejecutivo
+[ ] Gestión de Cursos (CRUD Básico)
 
-CDCV es una plataforma global de certificación digital que permite a cualquier persona validar sus habilidades reales mediante exámenes automatizados y de bajo costo, sin necesidad de pagar cursos o instituciones tradicionales.
+[ ] Crear un nuevo curso (Título, Slug, Descripción, Nivel).
 
-Objetivo General
+[ ] Editar metadata básica del curso (Precio, Idioma, Estado Activo/Inactivo).
 
-Democratizar la certificación de competencias profesionales y prácticas, creando una alternativa masiva, rápida y accesible a las certificaciones tradicionales.
+[ ] Eliminar curso (Borrado lógico/Soft delete).
 
-Público Objetivo
+[ ] Visualizar lista de todos los cursos en el Admin.
 
-Usuarios de YouTube, freelancers, estudiantes autodidactas y empresas pequeñas que buscan validar habilidades sin grandes inversiones.
+[ ] Gestión de la Estructura del Examen
 
-Propuesta de Valor
+[ ] Definir JSON de reglas (Cantidad de preguntas, Tiempo límite, Nota aprobación).
 
-"Valida tu habilidad, no tu asistencia."
-CDCV certifica lo que sabes, no lo que pagas. A diferencia de las plataformas tradicionales que cobran por el contenido educativo, CDCV cobra únicamente por la validación rigurosa del conocimiento adquirido por cualquier medio.
+[ ] Validar sintaxis del JSON en el guardado.
 
-Estructura del Producto
+[ ] Gestión de Preguntas (Banco de Datos)
 
-Niveles: CDCV-A (Associate), CDCV-P (Professional), CDCV-M (Master).
+[ ] Crear pregunta manual (Enunciado, Opciones, Respuesta Correcta).
 
-Mecanismo: Exámenes automatizados, selección aleatoria de preguntas y certificados verificables en línea.
+[ ] Editar texto de una pregunta existente.
 
-Modelo de Negocio
+[ ] Asignar etiquetas/tags a una pregunta (Tema, Dificultad).
 
-Estrategia: "Probar Gratis, Pagar por Certificado" (Validación de resultados).
+[ ] Eliminar pregunta.
 
-Pricing: $5 USD base (Tier Express/Early Bird). Margen alto debido a costos variables mínimos.
+[ ] Ingesta Masiva (AI Factory)
 
-Crecimiento: "Founder-led Growth" (8h/día dedicadas a SEO Long-tail y Marketing de Contenidos).
+[ ] Script para importar curso completo desde JSON (importar_curso).
 
-Escalabilidad: Generación masiva de cursos mediante Agentes de IA (Fábrica de Contenido).
+[ ] Validación automática de duplicados al importar.
 
-Ventajas Competitivas
+[ ] Carga de imágenes asociadas a preguntas (si aplica).
 
-Costo: Ultra bajo comparado con certificaciones tradicionales ($5 vs $100+).
+🔐 Módulo 2: Identidad y Acceso (Auth)
+Funciones relacionadas con la seguridad y la cuenta del usuario.
 
-Automatización: Total, permitiendo escalabilidad infinita.
+[ ] Registro e Ingreso
 
-Flexibilidad: Enfoque multiidioma y temático (Trend-jacking de nuevas tecnologías el "Día 1").
+[ ] Registro de usuario con Correo y Contraseña.
 
-Visión a 12 Meses
+[ ] Login clásico (Email/Pass).
 
-Lograr una base de datos con +1,000 cursos y +100,000 preguntas, disponible en 5 idiomas, con un sistema de ranking global.
+[ ] Login Social con Google (OAuth2).
 
-# 2. Arquitectura Técnica
+[ ] Logout (Cierre de sesión seguro).
 
-Stack Tecnológico
+[ ] Gestión de Contraseñas
 
-Backend: Django 5.x (Python 3.12).
+[ ] Flujo de "Olvidé mi contraseña" (Solicitud de email).
 
-Base de Datos: SQLite (Dev) / PostgreSQL (Prod).
+[ ] Pantalla de establecimiento de nueva contraseña.
 
-Pagos: PayPal REST SDK (Configurado para pagos globales en USD).
+[ ] Seguridad
 
-Generación de Documentos: ReportLab (PDF) + Qrcode.
+[ ] Verificación de correo electrónico (Código o Link).
 
-Infraestructura: Listo para despliegue en Railway/Render (Gunicorn + Whitenoise configurados).
+[ ] Protección CSRF en todos los formularios.
 
-Modelos de Datos Clave (core/models.py)
+[ ] Bloqueo de rutas protegidas (@login_required).
 
-Curso: Contiene la metadata y una estructura JSON opcional (estructura_examen) para recetas de generación complejas.
+🛍️ Módulo 3: Vitrina y Compra (Marketplace)
+Funciones visibles para el usuario antes de tomar el examen.
 
-Pregunta: Vinculada a Curso. Soporta estructura JSON para opciones (A, B, C, D) y justificación. Incluye metadatos de dificultad y tags.
+[ ] Navegación Pública
 
-Examen: Registra el intento del usuario. Almacena el snapshot de las preguntas usadas (preguntas_set) y las respuestas del usuario.
+[ ] Homepage con listado de cursos destacados/nuevos.
 
-Certificado: Se genera SOLO tras un pago exitoso. Vinculado 1:1 con un Examen aprobado. Genera un UUID único para validación pública.
+[ ] Buscador de cursos por palabra clave.
 
-# 3. Estado Funcional (Features)
+[ ] Filtros por Categoría, Nivel o Precio.
 
-✅ Autenticación: Login/Logout nativo de Django. Vistas protegidas con @login_required.
+[ ] Detalle del Producto
 
-✅ Motor de Exámenes: Selección aleatoria de preguntas (Logic en utils.py). Cálculo automático de puntaje.
+[ ] Página de detalle del curso (Descripción, qué incluye, precio).
 
-✅ Flujo de Pago (PayPal):
+[ ] Visualización de temario o habilidades a validar.
 
-Integración con PayPal Sandbox (probada y funcional).
+[ ] Pasarela de Pagos (PayPal)
 
-Manejo de moneda USD.
+[ ] Botón de pago dinámico (SDK PayPal).
 
-Webhooks/Redirección para confirmación de pago (pago_exitoso).
+[ ] Procesamiento de respuesta exitosa (Webhook/Return URL).
 
-✅ Emisión de Certificados:
+[ ] Manejo de errores de pago o cancelaciones.
 
-Generación de PDF con nombre, curso, fecha y ID.
+[ ] Generación de registro de "Orden de Compra" en BD.
 
-Generación de código QR incrustado que apunta a la URL de validación.
+📝 Módulo 4: Motor de Exámenes (Core)
+La experiencia principal de evaluación.
 
-✅ Validación Pública: URL pública /verificar/<uuid>/ que muestra la autenticidad del certificado sin requerir login.
+[ ] Inicialización
 
-✅ Ingesta de Contenido: Scripts de gestión (importar_curso) para cargar cursos masivamente desde archivos JSON estandarizados.
+[ ] Verificación de elegibilidad (¿Pagó el usuario?).
 
-# 4. Instrucciones de Instalación y Uso
+[ ] Generación de intento de examen (Snapshot de preguntas aleatorias).
 
-Configuración Local
+[ ] Pantalla de instrucciones y bienvenida al examen.
 
-Clonar repositorio.
+[ ] Ejecución (Runtime)
 
-Crear entorno virtual: python -m venv venv.
+[ ] Renderizado de pregunta (Texto + Opciones).
 
-Instalar dependencias: pip install -r requirements.txt.
+[ ] Mecanismo de selección de respuesta (Radio buttons).
 
-Configurar variables de entorno: Crear archivo .env con SECRET_KEY, PAYPAL_CLIENT_ID y PAYPAL_CLIENT_SECRET.
+[ ] Navegación entre preguntas (Siguiente/Anterior - Opcional).
 
-Migrar DB: python manage.py migrate.
+[ ] Guardado temporal de respuestas (para evitar pérdida por desconexión).
 
-Crear Superusuario: python manage.py createsuperuser.
+[ ] Cronómetro / Temporizador visual (Cuenta regresiva).
 
-Carga de Datos (Fábrica de Contenido)
+[ ] Forzar envío automático al agotarse el tiempo.
 
-El sistema utiliza scripts para ingestar cursos generados por IA.
-Ejemplo:
+[ ] Cierre y Cálculos
 
-python manage.py importar_curso cursos_json/powerbi_avanzado.json
+[ ] Cálculo de puntaje final (Score).
 
+[ ] Determinación de estado (Aprobado/Reprobado).
 
-Ejecución
+[ ] Guardado de intento finalizado en BD.
 
-python manage.py runserver
+📜 Módulo 5: Certificación y Resultados
+El valor entregable al usuario.
 
+[ ] Visualización de Resultados
 
-# 5. Roadmap Inmediato (Siguientes Pasos)
+[ ] Pantalla de feedback inmediato (Nota obtenida).
 
-Despliegue (Día 1): Subir a Railway/Render y conectar dominio (cdcv.io).
+[ ] Detalle de respuestas correctas/incorrectas (Opcional según configuración).
 
-Go-Live: Cambiar credenciales de PayPal a LIVE en variables de entorno.
+[ ] Generación de Documentos
 
-Marketing: Primera venta orgánica (LinkedIn/Reddit).
+[ ] Generar PDF del certificado (Diseño corporativo).
 
-Fase 2 (IA Autónoma): Implementar core/ai_factory/agent_factory.py para automatizar la creación de JSONs de cursos (Agentes Estratega, Constructor y Auditor).
+[ ] Incrustar datos dinámicos (Nombre, Fecha, ID Único).
 
-## 6. Plan Maestro Económico: Roadmap a $300k ARR
+[ ] Generar código QR único apuntando a validación.
 
-Este plan proyecta el crecimiento financiero para los primeros 12 meses de operación, fundamentado en tres pilares de escalabilidad tecnológica que rompen la linealidad tradicional:
+[ ] Validación Pública
 
-1.  **Hiper-Escalabilidad de Contenido (Agentización):** Uso de agentes autónomos para pasar de 3 cursos a +1,000 cursos sin intervención humana directa.
-2.  **Multiplicador Lingüístico:** Traducción y adaptación automática simultánea a 3 idiomas clave (Español, Inglés, Portugués), triplicando el mercado objetivo instantáneamente.
-3.  **Base de Datos Infinita:** Generación procedimental de millones de preguntas únicas, eliminando el riesgo de plagio y permitiendo re-intentos ilimitados para el usuario.
+[ ] Ruta pública /verificar/<uuid>.
 
-### Hipótesis de Ingresos
-* **Ticket Promedio Inicial:** $5 USD (Validación Masiva).
-* **Ticket Promedio Fase 2:** $29 USD (Certificación Pro/Especializada).
-* **Margen Operativo:** ~95% (Costos de servidor fijos, costo de creación de producto cercano a $0 por la IA).
+[ ] Vista de validación (Muestra: "Este certificado es legítimo").
 
-### Proyección Mensual - Año 1 (Fase de Arranque y Escalamiento)
+[ ] Manejo de error para UUIDs inexistentes.
 
-El objetivo es cerrar el Mes 12 con una facturación recurrente mensual (MRR) de **$25,000 USD**, lo que anualizado equivale al objetivo de **$300,000 USD**.
+👤 Módulo 6: Panel de Usuario (Dashboard)
+El espacio personal del cliente.
 
-| Mes | Fase | Acción Estratégica Clave (Agentes & Tech) | Catálogo (Cursos x Idiomas) | Ventas Est. / Mes | Ingresos Proyectados |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **1** | Semilla | Despliegue de MVP. Ajuste manual de pasarela de pagos. | 10 (Esp) | 20 | **$100** |
-| **2** | Calibración | **Activación Agente Creador**. Primeros 50 cursos generados por IA (Excel, Python, SQL). | 50 (Esp) | 100 | **$500** |
-| **3** | Tracción | Indexación SEO inicial. Campañas orgánicas en redes. | 100 (Esp) | 300 | **$1,500** |
-| **4** | **Expansión** | **Activación Agente Traductor**. Lanzamiento en Inglés (USA/India/Europa). | 300 (100 x 3 Idiomas) | 800 | **$4,000** |
-| **5** | Escala 1 | Agentes operando 24/7 generando nichos (Frameworks JS, AWS, Azure). | 600 (200 x 3 Idiomas) | 1,200 | **$6,000** |
-| **6** | Escala 2 | Optimización de conversión. Inicio de captación B2B pequeña. | 900 (300 x 3 Idiomas) | 1,800 | **$9,000** |
-| **7** | **Pro Tier** | **Lanzamiento Certificaciones Pro ($29 USD)**. Validación de identidad básica. | 1,500 (Total activos) | 2,000 (Std) + 100 (Pro) | **$12,900** |
-| **8** | Dominio | Cobertura total de tecnologías "Trending" en GitHub. | 2,400 Activos | 2,500 (Std) + 200 (Pro) | **$18,300** |
-| **9** | Automatización | El sistema se auto-mantiene. Agente Auditor mejora calidad de preguntas. | 3,000 Activos | 3,000 (Std) + 300 (Pro) | **$23,700** |
-| **10**| Optimización | Refinamiento de UX. Retención de usuarios (Upselling). | 3,600 Activos | 3,200 (Std) + 350 (Pro) | **$26,150** |
-| **11**| Consolidación | Expansión a Portugués (Brasil). Mercado LATAM dominado. | 4,500 Activos | 3,500 (Std) + 400 (Pro) | **$29,100** |
-| **12**| **Éxito** | **Máquina de Ventas Autónoma**. Foco en Enterprise API. | **+5,000 Activos** | **4,000 (Std) + 500 (Pro)** | **$34,500** |
+[ ] Mi Perfil
 
-**Resultado al final del Año 1:**
-* **Run Rate Anualizado:** ~$414,000 USD.
-* **Activos Digitales:** +5,000 exámenes únicos generando tráfico pasivo.
-* **Base de Datos:** +500,000 preguntas generadas y auditadas por IA.
+[ ] Editar datos personales (Nombre para el diploma).
 
----
+[ ] Ver historial de compras.
 
-## 7. Arquitectura de "Agentización" (AI Workforce)
+[ ] Mis Certificaciones
 
-Para sostener la proyección económica anterior, CDCV no contrata personal humano para la creación de contenido. Emplea una fuerza de trabajo digital (Agentes) orquestada en Python.
+[ ] Listado de exámenes aprobados.
 
-### El Ecosistema de Agentes
+[ ] Botón para descargar PDF nuevamente.
 
-1.  **Agente Radar (Trend Scout):**
-    * Monitoriza APIs de StackOverflow, GitHub Trending y Google Trends.
-    * Detecta demanda: *"Surgió una nueva librería de Python 'FastUI'. No hay certificaciones aún."*
-    * Acción: Ordena la creación inmediata del curso.
+[ ] Botón para compartir en LinkedIn (Enlace directo).
 
-2.  **Agente Arquitecto (Curriculum Builder):**
-    * Diseña el temario basado en la documentación oficial de la tecnología detectada.
-    * Estructura niveles: Junior, Ssr, Senior.
+⚙️ Módulo 7: Sistema e Infraestructura
+Configuraciones técnicas y mantenimiento.
 
-3.  **Agente Generador (The Factory):**
-    * Genera miles de preguntas en formato JSON.
-    * Crea variantes de la misma pregunta para evitar memorización.
-    * Genera el código de justificación (Feedback educativo).
+[ ] Configuración
 
-4.  **Agente Políglota (Localization):**
-    * Toma el JSON maestro y lo adapta cultural y lingüísticamente a EN, ES, PT.
-    * No traduce literalmente; adapta el contexto técnico.
+[ ] Variables de entorno separadas (Dev/Prod).
 
-5.  **Agente Auditor (QA & Fact-Checking):**
-    * Ejecuta los snippets de código generados en un entorno sandbox aislado.
-    * Si el código da error, descarta la pregunta. Si compila/ejecuta correctamente, aprueba el pase a Producción.
+[ ] Configuración de Base de Datos (SQLite/Postgres).
 
-> **Nota:** Esta arquitectura permite que CDCV sea la plataforma más rápida del mundo en ofrecer certificaciones para nuevas tecnologías, llegando al mercado días después de que una tecnología es lanzada (Time-to-Market récord).
+[ ] Configuración de Archivos Estáticos (Whitenoise).
+
+[ ] Monitoreo y Analytics
+
+[ ] Dashboard simple de métricas (Total ventas, Tasa de aprobación).
+
+[ ] Registro de logs de errores (Sentry o logs nativos).
+
+🚀 Futuras Implementaciones (Roadmap IA)
+Funciones pendientes para la Fase 2 (Agentización).
+
+[ ] Agente Radar: Detector de tendencias en GitHub/StackOverflow.
+
+[ ] Agente Constructor: Generador automático de JSON de preguntas.
+
+[ ] Agente Auditor: Validador de código en Sandbox.
+
+[ ] Sistema Multi-idioma (i18n) para la interfaz.
