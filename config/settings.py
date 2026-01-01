@@ -13,9 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Lee la llave secreta desde el archivo .env. Si no existe (prod), falla o usa default.
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-clave-por-defecto-para-dev')
 
-# DEBUG:
-# Borra el if 'RENDER'... y pon esto:
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = True
 
 # HOSTS PERMITIDOS:
 # En producción, esto debe incluir tu dominio (ej. 'cdcv.onrender.com').
@@ -63,9 +61,9 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': 
-            BASE_DIR / 'templates',         # 1. Busca aquí primero (Carpeta raíz)
-            
+        'DIRS': [
+            BASE_DIR / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -105,9 +103,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'es'
-TIME_ZONE = 'UTC'
+# Cambia 'UTC' por tu zona horaria real
+TIME_ZONE = 'America/Santiago'
 USE_I18N = True
 USE_TZ = True
+
 
 # --- ARCHIVOS ESTÁTICOS (CRÍTICO PARA PRODUCCIÓN) ---
 STATIC_URL = 'static/'
@@ -132,23 +132,35 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Modelo de Usuario Personalizado
 AUTH_USER_MODEL = 'core.Usuario'
 
-# --- Configuración de PayPal ---
-import paypalrestsdk
+import os
+import paypalrestsdk  # Asegúrate de tener: pip install paypalrestsdk
 
-PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
-PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET')
-# Si estamos en Render, asumimos producción (live), si no, sandbox.
-# Opcional: puedes controlarlo con una variable PAYPAL_MODE en el .env
-PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')
+# --- CONFIGURACIÓN PAYPAL INTELIGENTE ---
 
-if PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET:
-    paypalrestsdk.configure({
-        "mode": PAYPAL_MODE,
-        "client_id": PAYPAL_CLIENT_ID,
-        "client_secret": PAYPAL_CLIENT_SECRET
-    })
+# Render inyecta automáticamente la variable 'RENDER', así sabemos si es prod.
+IN_PRODUCTION = os.environ.get('RENDER', False)
+
+# CONFIGURACION PAYPAL
+if IN_PRODUCTION:
+    # 🔴 MODO LIVE (Dinero Real)
+    PAYPAL_MODE = 'live'
+    # En Render, configurarás estas variables en el panel "Environment"
+    PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_LIVE_CLIENT_ID')
+    PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_LIVE_SECRET')
 else:
-    print("ADVERTENCIA: Credenciales de PayPal no encontradas en variables de entorno.")
+    # 🟢 MODO SANDBOX (Pruebas Local)
+    PAYPAL_MODE = 'sandbox'
+    # Lee de tu archivo .env local
+    PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_SANDBOX_CLIENT_ID')
+    PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_SANDBOX_CLIENT_SECRET')
+
+# ¡ESTA ES LA PARTE QUE FALTABA!
+# Inicializamos el SDK con los datos obtenidos
+paypalrestsdk.configure({
+    "mode": PAYPAL_MODE,  # sandbox o live
+    "client_id": PAYPAL_CLIENT_ID,
+    "client_secret": PAYPAL_CLIENT_SECRET 
+})
 
 # --- CONFIGURACIÓN DE LOGIN SOCIAL (ALLAUTH) ---
 SITE_ID = 1
@@ -184,6 +196,8 @@ ACCOUNT_USERNAME_REQUIRED = False
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
+# Permite que al hacer clic en el enlace de Google vaya directo sin la página intermedia
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # 4. Verificación
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
@@ -193,7 +207,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_ADAPTER = 'core.adapters.MySocialAccountAdapter'
 
 # 6. Redirecciones
-LOGIN_REDIRECT_URL = 'core:homepage'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = 'core:homepage'
 LOGIN_URL = 'account_login'
 
