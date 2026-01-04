@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.forms import modelformset_factory, NumberInput  # <--- NUEVO: Para la tabla de precios
 from core.models import Curso, Usuario
 from core.logic import analytics
 
-# Importamos el Agente (Asegúrate que la ruta sea correcta según tu estructura)
-# Si usas Orchestrator, importa CDCVOrchestrator. Si usas directo el Agente:
+# Importamos el Agente
 from agents.builder_agent import BuilderAgent 
 
 # --- PESTAÑA 1: LA FÁBRICA (Crear) ---
@@ -13,7 +13,6 @@ from agents.builder_agent import BuilderAgent
 def dashboard_crear(request):
     """
     Vista para invocar al Agente IA y crear nuevos cursos.
-    Ahora soporta NIVEL DE DIFICULTAD (1-5).
     """
     if not request.user.is_staff: return redirect('core:homepage')
 
@@ -39,7 +38,6 @@ def dashboard_crear(request):
                 agente = BuilderAgent()
                 
                 # 3. PASAMOS EL NIVEL A LA FUNCIÓN DE CONSTRUCCIÓN
-                # Esto activará el prompt específico (Maestro vs Experto)
                 resultado = agente.construir_curso(nicho, nivel_dificultad=nivel) 
                 
                 # Mensaje de éxito con detalles
@@ -62,8 +60,7 @@ def dashboard_crear(request):
 @login_required
 def dashboard_administrar(request):
     """
-    Lista los cursos y permite editar la cantidad total de preguntas del examen
-    directamente desde la tabla (Lógica de redistribución proporcional).
+    Lista los cursos y permite editar la cantidad total de preguntas.
     """
     if not request.user.is_staff: return redirect('core:homepage')
     
@@ -103,7 +100,7 @@ def dashboard_administrar(request):
             # 5. Guardar cambios en la BD
             config['reglas_seleccion'] = reglas
             curso.estructura_examen = config
-            curso.cantidad_preguntas = nuevo_total # Actualizamos el contador global también
+            curso.cantidad_preguntas = nuevo_total
             curso.save()
             
             messages.success(request, f"✅ Curso '{curso.nombre}' actualizado a {nuevo_total} preguntas.")
@@ -116,7 +113,6 @@ def dashboard_administrar(request):
         return redirect('core:dashboard_administrar')
 
     # --- GET: MOSTRAR TABLA ---
-    # Mostramos cursos ordenados por creación reciente
     cursos = Curso.objects.filter(activo=True).order_by('-created_at')
     
     return render(request, 'core/dashboard_administrar.html', {
@@ -125,7 +121,52 @@ def dashboard_administrar(request):
     })
 
 
-# --- PESTAÑA 3: DASHBOARD LEGACY (KPIs) ---
+# --- PESTAÑA 3: CONFIGURACIÓN DE PRECIOS (NUEVA FUNCIONALIDAD) ---
+@login_required
+def dashboard_precios(request):
+    """
+    Permite editar masivamente el precio (USD) de todos los cursos activos.
+    Usa un ModelFormSet para crear una tabla editable.
+    """
+    if not request.user.is_staff: return redirect('core:homepage')
+
+    # 1. Definimos la 'Fábrica de Formularios' (FormSet)
+    # Esto le dice a Django: "Quiero editar el campo 'precio_usd' de muchos Cursos a la vez"
+    PrecioFormSet = modelformset_factory(
+        Curso,
+        fields=('precio_usd',),  # Asegúrate de que este campo exista en tu models.py
+        extra=0,                 # No mostrar filas vacías para crear nuevos
+        widgets={
+            'precio_usd': NumberInput(attrs={
+                'class': 'border border-gray-300 rounded px-3 py-2 w-32 text-right focus:ring-blue-500 focus:border-blue-500',
+                'step': '0.01',  # Permite decimales
+                'min': '0.50'    # Precio mínimo de seguridad
+            })
+        }
+    )
+
+    # 2. Procesar Guardado (POST)
+    if request.method == 'POST' and 'btn_actualizar_precios' in request.POST:
+        formset = PrecioFormSet(request.POST)
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, "💰 ¡Precios actualizados correctamente para todos los cursos!")
+            return redirect('core:dashboard_precios') # Recarga limpia (PRG pattern)
+        else:
+            messages.error(request, "❌ Error al guardar. Revisa que los valores sean números válidos.")
+
+    # 3. Cargar Datos (GET)
+    # Solo mostramos cursos activos, ordenados por nombre para facilitar la búsqueda
+    queryset = Curso.objects.filter(activo=True).order_by('nombre')
+    formset_precios = PrecioFormSet(queryset=queryset)
+
+    return render(request, 'core/dashboard_precios.html', {
+        'formset_precios': formset_precios,
+        'active_tab': 'precios'  # Identificador para resaltar la pestaña en el HTML
+    })
+
+
+# --- PESTAÑA 4: DASHBOARD LEGACY (KPIs) ---
 @login_required
 def dashboard_kpi(request):
     if not request.user.is_staff: return redirect('core:homepage')
@@ -134,7 +175,7 @@ def dashboard_kpi(request):
     return render(request, "core/dashboard.html", data)
 
 
-# --- PESTAÑA 4: USUARIOS ---
+# --- PESTAÑA 5: USUARIOS ---
 @login_required
 def dashboard_usuarios(request):
     if not request.user.is_staff: return redirect('core:homepage')

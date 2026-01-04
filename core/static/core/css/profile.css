@@ -9,24 +9,21 @@
     padding: 30px;
     border-radius: 12px;
     border: 1px solid #E2E8F0;
-    border-left: 5px solid #D4AF37; /* Acento Dorado */
+    border-left: 5px solid #D4AF37; /* Dorado */
     box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .profile-info h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: #1A202C;
     margin: 0;
-}
-
-.profile-info p {
-    color: #718096;
-    margin-top: 5px;
-    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .profile-stats {
@@ -34,134 +31,167 @@
     gap: 30px;
 }
 
-.stat-box {
-    text-align: center;
-}
+.stat-box { text-align: center; }
 .stat-number {
     display: block;
     font-size: 1.8rem;
     font-weight: 800;
-    color: #0056D2; /* Azul Corporativo */
+    color: #0056D2;
 }
 .stat-label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #A0AEC0;
     text-transform: uppercase;
+    font-weight: 700;
     letter-spacing: 1px;
-    font-weight: 600;
 }
 
-/* --- Secciones de Contenido (Tarjetas) --- */
-.section-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 25px;
-    border: 1px solid #E2E8F0;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    margin-bottom: 30px;
-}
-
+/* --- Títulos de Sección --- */
 .section-title {
-    font-size: 1.4rem;
-    color: #2D3748;
+    font-size: 1.2rem;
+    color: #4A5568;
     margin-bottom: 20px;
-    border-bottom: 2px solid #F7FAFC;
-    padding-bottom: 15px;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
-/* --- Tablas Profesionales --- */
-.table-container {
-    overflow-x: auto; /* Para móviles */
+/* --- NUEVO DISEÑO: Grid de Credenciales --- */
+.credentials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Tarjetas más compactas */
+    gap: 25px;
+    margin-bottom: 50px;
 }
 
-.custom-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+/* --- La Tarjeta de Certificado (Estilo Limpio) --- */
+.credential-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.custom-table th {
-    text-align: left;
-    padding: 15px;
-    background-color: #F8FAFC;
-    color: #64748B;
+.credential-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 86, 210, 0.08);
+    border-color: #BEE3F8;
+}
+
+/* Icono circular superior */
+.credential-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #fff 0%, #F7FAFC 100%);
+    border: 1px solid #E2E8F0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+}
+
+.credential-title {
+    font-size: 1.1rem;
     font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    border-bottom: 2px solid #E2E8F0;
+    color: #2D3748;
+    margin-bottom: 5px;
+    line-height: 1.4;
 }
 
-.custom-table td {
-    padding: 15px;
-    border-bottom: 1px solid #EDF2F7;
+.credential-meta {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-bottom: 20px;
+}
+
+/* Botón de descarga sutil */
+.btn-download-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #F7FAFC;
     color: #4A5568;
-    font-size: 0.95rem;
-    vertical-align: middle;
+    transition: all 0.2s;
+    text-decoration: none;
+    border: 1px solid #EDF2F7;
 }
 
-.custom-table tr:last-child td {
-    border-bottom: none;
+.btn-download-icon:hover {
+    background-color: #0056D2;
+    color: white;
+    border-color: #0056D2;
+    transform: scale(1.1);
 }
 
-.custom-table tr:hover {
-    background-color: #FAFAFA;
+/* Etiqueta de "Verificado" pequeña */
+.verified-tag {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1rem;
+    color: #D4AF37; /* Estrella dorada */
 }
 
-/* --- Badges (Etiquetas de Estado) --- */
-.badge {
-    padding: 6px 12px;
-    border-radius: 20px;
+/* --- Tablas y Listas Secundarias --- */
+.section-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden; /* Para que la tabla no se salga */
+}
+
+.custom-table { width: 100%; border-collapse: collapse; }
+.custom-table th {
+    background: #F8FAFC;
+    text-align: left;
+    padding: 12px 20px;
     font-size: 0.75rem;
+    color: #718096;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.custom-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #EDF2F7;
+    font-size: 0.9rem;
+    color: #4A5568;
+}
+.custom-table tr:last-child td { border-bottom: none; }
+
+/* Badges */
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
-    display: inline-block;
 }
+.badge-success { background: #F0FFF4; color: #276749; }
+.badge-fail { background: #FFF5F5; color: #C53030; }
 
-.badge-success {
-    background-color: #E6FFFA;
-    color: #2C7A7B; /* Verde profesional */
-    border: 1px solid #B2F5EA;
-}
-
-.badge-fail {
-    background-color: #FFF5F5;
-    color: #C53030; /* Rojo suave */
-    border: 1px solid #FED7D7;
-}
-
-/* --- Botones de Acción en Tabla --- */
-.btn-action-gold {
-    color: #D69E2E; /* Dorado oscuro para texto */
-    font-weight: 600;
-    text-decoration: none;
-    padding: 5px 10px;
-    border: 1px solid #D69E2E;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    transition: all 0.2s;
-}
-
-.btn-action-gold:hover {
-    background-color: #D69E2E;
-    color: #fff;
-}
-
-.btn-action-blue {
-    color: #0056D2;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-.btn-action-blue:hover {
-    text-decoration: underline;
-}
-
-/* --- Estado Vacío --- */
+/* Empty States */
 .empty-state {
     text-align: center;
     padding: 40px;
     color: #A0AEC0;
+    font-style: italic;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .profile-header { flex-direction: column; text-align: center; gap: 20px; }
+    .grid-secondary { grid-template-columns: 1fr !important; }
 }

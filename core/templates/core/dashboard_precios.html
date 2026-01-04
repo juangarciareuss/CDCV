@@ -1,0 +1,122 @@
+{% extends 'core/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Configuración de Precios - CDCV{% endblock %}
+
+{% block dashboard_content %}
+
+    <div style="background: var(--card-bg); padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-left: 5px solid var(--primary);">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <div>
+                <h2 style="margin-top: 0; color: var(--text-main);">💰 Gestión de Precios</h2>
+                <p style="color: var(--text-muted); margin: 0;">Define el valor comercial (USD) para cada certificación.</p>
+            </div>
+            
+            <button type="submit" form="form-precios" 
+                    style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: opacity 0.2s;">
+                💾 Guardar Cambios
+            </button>
+        </div>
+
+        <form method="POST" id="form-precios">
+            {% csrf_token %}
+            {{ formset_precios.management_form }}
+
+            <div class="table-card" style="box-shadow: none; border: 1px solid #dde2e6;">
+                <table class="main-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Curso / Certificación</th>
+                            <th style="width: 20%; text-align: center;">Nivel</th>
+                            <th style="width: 40%; text-align: right;">Precio Venta (USD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset_precios %}
+                            {% for hidden in form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                            
+                            <tr>
+                                <td>
+                                    <span class="course-name">{{ form.instance.nombre }}</span>
+                                    <span style="font-size: 11px; color: #999;">ID: {{ form.instance.id }}</span>
+                                </td>
+                                
+                                <td style="text-align: center; vertical-align: middle;">
+                                    {% if form.instance.nivel_dificultad == 1 %}
+                                        <span class="badge" style="background: #e6fffa; color: #2c7a7b;">Principiante</span>
+                                    {% elif form.instance.nivel_dificultad == 5 %}
+                                        <span class="badge" style="background: #faf5ff; color: #6b46c1;">Experto</span>
+                                    {% else %}
+                                        <span class="badge" style="background: #ebf8ff; color: #2b6cb0;">Nivel {{ form.instance.nivel_dificultad }}</span>
+                                    {% endif %}
+                                </td>
+
+                                <td style="text-align: right; vertical-align: middle;">
+                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+                                        <span style="font-weight: bold; color: var(--text-muted); font-size: 16px;">$</span>
+                                        
+                                        <div class="input-price-wrapper">
+                                            {{ form.precio_usd }}
+                                        </div>
+                                    </div>
+                                    {% if form.precio_usd.errors %}
+                                        <div style="color: var(--danger); font-size: 11px; margin-top: 4px;">
+                                            {{ form.precio_usd.errors }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    No hay cursos activos para configurar.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 20px; text-align: right;">
+                <button type="submit" name="btn_actualizar_precios" 
+                        style="background: var(--success); color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px; box-shadow: 0 4px 6px rgba(40,167,69,0.2);">
+                    💾 Confirmar Precios
+                </button>
+            </div>
+        </form>
+
+        {% if messages %}
+            <div style="margin-top: 30px;">
+                {% for message in messages %}
+                    <div style="padding: 15px; border-radius: 6px; margin-bottom: 10px; font-weight: 500; font-size: 14px;
+                        {% if message.tags == 'success' %}background: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% else %}background: #fff5f5; color: #c53030; border: 1px solid #fc8181;{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    </div>
+
+    <style>
+        .input-price-wrapper input {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            width: 120px;
+            text-align: right;
+            font-weight: bold;
+            color: var(--text-main);
+            font-family: inherit;
+        }
+        .input-price-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+    </style>
+
+{% endblock %}

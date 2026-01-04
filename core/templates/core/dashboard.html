@@ -1,30 +1,23 @@
+{% extends 'core/dashboard_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Ingeniería CDCV</title>
-    
-    <meta name="csrf-token" content="{{ csrf_token }}">
 
-    <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
-</head>
-<body>
+{% block title %}Panel de Ingeniería - CDCV{% endblock %}
 
-<div class="container">
-    <div class="header">
-        <div>
-            <h1>🚀 Control de Activos Digitales</h1>
-            <span style="font-size: 13px; color: #777;">Monitor de Disponibilidad de Exámenes</span>
-        </div>
-        <a href="{% url 'core:homepage' %}" class="btn-home">⬅ Volver a la Web</a>
-    </div>
+{% block dashboard_content %}
 
     <div class="stats-grid">
-        <div class="stat-card"><h2>{{ total_preguntas }}</h2><p>Preguntas Totales</p></div>
-        <div class="stat-card" style="border-color: var(--success);"><h2>{{ total_cursos }}</h2><p>Cursos Activos</p></div>
-        <div class="stat-card" style="border-color: var(--warning);"><h2>{{ total_certificados }}</h2><p>Certificados</p></div>
+        <div class="stat-card">
+            <h2>{{ total_preguntas }}</h2>
+            <p>Preguntas Totales</p>
+        </div>
+        <div class="stat-card" style="border-color: var(--success);">
+            <h2>{{ total_cursos }}</h2>
+            <p>Cursos Activos</p>
+        </div>
+        <div class="stat-card" style="border-color: var(--warning);">
+            <h2>{{ total_certificados }}</h2>
+            <p>Certificados</p>
+        </div>
     </div>
 
     <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px; border-left: 5px solid #6a11cb;">
@@ -50,7 +43,7 @@
                     <th style="width: 40%;">Cobertura</th>
                     <th style="width: 25%;">Estado</th>
                     <th style="width: 10%;">Activo</th>
-                    <th style="width: 10%;">Acciones</th> </tr>
+                    <th style="width: 10%;">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -109,70 +102,71 @@
                         </label>
                     </td>
 
-                <td style="text-align: center;">
-                    <button 
-                        onclick="eliminarCurso('{{ curso.id }}', '{{ curso.nombre|escapejs }}')"
-                        style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"
-                        title="Eliminar Curso permanentemente">
-                        🗑️
-                    </button>
-                </td>
-                
-                
+                    <td style="text-align: center;">
+                        <button 
+                            onclick="eliminarCurso('{{ curso.id }}', '{{ curso.nombre|escapejs }}')"
+                            style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"
+                            title="Eliminar Curso permanentemente">
+                            🗑️
+                        </button>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" style="text-align:center; padding: 40px;">No hay datos disponibles.</td>
+                    <td colspan="5" style="text-align:center; padding: 40px;">No hay datos disponibles.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-</div>
 
-<script src="{% static 'core/js/dashboard.js' %}"></script>
+    <script src="{% static 'core/js/dashboard.js' %}"></script>
+    <script>
+        // Lógica de eliminación usando el token del base.html
+        function eliminarCurso(id, nombre) {
+            if(!confirm(`⚠️ ¿Estás SEGURO de eliminar el curso "${nombre}"?\n\nEsta acción borrará:\n- El curso\n- Sus preguntas\n- Los exámenes de usuarios vinculados.`)) {
+                return;
+            }
 
-</body>
-</html>
+            // Buscamos el token CSRF (El meta tag está en dashboard_base.html)
+            const metaToken = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = metaToken ? metaToken.getAttribute('content') : '';
 
-<script>
-    // Esta función lee el token que dejaste en el <head>
-    function eliminarCurso(id, nombre) {
-        if(!confirm(`⚠️ ¿Estás SEGURO de eliminar el curso "${nombre}"?\n\nEsta acción borrará:\n- El curso\n- Sus preguntas\n- Los exámenes de usuarios vinculados.`)) {
-            return;
+            fetch(`/dashboard/eliminar-curso/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    alert("🗑️ Curso eliminado correctamente.");
+                    location.reload();
+                } else {
+                    alert("❌ Error: " + data.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error al intentar eliminar. Revisa la consola (F12) para detalles.");
+            });
         }
+        
+        // Lógica de creación rápida (Redirige a la pestaña de creación con el parámetro)
+        function crearCursoNuevo() {
+            const nicho = document.getElementById('inputNicho').value;
+            if(!nicho) { alert("Escribe un tema primero"); return; }
+            
+            // Redirige a la vista de creación pasando el nicho por URL
+            window.location.href = "{% url 'core:dashboard_crear' %}?nicho=" + encodeURIComponent(nicho);
+        }
+    </script>
 
-        // Buscamos el token CSRF en la etiqueta meta
-        const metaToken = document.querySelector('meta[name="csrf-token"]');
-        const csrfToken = metaToken ? metaToken.getAttribute('content') : '';
-
-        fetch(`/dashboard/eliminar-curso/${id}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                // Si el servidor da error (ej: 403 o 500), lanzamos una excepción
-                throw new Error(`Error HTTP: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                alert("🗑️ Curso eliminado correctamente.");
-                location.reload();
-            } else {
-                alert("❌ Error: " + data.message);
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Error al intentar eliminar. Revisa la consola (F12) para detalles.");
-        });
-    }
-
-    // Aquí puedes pegar también tus otras funciones (toggleCurso, ejecutarCuracion) si dejan de funcionar.
-</script>
+{% endblock %}

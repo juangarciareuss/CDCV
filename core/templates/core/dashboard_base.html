@@ -30,13 +30,16 @@
            📦 Bodega (Administrar)
         </a>
 
-        <a href="{% url 'core:dashboard_usuarios' %}" 
-       class="nav-tab {% if active_tab == 'usuarios' %}active{% endif %}">
-       👥 Usuarios
+        <a href="{% url 'core:dashboard_precios' %}" 
+           class="nav-tab {% if active_tab == 'precios' %}active{% endif %}">
+           💲 Precios
         </a>
 
-
-        </nav>
+        <a href="{% url 'core:dashboard_usuarios' %}" 
+           class="nav-tab {% if active_tab == 'usuarios' %}active{% endif %}">
+           👥 Usuarios
+        </a>
+    </nav>
 
     {% block dashboard_content %}
     {% endblock %}
