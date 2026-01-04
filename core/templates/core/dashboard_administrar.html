@@ -74,13 +74,35 @@
                         <div style="font-size: 10px; color: #aaa; margin-top: 4px;">Modificar y Guardar</div>
                     </td>
 
-                    <td style="padding: 15px; text-align: center;">
-                        {% if curso.activo %}
-                            <span style="background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 600;">🟢 Activo</span>
-                        {% else %}
-                            <span style="background: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 600;">🔴 Inactivo</span>
-                        {% endif %}
-                    </td>
+<td style="padding: 15px; text-align: center; vertical-align: middle;">
+    <form method="POST" style="margin: 0;">
+        {% csrf_token %}
+        <input type="hidden" name="curso_id" value="{{ curso.id }}">
+        <input type="hidden" name="accion" value="toggle_estado">
+        
+        <button type="submit" 
+                style="border: none; cursor: pointer; background: transparent; transition: transform 0.2s;"
+                title="Clic para cambiar estado"
+                onmouseover="this.style.transform='scale(1.1)'"
+                onmouseout="this.style.transform='scale(1)'">
+            
+            {% if curso.activo %}
+                <div style="background: #d4edda; color: #155724; padding: 6px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; border: 1px solid #c3e6cb; display: inline-flex; align-items: center; gap: 5px;">
+                    <span style="width: 8px; height: 8px; background: #28a745; border-radius: 50%;"></span>
+                    Publicado
+                </div>
+                <div style="font-size: 9px; color: #28a745; margin-top: 3px;">(Clic para ocultar)</div>
+            {% else %}
+                <div style="background: #fff3cd; color: #856404; padding: 6px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; border: 1px solid #ffeeba; display: inline-flex; align-items: center; gap: 5px;">
+                    <span style="width: 8px; height: 8px; background: #ffc107; border-radius: 50%;"></span>
+                    Borrador
+                </div>
+                <div style="font-size: 9px; color: #d39e00; margin-top: 3px;">(Clic para publicar)</div>
+            {% endif %}
+            
+        </button>
+    </form>
+</td>
 
                     <td style="padding: 15px; text-align: center;">
                         <button style="background: none; border: 1px solid #dee2e6; padding: 5px 10px; border-radius: 4px; cursor: pointer; color: #555;">🗑️</button>

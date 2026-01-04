@@ -56,64 +56,87 @@ def dashboard_crear(request):
     })
 
 
-# --- PESTAÑA 2: LA BODEGA (Administrar + Smart Resizing) ---
+# --- PESTAÑA 2: LA BODEGA (Administrar + Smart Resizing + Toggle) ---
 @login_required
 def dashboard_administrar(request):
     """
-    Lista los cursos y permite editar la cantidad total de preguntas.
+    Lista TODOS los cursos y permite:
+    1. Editar la cantidad total de preguntas (Smart Resizing).
+    2. Activar/Desactivar cursos (Toggle).
     """
     if not request.user.is_staff: return redirect('core:homepage')
     
-    # --- LÓGICA DE ACTUALIZACIÓN RÁPIDA (POST desde la tabla) ---
-    if request.method == 'POST' and 'actualizar_total' in request.POST:
-        try:
+    if request.method == 'POST':
+        # --- CASO 1: CAMBIAR ESTADO (ACTIVO/INACTIVO) ---
+        if request.POST.get('accion') == 'toggle_estado':
             curso_id = request.POST.get('curso_id')
-            nuevo_total = int(request.POST.get('nuevo_total', 10))
-            
             curso = get_object_or_404(Curso, id=curso_id)
-            config = curso.estructura_examen or {}
-            reglas = config.get('reglas_seleccion', [])
             
-            # 1. Calcular el total actual configurado
-            total_actual = sum(r.get('cantidad', 0) for r in reglas)
-            if total_actual == 0: total_actual = 1 
-            
-            # 2. Calcular factor de escala
-            factor = nuevo_total / total_actual
-            
-            # 3. Aplicar a cada tema proporcionalmente
-            total_real_asignado = 0
-            for regla in reglas:
-                nueva_cant_tema = int(regla.get('cantidad', 0) * factor)
-                if nueva_cant_tema < 1: nueva_cant_tema = 1 
-                
-                regla['cantidad'] = nueva_cant_tema
-                total_real_asignado += nueva_cant_tema
-                
-            # 4. Ajuste fino (Cuadrar el redondeo)
-            diferencia = nuevo_total - total_real_asignado
-            
-            if diferencia != 0 and reglas:
-                reglas[0]['cantidad'] += diferencia
-                if reglas[0]['cantidad'] < 1: reglas[0]['cantidad'] = 1
-
-            # 5. Guardar cambios en la BD
-            config['reglas_seleccion'] = reglas
-            curso.estructura_examen = config
-            curso.cantidad_preguntas = nuevo_total
+            # Invertimos el estado
+            curso.activo = not curso.activo
             curso.save()
             
-            messages.success(request, f"✅ Curso '{curso.nombre}' actualizado a {nuevo_total} preguntas.")
+            estado_texto = "activado" if curso.activo else "desactivado"
+            # Feedback visual según la acción
+            if curso.activo:
+                messages.success(request, f"🟢 Curso '{curso.nombre}' ahora está PÚBLICO.")
+            else:
+                messages.warning(request, f"🔴 Curso '{curso.nombre}' ahora está OCULTO (Borrador).")
             
-        except ValueError:
-            messages.error(request, "❌ Error: Debes ingresar un número válido.")
-        except Exception as e:
-            messages.error(request, f"❌ Error al actualizar: {str(e)}")
-            
-        return redirect('core:dashboard_administrar')
+            return redirect('core:dashboard_administrar')
+
+        # --- CASO 2: ACTUALIZAR TOTAL PREGUNTAS (Smart Resizing) ---
+        elif 'actualizar_total' in request.POST:
+            try:
+                curso_id = request.POST.get('curso_id')
+                nuevo_total = int(request.POST.get('nuevo_total', 10))
+                
+                curso = get_object_or_404(Curso, id=curso_id)
+                config = curso.estructura_examen or {}
+                reglas = config.get('reglas_seleccion', [])
+                
+                # 1. Calcular el total actual configurado
+                total_actual = sum(r.get('cantidad', 0) for r in reglas)
+                if total_actual == 0: total_actual = 1 
+                
+                # 2. Calcular factor de escala
+                factor = nuevo_total / total_actual
+                
+                # 3. Aplicar a cada tema proporcionalmente
+                total_real_asignado = 0
+                for regla in reglas:
+                    nueva_cant_tema = int(regla.get('cantidad', 0) * factor)
+                    if nueva_cant_tema < 1: nueva_cant_tema = 1 
+                    
+                    regla['cantidad'] = nueva_cant_tema
+                    total_real_asignado += nueva_cant_tema
+                    
+                # 4. Ajuste fino (Cuadrar el redondeo)
+                diferencia = nuevo_total - total_real_asignado
+                
+                if diferencia != 0 and reglas:
+                    reglas[0]['cantidad'] += diferencia
+                    if reglas[0]['cantidad'] < 1: reglas[0]['cantidad'] = 1
+
+                # 5. Guardar cambios en la BD
+                config['reglas_seleccion'] = reglas
+                curso.estructura_examen = config
+                curso.cantidad_preguntas = nuevo_total
+                curso.save()
+                
+                messages.success(request, f"✅ Curso '{curso.nombre}' re-calculado a {nuevo_total} preguntas.")
+                
+            except ValueError:
+                messages.error(request, "❌ Error: Debes ingresar un número válido.")
+            except Exception as e:
+                messages.error(request, f"❌ Error al actualizar: {str(e)}")
+                
+            return redirect('core:dashboard_administrar')
 
     # --- GET: MOSTRAR TABLA ---
-    cursos = Curso.objects.filter(activo=True).order_by('-created_at')
+    # CAMBIO CRÍTICO: Usamos .all() en lugar de .filter(activo=True)
+    # Esto permite ver los cursos "Borrador" o "Inactivos" en la lista.
+    cursos = Curso.objects.all().order_by('-created_at')
     
     return render(request, 'core/dashboard_administrar.html', {
         'cursos': cursos,
