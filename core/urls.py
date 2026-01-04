@@ -1,25 +1,18 @@
-from django.urls import path, include, re_path
+from django.urls import path, re_path
 from django.conf import settings
 from django.views.static import serve
 from django.views.generic import TemplateView
-from django.contrib.sitemaps.views import sitemap
-from core.sitemaps import StaticViewSitemap
 
-# Importamos tus 4 módulos de vistas:
+# Importamos tus módulos de vistas:
 from core.views import dashboard, exam, tools, gamification
 
 app_name = 'core'
-
-# Configura el diccionario de mapas
-sitemaps = {
-    'static': StaticViewSitemap,
-}
 
 urlpatterns = [
     # --- 1. PÚBLICO Y USUARIO (Módulo: tools) ---
     path('', tools.homepage, name='homepage'),
     path('perfil/', tools.perfil_usuario, name='perfil_usuario'),
-    path('accounts/', include('allauth.urls')), # Login de Google
+    # path('accounts/', ...) -> BORRADO (Ya está en config)
     path('guardar-nombre/', tools.guardar_nombre_legal, name='guardar_nombre_legal'),
     path('buscar/', tools.buscar_cursos, name='buscar_cursos'),
 
@@ -49,16 +42,15 @@ urlpatterns = [
     # --- 6. GAMIFICACIÓN / MARKETING (Módulo: gamification) ---
     path('reto/<slug:slug_competencia>/', gamification.reto_microcompetencia, name='reto_microcompetencia'),
 
-    #Legal
+    # --- 7. LEGAL ---
     path('legal/terminos/', TemplateView.as_view(template_name="legal/terminos.html"), name='terminos'),
     path('legal/privacidad/', TemplateView.as_view(template_name="legal/privacidad.html"), name='privacidad'),
-
-    #Sitemaps para Google Search Consol
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-]
+    
+    # Sitemap -> BORRADO (Ya está en config)
 ]
 
-# --- 8. MEDIA FILES (Servir archivos subidos) ---
+# --- 8. MEDIA FILES (Servir archivos subidos en Prod - Truco Render) ---
+# Mantenemos esto aquí porque es específico de cómo manejas archivos en Core
 urlpatterns += [
     re_path(r'^media/(?P<path>.*)$', serve, {
         'document_root': settings.MEDIA_ROOT,

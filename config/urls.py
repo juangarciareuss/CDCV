@@ -1,20 +1,31 @@
 from django.contrib import admin
-from django.urls import path, include, re_path # <--- Agregamos re_path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.static import serve # <--- Importante para servir archivos en prod
+
+# --- Importaciones para el Sitemap (Las movemos aquí) ---
+from django.contrib.sitemaps.views import sitemap
+from core.sitemaps import StaticViewSitemap
+
+# Definimos el diccionario de sitemaps global
+sitemaps = {
+    'static': StaticViewSitemap,
+}
 
 urlpatterns = [
-    # 1. Panel de Administración
+    # 1. Panel de Administración (Global)
     path('admin/', admin.site.urls),
 
-    # 2. Rutas de Autenticación (Google, Login, Logout)
-    # ESTA ES LA LÍNEA CLAVE QUE FALTA O ESTÁ MAL PUESTA
+    # 2. Rutas de Autenticación (Google, Login) - SE QUEDA AQUÍ
     path('accounts/', include('allauth.urls')),
 
-    # 3. Rutas de tu Aplicación Principal (CDCV)
+    # 3. Sitemap para Google (Global) - MEJOR LUGAR
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+
+    # 4. Rutas de tu Aplicación (Todo lo demás va a Core)
     path('', include('core.urls')),
 ]
 
+# Configuración para servir archivos media en desarrollo
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
