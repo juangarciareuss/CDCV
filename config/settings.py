@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     'core',
 
     # --- NUEVAS LIBRERÍAS (OBLIGATORIAS PARA GOOGLE) ---
-    'django.contrib.sites',  # Django necesita saber "qué sitio es este"
+    'django.contrib.sites',
+    'django.contrib.sitemaps', # Django necesita saber "qué sitio es este"
     'allauth',
     'allauth.account',
     'allauth.socialaccount',

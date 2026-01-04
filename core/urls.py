@@ -1,12 +1,19 @@
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.views.static import serve
-from django.views.generic import TemplateView # <--- Faltaba importar esto
+from django.views.generic import TemplateView
+from django.contrib.sitemaps.views import sitemap
+from core.sitemaps import StaticViewSitemap
 
 # Importamos tus 4 módulos de vistas:
 from core.views import dashboard, exam, tools, gamification
 
 app_name = 'core'
+
+# Configura el diccionario de mapas
+sitemaps = {
+    'static': StaticViewSitemap,
+}
 
 urlpatterns = [
     # --- 1. PÚBLICO Y USUARIO (Módulo: tools) ---
@@ -42,8 +49,13 @@ urlpatterns = [
     # --- 6. GAMIFICACIÓN / MARKETING (Módulo: gamification) ---
     path('reto/<slug:slug_competencia>/', gamification.reto_microcompetencia, name='reto_microcompetencia'),
 
+    #Legal
     path('legal/terminos/', TemplateView.as_view(template_name="legal/terminos.html"), name='terminos'),
     path('legal/privacidad/', TemplateView.as_view(template_name="legal/privacidad.html"), name='privacidad'),
+
+    #Sitemaps para Google Search Consol
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+]
 ]
 
 # --- 8. MEDIA FILES (Servir archivos subidos) ---
