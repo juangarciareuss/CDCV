@@ -1,6 +1,7 @@
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.views.static import serve
+from django.views.generic import TemplateView # <--- Faltaba importar esto
 
 # Importamos tus 4 módulos de vistas:
 from core.views import dashboard, exam, tools, gamification
@@ -28,9 +29,9 @@ urlpatterns = [
     # --- 4. DASHBOARD MODULAR (Módulo: dashboard) ---
     path('dashboard/crear/', dashboard.dashboard_crear, name='dashboard_crear'),
     path('dashboard/administrar/', dashboard.dashboard_administrar, name='dashboard_administrar'),
-    path('dashboard/precios/', dashboard.dashboard_precios, name='dashboard_precios'), # <--- Nueva ruta de precios
+    path('dashboard/precios/', dashboard.dashboard_precios, name='dashboard_precios'),
     path('dashboard/usuarios/', dashboard.dashboard_usuarios, name='dashboard_usuarios'),
-    path('dashboard-kpi/', dashboard.dashboard_kpi, name='dashboard_kpi'), # Legacy
+    path('dashboard-kpi/', dashboard.dashboard_kpi, name='dashboard_kpi'),
 
     # --- 5. HERRAMIENTAS ADMIN / API (Módulo: tools) ---
     path('dashboard/curar-ia/<int:curso_id>/', tools.endpoint_curar_con_ia, name='curar_ia'),
@@ -40,9 +41,12 @@ urlpatterns = [
 
     # --- 6. GAMIFICACIÓN / MARKETING (Módulo: gamification) ---
     path('reto/<slug:slug_competencia>/', gamification.reto_microcompetencia, name='reto_microcompetencia'),
+
+    path('legal/terminos/', TemplateView.as_view(template_name="legal/terminos.html"), name='terminos'),
+    path('legal/privacidad/', TemplateView.as_view(template_name="legal/privacidad.html"), name='privacidad'),
 ]
 
-# --- 7. MEDIA FILES (Servir archivos subidos) ---
+# --- 8. MEDIA FILES (Servir archivos subidos) ---
 urlpatterns += [
     re_path(r'^media/(?P<path>.*)$', serve, {
         'document_root': settings.MEDIA_ROOT,

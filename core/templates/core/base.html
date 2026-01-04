@@ -159,8 +159,15 @@
     {% block content %}
     {% endblock %}
 
-    <footer style="text-align: center; padding: 40px; color: #777; font-size: 0.9rem; border-top: 1px solid #eee; margin-top: 50px;">
-        <p>&copy; 2025 CertUfy - Validación de Competencias Digitales.</p>
+    <footer style="margin-top: 50px; padding: 40px 0; border-top: 1px solid #eee; text-align: center; color: #777; font-size: 0.9rem;">
+        <div class="container">
+            <p>&copy; 2026 CertUfy - Validación de Competencias Digitales.</p>
+            <div style="margin-top: 10px;">
+                <a href="{% url 'core:terminos' %}" style="color: #777; text-decoration: none; margin: 0 10px;">Términos y Condiciones</a>
+                |
+                <a href="{% url 'core:privacidad' %}" style="color: #777; text-decoration: none; margin: 0 10px;">Privacidad</a>
+            </div>
+        </div>
     </footer>
 
 </body>
