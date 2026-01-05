@@ -72,6 +72,13 @@ class MicroCompetencia(models.Model):
     icono = models.CharField(max_length=50, default="🏆", help_text="Emoji o URL")
     embedding_id = models.CharField(max_length=100, blank=True, null=True)
 
+    # --- 2. NUEVO: Lógica de Autocompletado ---
+    def save(self, *args, **kwargs):
+        # Si el slug está vacío, lo creamos usando el 'nombre'
+        if not self.slug:
+            self.slug = slugify(self.nombre)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"MC: {self.nombre}"
 
