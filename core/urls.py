@@ -4,7 +4,7 @@ from django.views.static import serve
 from django.views.generic import TemplateView
 
 # Importamos tus módulos de vistas:
-from core.views import dashboard, exam, tools, gamification
+from core.views import dashboard, exam, tools, gamification, maintenance
 
 app_name = 'core'
 
@@ -47,6 +47,10 @@ urlpatterns = [
     path('legal/privacidad/', TemplateView.as_view(template_name="legal/privacidad.html"), name='privacidad'),
     
     # Sitemap -> BORRADO (Ya está en config)
+
+    # --- ZONA DE MANTENIMIENTO (SALA DE MÁQUINAS) ---
+    path('mantenimiento/', maintenance.panel_mantenimiento, name='maintenance_panel'),
+    path('mantenimiento/reparar-slugs/', maintenance.ejecutar_reparacion_slugs, name='maintenance_reparar_slugs'),
 ]
 
 # --- 8. MEDIA FILES (Servir archivos subidos en Prod - Truco Render) ---
