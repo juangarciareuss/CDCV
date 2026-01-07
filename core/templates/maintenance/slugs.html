@@ -1,0 +1,49 @@
+{% extends 'maintenance/base_maintenance.html' %}
+
+{% block maintenance_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-dark mb-0">Gestor de URLs (Slugs)</h3>
+    {% if errores > 0 %}
+        <a href="{% url 'core:action_fix_slugs' %}" class="btn btn-primary fw-bold">
+            <i class="fas fa-magic me-2"></i> Reparar {{ errores }} Errores
+        </a>
+    {% else %}
+        <button class="btn btn-success disabled"><i class="fas fa-check me-2"></i> Sistema Óptimo</button>
+    {% endif %}
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Nombre</th>
+                        <th>Slug Actual</th>
+                        <th>Slug Ideal (Objetivo)</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td><span class="badge bg-light text-dark border">{{ item.tipo }}</span></td>
+                        <td class="fw-bold">{{ item.nombre }}</td>
+                        <td class="font-monospace small text-muted">{{ item.actual|default:"---" }}</td>
+                        <td class="font-monospace small text-primary opacity-75">{{ item.ideal }}</td>
+                        <td>
+                            {% if item.estado == 'OK' %}
+                                <i class="fas fa-check-circle text-success"></i>
+                            {% else %}
+                                <span class="badge bg-danger">ERROR</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

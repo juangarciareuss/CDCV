@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/maintenance.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="maintenance-wrapper">
+    <div class="maintenance-sidebar d-none d-lg-block">
+        <div class="brand">
+            <h5 class="mb-0 text-white"><i class="fas fa-cogs me-2"></i>Ingeniería</h5>
+            <small class="text-muted">Suite de Mantenimiento</small>
+        </div>
+        <nav class="nav flex-column maintenance-nav">
+            <a class="nav-link {% if request.resolver_match.url_name == 'maintenance_dashboard' %}active{% endif %}" 
+               href="{% url 'core:maintenance_dashboard' %}">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </a>
+            <div class="text-uppercase text-muted px-4 mt-4 mb-2" style="font-size: 0.75rem;">Herramientas</div>
+            <a class="nav-link {% if request.resolver_match.url_name == 'maintenance_slugs' %}active{% endif %}" 
+               href="{% url 'core:maintenance_slugs' %}">
+                <i class="fas fa-link"></i> Gestor de Slugs
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'maintenance_themes' %}active{% endif %}" 
+               href="{% url 'core:maintenance_themes' %}">
+                <i class="fas fa-layer-group"></i> Arquitectura Temas
+            </a>
+        </nav>
+    </div>
+
+    <div class="maintenance-content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 mb-4">
+                    <i class="fas fa-info-circle me-2"></i> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block maintenance_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

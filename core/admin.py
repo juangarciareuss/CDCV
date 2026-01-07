@@ -3,94 +3,120 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 import json
 
+# Importamos TODOS los modelos expuestos en __init__.py
 from .models import (
     Usuario, 
     MicroCompetencia, 
     Tema, 
     Curso, 
+    CursoMicroCompetencia, # <--- IMPORTANTE PARA EL ORDEN
     Pregunta, 
     Examen, 
-    Certificado
+    Certificado,
+    ProgresoCompetencia,   # <--- NUEVO
+    PerfilMicroCompetencia # <--- NUEVO (ELO)
 )
 
-# --- 1. Usuario Personalizado ---
+# --- 1. USUARIO (Con sus insignias visibles si quisieras) ---
 class CustomUserAdmin(UserAdmin):
     model = Usuario
-    list_display = ['username', 'email', 'first_name', 'last_name', 'is_staff']
+    list_display = ['username', 'email', 'is_staff', 'date_joined']
     fieldsets = UserAdmin.fieldsets + ((None, {'fields': ('idioma',)}),)
     add_fieldsets = UserAdmin.add_fieldsets + ((None, {'fields': ('idioma',)}),)
 
 admin.site.register(Usuario, CustomUserAdmin)
 
-# --- MEJORA DE PRODUCTIVIDAD: Edición en línea ---
-# Esto te permite agregar preguntas directamente dentro de la MicroCompetencia
+
+# --- 2. EL ÁTOMO: MicroCompetencia ---
+
+# Permitir crear preguntas directamente desde la pantalla de la competencia
 class PreguntaInline(admin.StackedInline):
     model = Pregunta
     extra = 0
-    fields = ('texto', 'respuesta_correcta', 'dificultad', 'opciones')
+    fields = ('texto', 'respuesta_correcta', 'dificultad', 'opciones', 'justificacion')
     show_change_link = True
-    classes = ['collapse'] # Se mantiene cerrado para no ensuciar la vista si hay muchas
+    classes = ['collapse'] 
 
-# --- 2. EL ÁTOMO: MicroCompetencia ---
 @admin.register(MicroCompetencia)
 class MicroCompetenciaAdmin(admin.ModelAdmin):
-    list_display = ('icono', 'nombre', 'slug', 'total_preguntas')
+    list_display = ('icono', 'nombre', 'slug', 'total_preguntas', 'temas_asociados')
     search_fields = ('nombre', 'definicion_atomica')
     prepopulated_fields = {'slug': ('nombre',)}
     
-    # Agregamos el Inline aquí
+    # Asignación de Temas (Etiquetas)
+    filter_horizontal = ('temas',) 
+    
+    # Muestra las preguntas hijas
     inlines = [PreguntaInline] 
     
     def total_preguntas(self, obj):
         count = obj.preguntas_banco.count()
-        # Semáforo visual: Rojo si está vacío, Verde si tiene 10+
         color = "green" if count >= 10 else "orange" if count > 0 else "red"
         return format_html('<span style="color: {}; font-weight: bold;">{}</span>', color, count)
-    total_preguntas.short_description = "Banco Preguntas"
+    total_preguntas.short_description = "Stock Preguntas"
+
+    def temas_asociados(self, obj):
+        return ", ".join([t.nombre for t in obj.temas.all()])
+
 
 # --- 3. LA PLAYLIST: Tema ---
 @admin.register(Tema)
 class TemaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'parent', 'slug')
-    list_filter = ('parent',)
+    list_display = ('icono', 'nombre', 'slug')
     search_fields = ('nombre',)
     prepopulated_fields = {'slug': ('nombre',)}
-    autocomplete_fields = ['parent']
-    
-    # Selector visual potente para agregar átomos a la playlist
-    filter_horizontal = ('micro_competencias',) 
 
-# --- 4. EL PRODUCTO: Curso ---
+
+# --- 4. EL PRODUCTO: Curso (Ahora con Ordenamiento) ---
+
+# Esta es la magia para ordenar el curso átomo por átomo
+class ContenidoCursoInline(admin.TabularInline):
+    model = CursoMicroCompetencia
+    extra = 1
+    autocomplete_fields = ['competencia'] # Vital si tienes miles de competencias
+    verbose_name = "Habilidad del Curso"
+    verbose_name_plural = "Playlist de Habilidades (Ordenable)"
+
 @admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
-    # Aquí sí dejamos precio_usd porque decidiste mantenerlo en el modelo
-    list_display = ('nombre', 'precio_usd', 'activo', 'cantidad_preguntas', 'created_at')
-    list_filter = ('activo', 'created_at')
+    list_display = ('nombre', 'nivel', 'activo', 'cantidad_preguntas', 'precio_usd')
+    list_filter = ('activo', 'nivel', 'created_at')
     search_fields = ('nombre',)
     prepopulated_fields = {'slug': ('nombre',)}
     
-    # Selector visual potente para agregar playlists al producto
-    filter_horizontal = ('temas',) 
+    # Etiquetas Macro
+    filter_horizontal = ('temas',)
+    
+    # Aquí definimos el contenido exacto
+    inlines = [ContenidoCursoInline] 
 
-# --- 5. EL REACTIVO: Pregunta ---
+    fieldsets = (
+        ('Información Comercial', {
+            'fields': ('nombre', 'slug', 'descripcion', 'precio_usd', 'activo', 'idioma')
+        }),
+        ('Configuración Técnica', {
+            'fields': ('nivel', 'cantidad_preguntas', 'estructura_examen', 'temas')
+        }),
+    )
+
+
+# --- 5. LA MUNICIÓN: Pregunta ---
 @admin.register(Pregunta)
 class PreguntaAdmin(admin.ModelAdmin):
-    # Eliminamos 'auditoria_calidad' para evitar errores
-    list_display = ('texto_corto', 'micro_competencia', 'dificultad')
-    list_filter = ('dificultad', 'micro_competencia')
+    list_display = ('id', 'texto_corto', 'micro_competencia', 'dificultad', 'verificado')
+    list_filter = ('dificultad', 'verificado', 'idioma', 'micro_competencia')
     search_fields = ('texto', 'micro_competencia__nombre')
+    autocomplete_fields = ['micro_competencia'] # Carga rápida
     
     readonly_fields = ('opciones_formateadas',) 
     
     fieldsets = (
+        ('Contexto', {
+            'fields': ('micro_competencia', 'dificultad', 'verificado')
+        }),
         ('Contenido', {
-            'fields': ('micro_competencia', 'texto', 'respuesta_correcta', 'dificultad')
+            'fields': ('texto', 'opciones', 'opciones_formateadas', 'respuesta_correcta', 'justificacion')
         }),
-        ('Detalles JSON', {
-            'fields': ('opciones', 'opciones_formateadas', 'explicacion'),
-            'classes': ('collapse',)
-        }),
-        # Eliminamos la sección de 'Control' por ahora (Auditoría)
     )
 
     def opciones_formateadas(self, obj):
@@ -98,27 +124,49 @@ class PreguntaAdmin(admin.ModelAdmin):
             opciones_str = json.dumps(obj.opciones, indent=2, ensure_ascii=False)
             return format_html("<pre>{}</pre>", opciones_str)
         except TypeError:
-            return obj.opciones
-    opciones_formateadas.short_description = "Vista Previa Opciones"
+            return "Error en formato JSON"
+    opciones_formateadas.short_description = "Vista Previa"
 
     def texto_corto(self, obj):
-        return obj.texto[:60] + "..." if obj.texto else "Sin texto"
-    texto_corto.short_description = "Pregunta"
+        return obj.texto[:80] + "..." if len(obj.texto) > 80 else obj.texto
+    texto_corto.short_description = "Enunciado"
 
-# --- 6. REGISTROS OPERATIVOS ---
+
+# --- 6. OPERACIONES Y AUDITORÍA ---
 @admin.register(Examen)
 class ExamenAdmin(admin.ModelAdmin):
-    list_display = ('usuario', 'curso', 'puntaje', 'aprobado', 'fecha')
-    list_filter = ('aprobado', 'fecha', 'curso')
-    # Agregamos búsqueda para encontrar exámenes rápido
-    search_fields = ('usuario__username', 'usuario__email', 'curso__nombre')
+    list_display = ('id', 'usuario', 'curso', 'puntaje', 'aprobado', 'fecha')
+    list_filter = ('aprobado', 'fecha')
+    readonly_fields = ('preguntas_set', 'respuestas_usuario') # JSONs complejos mejor solo lectura
 
 @admin.register(Certificado)
 class CertificadoAdmin(admin.ModelAdmin):
     list_display = ('codigo_verificacion', 'usuario', 'curso', 'fecha_emision')
-    readonly_fields = ('fecha_emision', 'codigo_verificacion')
-    search_fields = ('codigo_verificacion', 'usuario__username')
+    readonly_fields = ('fecha_emision', 'codigo_verificacion', 'archivo_pdf', 'codigo_qr')
+    search_fields = ('codigo_verificacion', 'usuario__email')
 
-admin.site.site_header = "Administración CDCV (Modelo Spotify)"
-admin.site.site_title = "Panel de Control"
-admin.site.index_title = "Gestión de Activos Educativos"
+
+# --- 7. INTELIGENCIA DE DATOS (NUEVO) ---
+# Esto es vital para ver si tu "Scalable Hive" está funcionando bien
+
+@admin.register(ProgresoCompetencia)
+class ProgresoCompetenciaAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'competencia', 'estado', 'intentos')
+    list_filter = ('estado', 'ultima_actualizacion')
+    search_fields = ('usuario__username', 'competencia__nombre')
+
+@admin.register(PerfilMicroCompetencia)
+class PerfilELOAdmin(admin.ModelAdmin):
+    """
+    Monitor del Algoritmo ELO. 
+    Permite ver si un usuario se vuelve experto o si una pregunta es muy difícil.
+    """
+    list_display = ('usuario', 'micro_competencia', 'nivel_actual', 'racha_actual', 'aciertos')
+    list_filter = ('nivel_actual',)
+    search_fields = ('usuario__username', 'micro_competencia__nombre')
+
+
+# Configuración del Header
+admin.site.site_header = "CertUfy AI Command Center"
+admin.site.site_title = "Admin"
+admin.site.index_title = "Gestión de Activos y Agentes"

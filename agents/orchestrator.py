@@ -1,58 +1,84 @@
-# core/logic/ai_services/orchestrator.py
 import time
+import sys
 from .builder_agent import BuilderAgent
 from .refiller_agent import RefillerAgent
 from core.models import Curso
 
 class CDCVOrchestrator:
     """
-    Coordinador central de la fuerza laboral de IA.
-    Recibe órdenes de alto nivel y delega a los agentes especialistas.
+    ORQUESTADOR V3 (MODO TRANSPARENTE)
+    Muestra el progreso en tiempo real en la consola.
     """
     def __init__(self):
-        # Inicializamos los agentes especialistas
         self.builder = BuilderAgent()
         self.refiller = RefillerAgent()
 
-    def curar_curso_roto(self, curso_id):
+    def crear_nuevo_curso(self, nicho, nivel):
+        # Delegamos al Builder (este ya tiene sus propios prints internos)
+        return self.builder.construir_curso(nicho, nivel)
+
+    def expandir_conocimiento_curso(self, curso_id):
         """
-        Analiza un curso existente, detecta faltantes y llama al Refiller.
-        Se usa desde el botón 'Curar con IA' del Dashboard.
+        Recorre las competencias y muestra una barra de progreso real.
         """
         try:
             curso = Curso.objects.get(id=curso_id)
-            config = curso.estructura_examen or {}
-            reglas = config.get('reglas_seleccion', [])
+            mcs_del_curso = curso.micro_competencias.all()
+            total_mcs = mcs_del_curso.count()
             
-            reporte_acciones = []
+            print(f"\n📡 CONECTANDO CON HIVE MIND PARA: {curso.nombre}")
+            print(f"   🎯 Objetivo: Analizar y poblar {total_mcs} micro-competencias.")
+            print("   (Presiona Ctrl+C solo si deseas detener la emergencia)\n")
 
-            for regla in reglas:
-                tema_nombre = regla.get('tema_nombre')
-                cantidad_necesaria = regla.get('cantidad', 5)
+            if total_mcs == 0:
+                print("⚠️  ALERTA: El curso no tiene competencias. Ejecuta el Builder primero.")
+                return {"status": "warning", "message": "Sin competencias"}
+
+            # ITERACIÓN EN TIEMPO REAL
+            cambios_totales = 0
+            
+            for i, mc in enumerate(mcs_del_curso, 1):
+                # 1. Diagnóstico Rápido
+                num_preguntas = mc.preguntas_banco.count()
                 
-                # Delegamos al Refiller la tarea de generar preguntas para este tema
-                # Nota: El Refiller es inteligente, tú le pides X cantidad y él genera calidad.
-                resultado = self.refiller.poblar_tema(tema_nombre, cantidad=cantidad_necesaria)
-                reporte_acciones.append(f"{tema_nombre}: {resultado}")
+                # Formato visual: [ 1/15] Nombre de la competencia......
+                prefix = f"[{i:02d}/{total_mcs:02d}] {mc.nombre[:40]:<40}"
+                print(f"{prefix}", end=" ", flush=True)
 
-                # --- 2. EL FRENO DE MANO ---
-                # Esperamos 10 segundos entre cada petición para no saturar a Google
-                # (El plan gratuito suele permitir 2-4 peticiones por minuto de forma segura)
-                time.sleep(10)
+                # 2. Toma de Decisión
+                if num_preguntas < 5:
+                    necesarias = 5 - num_preguntas
+                    print(f"🔻 Faltan {necesarias}. Generando...", end=" ", flush=True)
+                    
+                    orden = {
+                        "target_mc": mc.nombre,
+                        "cantidad": necesarias,
+                        "instruccion_nivel": f"Refuerzo nivel {curso.nivel}"
+                    }
+                    
+                    tema_contexto = mc.temas.first()
+                    
+                    if tema_contexto:
+                        # 3. Llamada a la API (Aquí es donde suele demorar 2-5 seg)
+                        creadas = self.refiller.ejecutar_orden_quirurgica(tema_contexto, orden)
+                        
+                        if creadas > 0:
+                            print(f"✅ +{creadas} preguntas.", flush=True)
+                            cambios_totales += creadas
+                        else:
+                            print(f"❌ Error API.", flush=True)
+                        
+                        # Pausa de seguridad para no quemar la API Key
+                        time.sleep(1.5) 
+                    else:
+                        print("⚠️ Sin Tema (Skip)", flush=True)
+                else:
+                    # Si ya está llena, pasamos rápido
+                    print(f"👌 Completa ({num_preguntas}).", flush=True)
 
-            return {
-                "status": "success", 
-                "message": f"Orquestación completada para {curso.nombre}",
-                "detalles": reporte_acciones
-            }
+            print(f"\n✨ PROCESO TERMINADO. Se generaron un total de {cambios_totales} preguntas nuevas.")
+            return {"status": "success", "detalles": []}
 
         except Exception as e:
+            print(f"\n🔥 ERROR CRÍTICO EN ORQUESTADOR: {str(e)}")
             return {"status": "error", "message": str(e)}
-
-def crear_nuevo_producto(self, nicho_mercado, nivel):
-        """
-        Llama al Builder para crear un curso.
-        El argumento 'nivel' es requerido estrictamente.
-        """
-        # Pasamos el nivel explícitamente. Si falta, explota aquí.
-        return self.builder.construir_curso(nicho_mercado, nivel_dificultad=nivel)

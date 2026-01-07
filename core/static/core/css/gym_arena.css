@@ -1,0 +1,190 @@
+/* core/static/core/css/gym_arena.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+    --gold-primary: #D4AF37;
+    --gold-dark: #B8860B;
+    --gold-gradient: linear-gradient(90deg, #D4AF37 0%, #F4E5A8 50%, #D4AF37 100%);
+    --bg-app: #f3f4f6;
+    --card-bg: #ffffff;
+    --text-dark: #111827;
+    --text-gray: #6b7280;
+}
+
+body {
+    background-color: var(--bg-app);
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-dark);
+    /* Centrado vertical y horizontal suave */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 90vh;
+}
+
+/* --- EL CONTENEDOR MAESTRO (ADAPTABLE) --- */
+.gym-container {
+    width: 95%; /* En móviles usa el 95% del ancho */
+    max-width: 680px; /* En PC NUNCA pasará de 680px (lectura cómoda) */
+    margin: 20px auto;
+    position: relative;
+}
+
+/* --- 1. LA BARRA DORADA (HEADER) --- */
+.gold-header {
+    background: var(--gold-gradient);
+    border-radius: 12px 12px 0 0; /* Redondeado solo arriba */
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    position: relative;
+    z-index: 10;
+}
+
+.gold-title {
+    color: #5c4d16; /* Color oscuro dorado para contraste */
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.gold-stats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stat-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--gold-dark);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* --- 2. LA TARJETA PRINCIPAL --- */
+.arena-card {
+    background: var(--card-bg);
+    border-radius: 0 0 16px 16px; /* Redondeado abajo */
+    padding: 30px; /* Espacio interno para que el texto no toque bordes */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+/* Pregunta */
+.question-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+    /* Evita que el texto toque los bordes visualmente */
+    padding: 0 5px; 
+}
+
+/* --- 3. GRID DE RESPUESTAS (ADAPTABLE) --- */
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* PC: 2 Columnas */
+    gap: 15px;
+}
+
+/* EN MOVIL: 1 COLUMNA AUTOMÁTICAMENTE */
+@media (max-width: 500px) {
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+    .question-text {
+        font-size: 1.1rem; /* Letra un poco más chica en celular */
+    }
+}
+
+.option-btn {
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+}
+
+.option-btn:hover {
+    border-color: var(--gold-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.option-key {
+    background: #f3f4f6;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--text-gray);
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+/* Estados */
+.option-btn.correct { background: #ecfdf5; border-color: #10b981; }
+.option-btn.correct .option-key { background: #10b981; color: white; }
+
+.option-btn.incorrect { background: #fef2f2; border-color: #ef4444; }
+.option-btn.incorrect .option-key { background: #ef4444; color: white; }
+
+/* --- 4. FEEDBACK AREA (DISEÑO COMPACTO PREMIUM) --- */
+.feedback-box {
+    margin-top: 15px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 15px; /* Padding compacto */
+    
+    /* Layout Horizontal: Icono | Contenido */
+    display: grid;
+    grid-template-columns: auto 1fr; 
+    gap: 15px;
+    align-items: start;
+    
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    animation: slideUp 0.3s ease-out;
+}
+
+/* Icono Grande (Tick o Cruz) */
+.feedback-icon {
+    font-size: 2rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+/* Contenedor del texto a la derecha */
+.feedback-body {
+    width: 100%;
+}
+
+/* El botón ahora es más delgado */
+.btn-compact {
+    padding: 8px 0;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

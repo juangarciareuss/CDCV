@@ -4,7 +4,7 @@ from django.views.static import serve
 from django.views.generic import TemplateView
 
 # Importamos tus módulos de vistas:
-from core.views import dashboard, exam, tools, gamification, maintenance
+from core.views import dashboard, exam, tools, gamification, maintenance, gym
 
 app_name = 'core'
 
@@ -48,9 +48,28 @@ urlpatterns = [
     
     # Sitemap -> BORRADO (Ya está en config)
 
-    # --- ZONA DE MANTENIMIENTO (SALA DE MÁQUINAS) ---
-    path('mantenimiento/', maintenance.panel_mantenimiento, name='maintenance_panel'),
-    path('mantenimiento/reparar-slugs/', maintenance.ejecutar_reparacion_slugs, name='maintenance_reparar_slugs'),
+# --- SUITE DE INGENIERÍA ---
+    # 1. Dashboard Principal (Resumen)
+    path('ingenieria/', maintenance.dashboard, name='maintenance_dashboard'),
+    
+    # 2. Módulo de Slugs (Auditoría y Reparación)
+    path('ingenieria/slugs/', maintenance.slug_manager, name='maintenance_slugs'),
+    path('ingenieria/slugs/fix/', maintenance.ejecutar_reparacion_slugs, name='action_fix_slugs'),
+
+    # 3. Módulo de Arquitectura de Temas (Auditoría y Limpieza)
+    path('ingenieria/temas/', maintenance.theme_manager, name='maintenance_themes'),
+    path('ingenieria/temas/clean/', maintenance.ejecutar_limpieza_temas, name='action_clean_themes'),
+
+    # --- RUTAS DEL GIMNASIO (API + VISTAS) ---
+# --- ZONA DE ENTRENAMIENTO (GIMNASIO) ---
+    path('entrenamiento/<slug:tema_slug>/', gym.gym_home, name='gym_home'),
+    
+    # --- API INTERNA PARA EL GIMNASIO (AJAX) ---
+    path('entrenamiento/api/pregunta/<int:tema_id>/', gym.api_get_pregunta, name='api_get_pregunta'),
+    path('entrenamiento/api/responder/', gym.api_responder, name='api_responder'),
+
+
+
 ]
 
 # --- 8. MEDIA FILES (Servir archivos subidos en Prod - Truco Render) ---

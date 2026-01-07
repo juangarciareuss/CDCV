@@ -1,0 +1,42 @@
+{% extends 'maintenance/base_maintenance.html' %}
+
+{% block maintenance_content %}
+<h3 class="fw-bold text-dark mb-4">Resumen de Salud</h3>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-card h-100 border-start border-4 border-primary">
+            <div>
+                <div class="text-muted small text-uppercase fw-bold">Salud Sistema</div>
+                <h2 class="m-0 fw-bold {% if salud == 100 %}text-success{% else %}text-warning{% endif %}">{{ salud }}%</h2>
+            </div>
+            <i class="fas fa-heartbeat fa-2x text-muted opacity-25"></i>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-card h-100">
+            <div>
+                <div class="text-muted small text-uppercase fw-bold">Slugs Rotos</div>
+                <h2 class="m-0 fw-bold {% if slugs_rotos > 0 %}text-danger{% else %}text-dark{% endif %}">{{ slugs_rotos }}</h2>
+            </div>
+            <i class="fas fa-link fa-2x text-muted opacity-25"></i>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-card h-100">
+            <div>
+                <div class="text-muted small text-uppercase fw-bold">Temas Legacy</div>
+                <h2 class="m-0 fw-bold {% if temas_sucios > 0 %}text-warning{% else %}text-dark{% endif %}">{{ temas_sucios }}</h2>
+            </div>
+            <i class="fas fa-broom fa-2x text-muted opacity-25"></i>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-light border shadow-sm">
+    <h5 class="fw-bold"><i class="fas fa-robot me-2"></i>Estado del Agente</h5>
+    <p class="mb-0 text-muted">Todos los sistemas operativos. Selecciona una herramienta del menú lateral para comenzar a auditar.</p>
+</div>
+{% endblock %}

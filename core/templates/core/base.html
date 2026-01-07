@@ -139,7 +139,7 @@
                 <a href="/admin/" class="nav-link" target="_blank">🔧 Admin</a>
 
             {% if user.is_superuser %}
-                    <a href="{% url 'core:maintenance_panel' %}" class="nav-link" style="color: #d63384; font-weight: bold;">
+                    <a href="{% url 'core:maintenance_dashboard' %}" class="nav-link" style="color: #d63384; font-weight: bold;">
                         ⚙️ Mantenimiento
                     </a>
                 {% endif %}

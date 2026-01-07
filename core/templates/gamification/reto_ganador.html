@@ -16,23 +16,23 @@
         <p style="margin: 5px 0 0;">Se ha añadido a tu perfil profesional.</p>
     </div>
 
-    {% if curso_sugerido %}
+   {% if competencia.curso_sugerido %}
     <div style="background: white; border: 1px solid #ddd; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
         <p style="color: #666; font-size: 1.1rem;">
             Ya tienes <strong>1 victoria</strong>. <br>
             Completa las micro-competencias restantes para obtener tu:
         </p>
         
-        <h2 style="color: #0056b3; margin: 10px 0;">{{ curso_sugerido.nombre }}</h2>
+        <h2 style="color: #0056b3; margin: 10px 0;">{{ competencia.curso_sugerido.nombre }}</h2>
         
         <div style="margin: 20px 0;">
             <span style="text-decoration: line-through; color: #999;">$100.00 USD</span>
             <span style="font-size: 1.5rem; font-weight: bold; color: #28a745; margin-left: 10px;">
-                ${{ curso_sugerido.precio_usd }} USD
+                ${{ competencia.curso_sugerido.precio_usd }} USD
             </span>
         </div>
 
-        <a href="{% url 'core:examen' curso_sugerido.id %}" style="display: inline-block; background: #0056b3; color: white; padding: 15px 40px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,91,187,0.3);">
+        <a href="{% url 'core:examen' competencia.curso_sugerido.id %}" style="display: inline-block; background: #0056b3; color: white; padding: 15px 40px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,91,187,0.3);">
             👉 Ir por la Certificación Completa
         </a>
     </div>

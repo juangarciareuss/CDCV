@@ -1,0 +1,81 @@
+🏢 ESTRUCTURA ORGANIZACIONAL: CertUfy AI Dept.
+1. El Gerente de Operaciones (COO)
+Nombre Clave: CDCVOrchestrator Rango: Gerente General de Operaciones Reporta a: CEO (Tú)
+
+Perfil Profesional: Es el ejecutivo encargado de que las cosas sucedan. No "trabaja" directamente en la manufactura, sino que coordina a los departamentos. Su obsesión es el flujo de trabajo y el manejo de excepciones.
+
+Misión Crítica: Recibir una orden vaga del CEO (ej: "Crear curso de Python") y transformarla en una cadena de comandos ejecutables para los subordinados.
+
+Habilidades:
+
+Gestión de Procesos (BPM).
+
+Manejo de Errores y Recuperación de Desastres.
+
+Reportes de Estado en Tiempo Real (Streaming).
+
+Coordinación de Agentes Subordinados.
+
+2. El Arquitecto Senior
+Nombre Clave: BuilderAgent Rango: Jefe de Producto y Estrategia Reporta a: Orchestrator
+
+Perfil Profesional: Es el visionario creativo y estructurado. Piensa en "macro". No le preocupa el detalle de una pregunta específica, sino la coherencia del plan de estudios completo. Entiende de pedagogía y taxonomía.
+
+Misión Crítica: Diseñar el esqueleto del edificio (Cursos, Módulos, Competencias) asegurando que la estructura sea lógica, vendible y pedagógicamente correcta.
+
+Habilidades:
+
+Diseño Curricular (Instructional Design).
+
+Arquitectura de Información (Taxonomía y Etiquetas).
+
+Planificación Estratégica (Precios, Niveles, Descripciones).
+
+Gestión de Base de Datos (Creación de relaciones complejas).
+
+3. El Especialista en Manufactura (La Mente Colmena)
+Nombre Clave: RefillerAgent (Hive Mind) Rango: Supervisor de Producción Masiva Reporta a: Orchestrator
+
+Perfil Profesional: Es el trabajador incansable. Operativo, rápido y detallista. Si el Arquitecto dice "Aquí va una pared", este agente pone los ladrillos uno por uno. Se especializa en generación de contenido granular masivo.
+
+Misión Crítica: Detectar huecos vacíos en las competencias y rellenarlos con preguntas de alta calidad, asegurando variedad en las opciones y justificaciones pedagógicas claras.
+
+Habilidades:
+
+Redacción Técnica (Copywriting).
+
+Generación de Reactivos de Evaluación.
+
+Lógica Deductiva (Crear distractores plausibles en las preguntas).
+
+Trabajo bajo presión (Rate Limiting y API management).
+
+4. El Auditor de Calidad (Propuesto/Futuro)
+Nombre Clave: QualityAgent Rango: Auditor QA (Quality Assurance) Reporta a: Orchestrator
+
+Perfil Profesional: Es el escéptico del grupo. No confía en lo que produce la IA a la primera. Su trabajo es leer lo que hizo el RefillerAgent y buscar alucinaciones, errores de formato o preguntas ambiguas.
+
+Misión Crítica: Revisar preguntas marcadas como verificado=False y pasarlas a True solo si cumplen los estándares ISO de tu empresa.
+
+Habilidades:
+
+Verificación de Hechos (Fact-Checking).
+
+Corrección de Estilo.
+
+Limpieza de JSON mal formados.
+
+5. El Ingeniero de Mantenimiento (El que limpia el Gym)
+Nombre Clave: TaxonomyAgent (El Script de Limpieza) Rango: Ingeniero de Datos Junior Reporta a: BuilderAgent
+
+Perfil Profesional: Es el encargado de la higiene de la base de datos. Se asegura de que no haya etiquetas duplicadas como "Inglés Básico" e "Inglés: Básico". Mantiene el gimnasio ordenado para los usuarios.
+
+Misión Crítica: Ejecutar scripts de fusión y limpieza de etiquetas (Tags) para asegurar una experiencia de usuario fluida en el Frontend.
+
+Habilidades:
+
+Normalización de Datos.
+
+Fusión de Registros (Merge).
+
+Gestión de Inventario (Skills).

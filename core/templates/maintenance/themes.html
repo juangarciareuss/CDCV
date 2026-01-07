@@ -1,0 +1,93 @@
+{% extends 'maintenance/base_maintenance.html' %}
+
+{% block maintenance_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-0">Arquitectura de Temas</h3>
+        <p class="text-muted small mb-0">Gestión de Lista Blanca y Migración de Legacy</p>
+    </div>
+    {% if total_legacy > 0 %}
+        <a href="{% url 'core:action_clean_themes' %}" 
+           class="btn btn-warning fw-bold text-dark"
+           onclick="return confirm('⚠️ ESTO ES DESTRUCTIVO.\n\nSe moverán las competencias a los temas oficiales y se borrarán los temas legacy.\n¿Proceder?');">
+            <i class="fas fa-broom me-2"></i> Limpiar {{ total_legacy }} Temas
+        </a>
+    {% else %}
+        <button class="btn btn-success disabled"><i class="fas fa-check me-2"></i> Arquitectura Limpia</button>
+    {% endif %}
+</div>
+
+<ul class="nav nav-tabs mb-3" id="themeTabs">
+    <li class="nav-item">
+        <button class="nav-link active text-danger fw-bold" data-bs-toggle="tab" data-bs-target="#legacy">
+            🚨 Legacy / Sucios ({{ total_legacy }})
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link text-success fw-bold" data-bs-toggle="tab" data-bs-target="#official">
+            ✅ Oficiales / Whitelist
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content">
+    
+    <div class="tab-pane fade show active" id="legacy">
+        <div class="card shadow-sm border-0 border-start border-4 border-danger">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tema "Sucio"</th>
+                            <th>Habilidades Contenidas</th>
+                            <th>Acción Automática</th>
+                            <th>Destino Predicho</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in legacy %}
+                        <tr>
+                            <td class="fw-bold text-danger">{{ item.obj.nombre }}</td>
+                            <td><span class="badge bg-secondary rounded-pill">{{ item.count }}</span></td>
+                            <td><span class="badge bg-danger">ELIMINAR / MIGRAR</span></td>
+                            <td class="text-success fw-bold">
+                                <i class="fas fa-arrow-right me-2"></i> {{ item.destino }}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center py-5 text-muted">No hay temas legacy. ¡Buen trabajo!</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="official">
+        <div class="card shadow-sm border-0 border-start border-4 border-success">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tema Maestro</th>
+                            <th>Slug</th>
+                            <th>Habilidades Activas</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in oficiales %}
+                        <tr>
+                            <td class="fw-bold text-dark">{{ item.obj.nombre }}</td>
+                            <td class="font-monospace small text-muted">{{ item.obj.slug }}</td>
+                            <td><span class="badge bg-primary rounded-pill">{{ item.count }}</span></td>
+                            <td><i class="fas fa-check-circle text-success"></i> OFICIAL</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

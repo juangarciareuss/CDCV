@@ -14,41 +14,37 @@ from django.template.loader import render_to_string
 from core.models import Curso
 
 # 👇 AGREGAMOS MicroCompetencia AQUI
-from core.models import Curso, Examen, Certificado, InsigniaUsuario, MicroCompetencia
+from core.models import Curso, Examen, Certificado, InsigniaUsuario, MicroCompetencia, Tema
 #from core.logic import analytics
 from agents.ai_services import CDCVOrchestrator
 
-# --- PÚBLICO (VITRINA COMERCIAL) ---
 def homepage(request):
     """
-    Portada Comercial Renovada ($300K Look)
+    Portada Comercial + Gimnasio de Habilidades
     """
     
-    # A. LOS PRODUCTOS (SOLO ACTIVOS)
-    # 🔴 CORRECCIÓN: Usamos .filter(activo=True) en lugar de .all()
-    # Esto hace que si desmarcas el tic "Activo" en el admin (o lo borras), desaparezca de aquí.
+    # --- 1. GIMNASIO (NUEVO) ---
+    # Necesitamos los temas para mostrar las tarjetas de entrenamiento
+    # Opcional: Podríamos filtrar solo los que tienen preguntas asociadas
+    temas = Tema.objects.all()[:4]
+
+    # --- 2. LOS PRODUCTOS (SOLO ACTIVOS) ---
     cursos = Curso.objects.filter(activo=True).order_by('nivel')
 
-    # B. EL GANCHO (Micro-Competencias)
+    # --- 3. EL GANCHO (Micro-Competencias) ---
     try:
         retos = MicroCompetencia.objects.annotate(
             num_preguntas=Count('preguntas_banco')
         ).filter(num_preguntas__gte=3).order_by('?')[:6]
     except Exception:
-        # Si falla (ej: tabla no existe aún), mostramos lista vacía
         retos = []
 
-    # C. ESTADÍSTICAS (CON IMPORTACIÓN TARDÍA Y SEGURA)
+    # --- 4. ESTADÍSTICAS (TU LÓGICA SEGURA) ---
     try:
-        # 1. Intentamos importar el archivo AQUÍ dentro
         from core.logic import analytics
-        
-        # 2. Si importa bien, pedimos los datos
         stats = analytics.obtener_stats_comerciales()
-        
     except Exception as e:
-        # 3. Si falla CUALQUIER cosa (No existe archivo, falta __init__, DB vacía, etc.)
-        print(f"⚠️ Aviso: No se pudieron cargar las stats: {e}")
+        # print(f"⚠️ Aviso: No se pudieron cargar las stats: {e}") # Descomentar para debug
         stats = {
             "total_cursos": 0,
             "total_examenes": 0,
@@ -56,12 +52,15 @@ def homepage(request):
         }
 
     context = {
+        "temas": temas,
         "cursos": cursos,
         "retos": retos,
         **stats
     }
+    
+    # Nota: Asegúrate de que el nombre del template coincida con el archivo que creaste
+    # Si usaste el código anterior, renómbralo a 'core/home.html' o cambia aquí a 'core/homepage.html'
     return render(request, "core/homepage.html", context)
-
 
 # --- ÁREA PRIVADA ---
 @login_required
