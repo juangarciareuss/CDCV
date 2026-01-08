@@ -8,48 +8,52 @@ from core.logic import analytics
 # Importamos el Agente
 from agents.builder_agent import BuilderAgent 
 
-# --- PESTAÑA 1: LA FÁBRICA (Crear) ---
+# EN: core/views/dashboard.py
+#
+
 @login_required
 def dashboard_crear(request):
     """
-    Vista para invocar al Agente IA y crear nuevos cursos.
+    Vista para crear cursos.
+    Captura Nicho, Nivel y Precio directamente del formulario y ejecuta el Agente.
     """
     if not request.user.is_staff: return redirect('core:homepage')
 
     if request.method == 'POST':
         nicho = request.POST.get('nicho')
-        
-        # 1. CAPTURAMOS EL NIVEL DEL FORMULARIO
         nivel_raw = request.POST.get('nivel')
+        precio_raw = request.POST.get('precio')
 
-        # 2. VALIDACIÓN OBLIGATORIA
-        if not nivel_raw:
-            messages.error(request, "⚠️ Error crítico: El Nivel de Profundidad es obligatorio.")
+        # Verificación simple de que llegaron datos
+        if not nicho or not nivel_raw or not precio_raw:
+            messages.error(request, "⚠️ Todos los campos son obligatorios.")
             return render(request, 'core/dashboard_crear.html', {'active_tab': 'crear'})
 
         try:
+            # Conversión de tipos directa
             nivel = int(nivel_raw)
-        except ValueError:
-            nivel = 3 # Fallback de seguridad
-
-        if nicho:
-            try:
-                # Instanciamos al Agente Arquitecto
-                agente = BuilderAgent()
-                
-                # 3. PASAMOS EL NIVEL A LA FUNCIÓN DE CONSTRUCCIÓN
-                resultado = agente.construir_curso(nicho, nivel_dificultad=nivel) 
-                
-                # Mensaje de éxito con detalles
-                messages.success(request, f"✅ ¡Éxito! Curso '{nicho}' (Nivel {nivel}) creado correctamente.")
-                return redirect('core:dashboard_administrar')
+            precio = float(precio_raw)
             
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
-                messages.error(request, f"❌ Error del Agente: {str(e)}")
-        else:
-            messages.warning(request, "⚠️ Debes escribir un nicho de mercado.")
+            # Instanciamos al Agente
+            agente = BuilderAgent()
+            
+            # Construimos la estructura base
+            curso = agente.construir_curso(nicho, nivel_dificultad=nivel) 
+            
+            if curso:
+                # Actualizamos el precio con lo que ingresó el usuario
+                curso.precio_usd = precio
+                curso.save()
+                
+                messages.success(request, f"✅ Curso '{curso.nombre}' creado. Precio: ${precio} USD.")
+                return redirect('core:dashboard_administrar')
+            else:
+                messages.error(request, "⚠️ El agente IA no devolvió un curso válido.")
+
+        except ValueError:
+            messages.error(request, "❌ Error de formato en Nivel o Precio.")
+        except Exception as e:
+            messages.error(request, f"❌ Error del sistema: {str(e)}")
 
     return render(request, 'core/dashboard_crear.html', {
         'active_tab': 'crear' 

@@ -46,17 +46,34 @@ class BuilderAgent:
         reglas_seleccion = []
         orden_global = 1 # 🆕 Variable para controlar el orden de la playlist
 
-        # 3. Iterar Temas y Competencias
+     # 3. Iterar Módulos
         for t_data in plan['temas']:
-            print(f"   -> Procesando Módulo: {t_data['nombre']}")
-            tema_slug = slugify(t_data['nombre']) or f"t-{int(time.time())}"
+            # -------------------------------------------------------
+            # 🧠 LÓGICA DE PARSEO "AMAZON TAXONOMY"
+            # Separamos "CATEGORÍA: Subtema" para el Gimnasio
+            # -------------------------------------------------------
+            nombre_completo = t_data.get('nombre', 'General: General')
             
-            # Crear Tema
+            if ":" in nombre_completo:
+                # Si cumple el formato "Excel: Tablas", separamos
+                partes = nombre_completo.split(":")
+                nombre_tema_maestro = partes[0].strip() # "Excel" (Para el Gym)
+                contexto_subtema = partes[1].strip()    # "Tablas" (Para contexto)
+            else:
+                # Fallback si la IA olvida los dos puntos
+                nombre_tema_maestro = nombre_completo.strip()
+                contexto_subtema = nombre_completo.strip()
+
+            print(f"   -> Procesando Área: {nombre_tema_maestro} | Contexto: {contexto_subtema}")
+
+            tema_slug = slugify(nombre_tema_maestro)
+            
+            # Buscamos o creamos el TEMA MAESTRO (Ej: solo "Excel")
             tema_obj, _ = Tema.objects.get_or_create(
-                nombre=t_data['nombre'], 
-                defaults={'slug': tema_slug, 'icono': '📚'}
+                nombre=nombre_tema_maestro, 
+                defaults={'slug': tema_slug}
             )
-            curso.temas.add(tema_obj) # Conexión Curso <-> Tema (Etiquetas macro)
+            curso.temas.add(tema_obj)
             
             preguntas_tema_count = 0
             

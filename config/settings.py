@@ -20,6 +20,14 @@ DEBUG = True
 # El '*' permite todo, útil para probar el deploy inicial, luego ciérralo.
 ALLOWED_HOSTS = ['*']
 
+# CRÍTICO PARA PRODUCCIÓN (HTTPS):
+CSRF_TRUSTED_ORIGINS = [
+    'https://certufy.net', 
+    'https://www.certufy.net',
+    # Si tienes una url de render tipo:
+    # 'https://cdcv.onrender.com', 
+]
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -118,8 +126,6 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder', # Añade esta línea
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
-STATICFILES_DIRS = []
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

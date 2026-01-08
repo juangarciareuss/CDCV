@@ -9,6 +9,15 @@
 
 {% block content %}
 
+<a href="{% url 'core:homepage' %}" 
+   onclick="return confirm('¿Estás seguro de que deseas abandonar el examen? Tu progreso se perderá.');"
+   title="Abandonar Examen"
+   style="position: fixed; top: 20px; left: 20px; z-index: 9999; width: 40px; height: 40px; background: white; border-radius: 50%; text-decoration: none; color: #e53e3e; font-weight: bold; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 2px solid #e53e3e; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;"
+   onmouseover="this.style.transform='scale(1.1)'"
+   onmouseout="this.style.transform='scale(1)'">
+   ✕
+</a>
+
 <div class="progress-fixed">
     <div class="progress-fill" id="progressBar"></div>
 </div>

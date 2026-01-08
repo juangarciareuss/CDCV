@@ -31,9 +31,10 @@ def diagnosticar_y_pescar_preguntas(curso):
         if not tema_obj:
             return None, f"Error de configuración: El tema '{tema_nombre}' no existe en la BD."
 
-        # 2. Query Estricta
+        # 2. Query Estricta (CORREGIDA)
+        # Cambiamos 'temas=tema_obj' por 'micro_competencia__temas=tema_obj'
         candidatas = Pregunta.objects.filter(
-            temas=tema_obj,
+            micro_competencia__temas=tema_obj, 
             dificultad__gte=dif_min,
             dificultad__lte=dif_max
         ).exclude(id__in=ids_ya_usados)
@@ -41,22 +42,21 @@ def diagnosticar_y_pescar_preguntas(curso):
         # 3. Validación de Stock
         count_disponible = candidatas.count()
         if count_disponible < cantidad:
-            mensaje_error = (
-                f"⚠️ FALTA STOCK EN: '{tema_nombre}'\n"
-                f"- Se piden: {cantidad}. Hay: {count_disponible}.\n"
-                f"💡 Solución: Genera más preguntas con IA."
-            )
-            return [], mensaje_error
-
-        # Selección al azar
-        seleccion = list(candidatas.order_by('?')[:cantidad])
-        preguntas_seleccionadas.extend(seleccion)
-        
-        for p in seleccion:
-            ids_ya_usados.add(p.id)
+            # Si falta stock, intentamos rellenar con lo que haya para no romper el examen
+            seleccion = list(candidatas.order_by('?'))
+            preguntas_seleccionadas.extend(seleccion)
+            for p in seleccion: ids_ya_usados.add(p.id)
+            
+            # Opcional: Podrías lanzar error si prefieres ser estricto
+            # return [], f"Falta stock en '{tema_nombre}'. Hay {count_disponible}, se piden {cantidad}."
+        else:
+            # Selección al azar normal
+            seleccion = list(candidatas.order_by('?')[:cantidad])
+            preguntas_seleccionadas.extend(seleccion)
+            for p in seleccion: ids_ya_usados.add(p.id)
 
     if not preguntas_seleccionadas:
-        return None, "No se encontraron preguntas válidas."
+        return None, "No se encontraron preguntas válidas para generar el examen."
 
     return preguntas_seleccionadas, None
 
@@ -79,23 +79,21 @@ def finalizar_examen(user, curso, preguntas_ids, respuestas_usuario):
     # (Asumimos que utils hace el cálculo crudo)
     resultados_raw, porcentaje, total_correctas, total_preguntas = calcular_resultados(respuestas_usuario, preguntas_ordenadas)
     
-    # 4. CONSTRUCCIÓN DEL SOLUCIONARIO (LO QUE FALTABA)
+    # 4. CONSTRUCCIÓN DEL SOLUCIONARIO
     detalles_para_html = []
     
     for pregunta in preguntas_ordenadas:
         # ID de la respuesta del usuario (ej: 'a', 'b')
-        # Nota: request.POST usa 'pregunta_123', aqui limpiamos la clave si es necesario
         key_post = f"pregunta_{pregunta.id}"
         respuesta_user_id = respuestas_usuario.get(key_post)
         
         # Texto de la respuesta del usuario
-        # Buscamos en el JSON de opciones: {'a': 'Texto A', 'b': 'Texto B'}
         texto_usuario = "Sin responder"
         if respuesta_user_id and respuesta_user_id in pregunta.opciones:
             texto_usuario = pregunta.opciones[respuesta_user_id]
             
         # Texto de la respuesta correcta
-        correcta_id = pregunta.respuesta_correcta # ej: 'c'
+        correcta_id = pregunta.respuesta_correcta 
         texto_correcta = pregunta.opciones.get(correcta_id, "Error en datos")
         
         # Verificación individual
@@ -123,11 +121,11 @@ def finalizar_examen(user, curso, preguntas_ids, respuestas_usuario):
         aprobado=examen_aprobado
     )
     
-    # 7. RETORNO PARA EL TEMPLATE (Con las llaves correctas)
+    # 7. RETORNO PARA EL TEMPLATE
     return {
         'aprobado': examen_aprobado,
-        'puntaje': porcentaje,       # Para el círculo de nota
-        'detalles': detalles_para_html, # Para el solucionario
-        'examen_id': examen_obj.id,  # Para el link de pago
+        'puntaje': porcentaje,       
+        'detalles': detalles_para_html, 
+        'examen_id': examen_obj.id,  
         'curso': curso
     }, None
