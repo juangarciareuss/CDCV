@@ -11,11 +11,7 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
-from core.models import Curso
-
-# 👇 AGREGAMOS MicroCompetencia AQUI
-from core.models import Curso, Examen, Certificado, InsigniaUsuario, MicroCompetencia, Tema
-#from core.logic import analytics
+from core.models import Curso, Examen, Certificado, InsigniaUsuario, MicroCompetencia, Tema, PerfilEntrenamiento
 from agents.ai_services import CDCVOrchestrator
 
 def homepage(request):
@@ -27,6 +23,14 @@ def homepage(request):
     # Necesitamos los temas para mostrar las tarjetas de entrenamiento
     # Opcional: Podríamos filtrar solo los que tienen preguntas asociadas
     temas = Tema.objects.all()[:4]
+
+    # LÓGICA DE NIVEL DE USUARIO
+    if request.user.is_authenticated:
+        for t in temas:
+            # Buscamos si el usuario ya tiene un perfil en este tema
+            perfil = PerfilEntrenamiento.objects.filter(user=request.user, tema=t).first()
+            # Si existe, guardamos el nivel. Si no, 0 (para indicar "Nuevo")
+            t.nivel_usuario = perfil.nivel_actual if perfil else 0
 
     # --- 2. LOS PRODUCTOS (SOLO ACTIVOS) ---
     cursos = Curso.objects.filter(activo=True).order_by('nivel')

@@ -146,7 +146,16 @@
                         </div>
                         
                         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; color: #2d3748;">{{ tema.nombre }}</h3>
-                        <p style="font-size: 0.85rem; color: #718096; margin-bottom: 15px;">Calibrar Nivel</p>
+
+                        {% if user.is_authenticated and tema.nivel_usuario > 0 %}
+                            <div style="margin-bottom: 15px;">
+                                <span style="background: #e9d8fd; color: #6b46c1; font-weight: 800; font-size: 0.9rem; padding: 2px 8px; border-radius: 12px;">
+                                    Nivel {{ tema.nivel_usuario|floatformat:1 }}
+                                </span>
+                            </div>
+                        {% else %}
+                            <p style="font-size: 0.85rem; color: #718096; margin-bottom: 15px;">Calibrar Nivel</p>
+                        {% endif %}
                         
                         <div style="background: #edf2f7; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 15px;">
                              <div style="background: #9f7aea; width: 20%; height: 100%;"></div>

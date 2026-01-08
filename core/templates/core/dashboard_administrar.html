@@ -104,9 +104,24 @@
     </form>
 </td>
 
-                    <td style="padding: 15px; text-align: center;">
-                        <button style="background: none; border: 1px solid #dee2e6; padding: 5px 10px; border-radius: 4px; cursor: pointer; color: #555;">🗑️</button>
-                    </td>
+<td style="padding: 15px; text-align: center;">
+    <form action="" method="POST" style="margin:0;" onsubmit="return confirm('⚠️ ¿Estás SEGURO de eliminar el curso \'{{ curso.nombre }}\'?\n\nEsta acción NO se puede deshacer.');">
+        {% csrf_token %}
+        
+        <input type="hidden" name="curso_id" value="{{ curso.id }}">
+        <input type="hidden" name="accion" value="eliminar_curso">
+        
+        <button type="submit" 
+                style="background: #fff; border: 1px solid #dc3545; padding: 5px 10px; border-radius: 4px; cursor: pointer; color: #dc3545; transition: all 0.2s;"
+                onmouseover="this.style.background='#dc3545'; this.style.color='white';"
+                onmouseout="this.style.background='#fff'; this.style.color='#dc3545';"
+                title="Eliminar curso definitivamente">
+            🗑️
+        </button>
+    </form>
+</td>
+
+
                 </tr>
                 {% empty %}
                 <tr>

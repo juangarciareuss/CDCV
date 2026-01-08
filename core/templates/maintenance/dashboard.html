@@ -40,3 +40,18 @@
     <p class="mb-0 text-muted">Todos los sistemas operativos. Selecciona una herramienta del menú lateral para comenzar a auditar.</p>
 </div>
 {% endblock %}
+
+<td>
+    {% if "FALTA TEMA CRÍTICO" in item.problemas|join:"" %}
+        <form action="{% url 'core:maintenance_fix_integrity' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="curso_id" value="{{ item.id }}">
+            <input type="hidden" name="accion" value="reparar_excel">
+            <button type="submit" class="btn btn-sm btn-danger shadow-sm">
+                <i class="fas fa-hammer me-1"></i> Reparar Estructura
+            </button>
+        </form>
+    {% else %}
+        <span class="text-muted">Revisión manual</span>
+    {% endif %}
+</td>

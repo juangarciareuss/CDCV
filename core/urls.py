@@ -59,6 +59,7 @@ urlpatterns = [
     # 3. Módulo de Arquitectura de Temas (Auditoría y Limpieza)
     path('ingenieria/temas/', maintenance.theme_manager, name='maintenance_themes'),
     path('ingenieria/temas/clean/', maintenance.ejecutar_limpieza_temas, name='action_clean_themes'),
+    path('maintenance/fix-integrity/', maintenance.ejecutar_reparacion_integridad, name='maintenance_fix_integrity'),
 
     # --- RUTAS DEL GIMNASIO (API + VISTAS) ---
 # --- ZONA DE ENTRENAMIENTO (GIMNASIO) ---

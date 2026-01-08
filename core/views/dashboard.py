@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.forms import modelformset_factory, NumberInput  # <--- NUEVO: Para la tabla de precios
 from core.models import Curso, Usuario
 from core.logic import analytics
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 # Importamos el Agente
 from agents.builder_agent import BuilderAgent 
@@ -60,18 +62,19 @@ def dashboard_crear(request):
     })
 
 
-# --- PESTAÑA 2: LA BODEGA (Administrar + Smart Resizing + Toggle) ---
+# --- PESTAÑA 2: LA BODEGA (Administrar + Smart Resizing + Toggle + ELIMINAR) ---
 @login_required
 def dashboard_administrar(request):
     """
     Lista TODOS los cursos y permite:
     1. Editar la cantidad total de preguntas (Smart Resizing).
     2. Activar/Desactivar cursos (Toggle).
+    3. ELIMINAR cursos (Funcionalidad Nueva).
     """
     if not request.user.is_staff: return redirect('core:homepage')
     
     if request.method == 'POST':
-        # --- CASO 1: CAMBIAR ESTADO (ACTIVO/INACTIVO) ---
+        # --- CASO 1: CAMBIAR ESTADO (TU CÓDIGO ORIGINAL) ---
         if request.POST.get('accion') == 'toggle_estado':
             curso_id = request.POST.get('curso_id')
             curso = get_object_or_404(Curso, id=curso_id)
@@ -80,7 +83,6 @@ def dashboard_administrar(request):
             curso.activo = not curso.activo
             curso.save()
             
-            estado_texto = "activado" if curso.activo else "desactivado"
             # Feedback visual según la acción
             if curso.activo:
                 messages.success(request, f"🟢 Curso '{curso.nombre}' ahora está PÚBLICO.")
@@ -89,7 +91,21 @@ def dashboard_administrar(request):
             
             return redirect('core:dashboard_administrar')
 
-        # --- CASO 2: ACTUALIZAR TOTAL PREGUNTAS (Smart Resizing) ---
+        # --- CASO 2: ELIMINAR CURSO (NUEVO BLOQUE AGREGADO) ---
+        elif request.POST.get('accion') == 'eliminar_curso':
+            curso_id = request.POST.get('curso_id')
+            curso = get_object_or_404(Curso, id=curso_id)
+            try:
+                nombre_backup = curso.nombre
+                curso.delete()
+                messages.success(request, f"🗑️ Curso '{nombre_backup}' eliminado definitivamente.")
+            except Exception as e:
+                # Protección de integridad
+                messages.error(request, f"⛔ No se puede eliminar '{curso.nombre}' porque tiene datos históricos (alumnos/ventas) asociados.")
+            
+            return redirect('core:dashboard_administrar')
+
+        # --- CASO 3: ACTUALIZAR TOTAL PREGUNTAS (TU CÓDIGO ORIGINAL) ---
         elif 'actualizar_total' in request.POST:
             try:
                 curso_id = request.POST.get('curso_id')
@@ -137,16 +153,13 @@ def dashboard_administrar(request):
                 
             return redirect('core:dashboard_administrar')
 
-    # --- GET: MOSTRAR TABLA ---
-    # CAMBIO CRÍTICO: Usamos .all() en lugar de .filter(activo=True)
-    # Esto permite ver los cursos "Borrador" o "Inactivos" en la lista.
+    # --- GET: MOSTRAR TABLA (TU CÓDIGO ORIGINAL) ---
     cursos = Curso.objects.all().order_by('-created_at')
     
     return render(request, 'core/dashboard_administrar.html', {
-        'cursos': cursos,
-        'active_tab': 'administrar'
-    })
-
+            'cursos': cursos,
+            'active_tab': 'administrar'
+        })
 
 # --- PESTAÑA 3: CONFIGURACIÓN DE PRECIOS (NUEVA FUNCIONALIDAD) ---
 @login_required

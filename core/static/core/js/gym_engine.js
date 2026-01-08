@@ -78,9 +78,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const btn = document.createElement('div');
             btn.className = 'option-btn';
             
-            // Animación de entrada en cascada (stagger)
-            btn.style.animation = `fadeIn 0.3s ease forwards ${index * 0.1}s`;
-            btn.style.opacity = '0'; // Empieza invisible para la animación
+            // SOLUCIÓN NUEVA: Animación directa sin depender de CSS
+            btn.style.opacity = '0';
+            btn.style.transform = 'translateY(10px)';
+            btn.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            
+            // Pequeño retraso matemático para el efecto cascada
+            setTimeout(() => {
+                btn.style.opacity = '1';
+                btn.style.transform = 'translateY(0)';
+            }, index * 100 + 50); // 100ms * índice
 
             btn.innerHTML = `
                 <div class="option-key">${key}</div>
