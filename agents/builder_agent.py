@@ -3,7 +3,6 @@ import os
 import time
 from google import genai
 from django.utils.text import slugify
-# AGREGAMOS CursoMicroCompetencia a los imports
 from core.models import Curso, Tema, MicroCompetencia, Pregunta, CursoMicroCompetencia
 from .prompts import prompt_plan_maestro, prompt_generacion_reactivos
 
@@ -33,13 +32,24 @@ class BuilderAgent:
             print("❌ Error: El JSON no contiene la clave 'temas'.")
             return None
 
-        # 2. Materializar Curso en BD
+        #NUEVA LÓGICA DE NOMBRE (NIVEL X) ---
+        niveles_map = {
+            1: "Principiante",
+            2: "Básico",
+            3: "Intermedio",
+            4: "Avanzado",
+            5: "Experto"
+        }
+        sufijo = niveles_map.get(nivel_dificultad, "Especializado")
+        nombre_estandar = f"{nicho_mercado.title()} {sufijo}" # Ej: "Excel Intermedio"
+        # -----------------------------------------
+
         curso = Curso.objects.create(
-            nombre=plan['curso']['nombre'],
+            nombre=nombre_estandar,  # <--- ANTES DECÍA: plan['curso']['nombre']
             descripcion=plan['curso']['descripcion'],
             precio_usd=plan['curso'].get('precio_usd', 9.99),
             nivel=nivel_dificultad,
-            activo=False # Nace inactivo hasta revisión
+            activo=False 
         )
         
         total_preguntas = 0

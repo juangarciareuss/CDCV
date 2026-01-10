@@ -1,5 +1,6 @@
 # core/agents/prompts.py
 
+#Define las búsquedas según nivel de dificultad.
 def obtener_reglas_nivel(nivel):
     """
     Define la 'Personalidad Pedagógica' según el nivel de dificultad (1-5).
@@ -47,8 +48,6 @@ def obtener_reglas_nivel(nivel):
         }
     }
     return niveles.get(nivel, niveles[3])
-
-# core/agents/prompts.py
 
 # core/agents/prompts.py
 
