@@ -6,57 +6,86 @@ from core.utils import calcular_resultados
 
 def diagnosticar_y_pescar_preguntas(curso):
     """
-    Motor de Selección Estricto.
-    Selecciona preguntas basándose EXCLUSIVAMENTE en la configuración del curso.
+    Motor de Selección Estricto con Diagnóstico Detallado.
+    Si falla, devuelve un reporte técnico exacto de por qué falló.
     """
-    # Validación básica
-    if not curso.estructura_examen or 'reglas_seleccion' not in curso.estructura_examen:
-        return None, "Error: El curso no tiene una estructura de examen definida."
+    debug_log = [] # Aquí acumularemos las pistas
+    
+    # 1. Validación de Estructura (JSON)
+    if not curso.estructura_examen:
+        return None, "❌ ERROR CRÍTICO: El campo 'estructura_examen' está VACÍO en la base de datos."
+        
+    if 'reglas_seleccion' not in curso.estructura_examen:
+        return None, f"❌ ERROR DE FORMATO: El JSON existe pero no tiene la clave 'reglas_seleccion'. Contenido: {curso.estructura_examen}"
+
+    reglas = curso.estructura_examen['reglas_seleccion']
+    if not reglas:
+        return None, "❌ ERROR DE LÓGICA: La lista 'reglas_seleccion' está vacía ([]). El Builder no guardó ninguna regla."
 
     preguntas_seleccionadas = []
     ids_ya_usados = set()
 
-    # Iteramos por las reglas definidas en la base de datos
-    for regla in curso.estructura_examen['reglas_seleccion']:
+    # 2. Iteración Forense por Reglas
+    for i, regla in enumerate(reglas):
         tema_nombre = regla.get('tema_nombre')
-        cantidad = regla.get('cantidad', 10)
-        dif_min = regla.get('dificultad_min', 1)
-        dif_max = regla.get('dificultad_max', 5)
+        cantidad_pedida = regla.get('cantidad', 0)
         
-        # 1. Buscamos el objeto Tema
+        # A. Buscar el Tema
+        # Intentamos coincidencia exacta primero, luego insensible a mayúsculas
         tema_obj = Tema.objects.filter(nombre__iexact=tema_nombre).first()
         if not tema_obj:
+            # Intento de fallback por si el nombre varía ligeramente
             tema_obj = Tema.objects.filter(nombre__icontains=tema_nombre).first()
-
+        
         if not tema_obj:
-            return None, f"Error de configuración: El tema '{tema_nombre}' no existe en la BD."
+            debug_log.append(f"⚠️ Regla #{i+1}: El tema '{tema_nombre}' NO EXISTE en la tabla 'core_tema'.")
+            continue
 
-        # 2. Query Estricta (CORREGIDA)
-        # Cambiamos 'temas=tema_obj' por 'micro_competencia__temas=tema_obj'
+        # B. Contar Preguntas VERIFICADAS (La causa más probable)
         candidatas = Pregunta.objects.filter(
-            micro_competencia__temas=tema_obj, 
-            dificultad__gte=dif_min,
-            dificultad__lte=dif_max
+            micro_competencia__temas=tema_obj,
+            micro_competencia__cursomicrocompetencia__curso=curso,
+            verificado=True  # <--- OJO AQUÍ
         ).exclude(id__in=ids_ya_usados)
         
-        # 3. Validación de Stock
-        count_disponible = candidatas.count()
-        if count_disponible < cantidad:
-            # Si falta stock, intentamos rellenar con lo que haya para no romper el examen
-            seleccion = list(candidatas.order_by('?'))
-            preguntas_seleccionadas.extend(seleccion)
-            for p in seleccion: ids_ya_usados.add(p.id)
-            
-            # Opcional: Podrías lanzar error si prefieres ser estricto
-            # return [], f"Falta stock en '{tema_nombre}'. Hay {count_disponible}, se piden {cantidad}."
-        else:
-            # Selección al azar normal
-            seleccion = list(candidatas.order_by('?')[:cantidad])
-            preguntas_seleccionadas.extend(seleccion)
-            for p in seleccion: ids_ya_usados.add(p.id)
+        stock_real = candidatas.count()
 
+        if stock_real == 0:
+            # Diagnóstico profundo: ¿Es porque no hay preguntas o porque no están verificadas?
+            total_sin_verificar = Pregunta.objects.filter(
+                micro_competencia__temas=tema_obj,
+                micro_competencia__cursomicrocompetencia__curso=curso
+            ).count()
+            
+            if total_sin_verificar > 0:
+                debug_log.append(f"⛔ Regla #{i+1} ({tema_nombre}): Hay {total_sin_verificar} preguntas pero 0 VERIFICADAS. (Falta verificado=True)")
+            else:
+                debug_log.append(f"💀 Regla #{i+1} ({tema_nombre}): NO EXISTEN preguntas en BD para este curso/tema.")
+            continue
+
+        # C. Selección
+        if stock_real < cantidad_pedida:
+            debug_log.append(f"⚠️ Regla #{i+1} ({tema_nombre}): Se pedían {cantidad_pedida}, solo hay {stock_real}. Se tomaron todas.")
+            seleccion = list(candidatas)
+        else:
+            seleccion = random.sample(list(candidatas), cantidad_pedida)
+            
+        preguntas_seleccionadas.extend(seleccion)
+        for p in seleccion:
+            ids_ya_usados.add(p.id)
+
+# 3. Resultado Final
     if not preguntas_seleccionadas:
-        return None, "No se encontraron preguntas válidas para generar el examen."
+        mensaje_error = "NO SE PUDO GENERAR EL EXAMEN.\n\nDiagnóstico Técnico:\n" + "\n".join(debug_log)
+        
+        # 👇 AGREGA ESTO PARA VERLO EN LA TERMINAL 👇
+        print("\n" + "="*50)
+        print("🚨 REPORTE FORENSE DE ERROR (ENGINE):")
+        print(mensaje_error)
+        print("="*50 + "\n")
+        # 👆 --------------------------------------- 👆
+
+        return None, mensaje_error
 
     return preguntas_seleccionadas, None
 

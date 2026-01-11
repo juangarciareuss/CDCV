@@ -1,7 +1,7 @@
-import json
+import json  # <--- 1. AGREGADO: Faltaba esta librería esencial
 import os
 import time
-import re # Agregamos re para limpieza extra si hace falta
+import re
 from google import genai
 from django.utils.text import slugify
 from core.models import Curso, Tema, MicroCompetencia, Pregunta, CursoMicroCompetencia
@@ -47,27 +47,21 @@ class BuilderAgent:
 
         # Detectamos si es una Especialización (Tiene ":") o General
         if ":" in nicho_mercado:
-            # FORMATO B: Especialización (Ej: "Excel: Tablas Dinámicas")
-            # Regla: Se conserva el subtema, SE OMITE la palabra del nivel.
             partes = nicho_mercado.split(":")
-            tema_principal = partes[0].strip().title() # "Excel"
-            sub_tema = partes[1].strip().title()       # "Tablas Dinámicas"
+            tema_principal = partes[0].strip().title()
+            sub_tema = partes[1].strip().title()
             nombre_estandar = f"{tema_principal}: {sub_tema}"
         else:
-            # FORMATO A: General (Ej: "Excel Intermedio")
-            # Regla: Se agrega el sufijo del nivel estandarizado.
             sufijo = niveles_map.get(nivel_dificultad, "Especializado")
             nombre_estandar = f"{nicho_mercado.title()} {sufijo}"
         
-        # -------------------------------------------------------
-
         # 2. Materializar Curso en BD
         curso = Curso.objects.create(
-            nombre=nombre_estandar,  # <--- Nombre limpio aplicado
+            nombre=nombre_estandar,
             descripcion=plan['curso']['descripcion'],
             precio_usd=plan['curso'].get('precio_usd', 9.99),
             nivel=nivel_dificultad,
-            activo=False # Nace inactivo hasta revisión
+            activo=False
         )
         
         total_preguntas = 0
@@ -79,10 +73,7 @@ class BuilderAgent:
             
             # --- AUTO-CORRECCIÓN DE TAXONOMÍA ---
             nombre_tema_raw = t_data.get('nombre', 'General')
-            
-            # Si la IA olvidó poner "Python: Variables", nosotros lo forzamos usando el nicho.
             if ":" not in nombre_tema_raw:
-                # Recuperamos la herramienta del nombre del curso (Ej: "Excel")
                 herramienta_base = nicho_mercado.split(":")[0].strip().title()
                 nombre_tema_final = f"{herramienta_base}: {nombre_tema_raw.strip()}"
             else:
@@ -90,7 +81,7 @@ class BuilderAgent:
 
             print(f"   -> Tema procesado: {nombre_tema_final}")
 
-            # Buscamos o creamos el TEMA MAESTRO con slug simple
+            # Buscamos o creamos el TEMA MAESTRO
             tema_slug = slugify(nombre_tema_final)
             tema_obj, _ = Tema.objects.get_or_create(
                 nombre=nombre_tema_final, 
@@ -98,33 +89,24 @@ class BuilderAgent:
             )
             curso.temas.add(tema_obj)
             
-            preguntas_tema_count = 0
-            
+            # Bucle de Micro-Competencias
             for mc_data in t_data.get('micro_competencias', []):
-                
-                # --- AQUÍ CAPTURAMOS EL SLUG SEO ---
-                # 1. Intentamos leer 'slug_seo' del JSON.
-                # 2. Si no viene, usamos el nombre normal como plan B.
                 slug_intencional = mc_data.get('slug_seo', mc_data['nombre'])
-                
-                # 3. Limpiamos para asegurar que sea URL válida (minúsculas, guiones)
                 slug_final = slugify(slug_intencional)
 
                 # Crear MicroCompetencia
                 mc_obj, _ = MicroCompetencia.objects.get_or_create(
                     nombre=mc_data['nombre'],
                     defaults={
-                        'slug': slug_final, # <--- ¡ESTO FALTABA! Antes no se guardaba.
+                        'slug': slug_final,
                         'definicion_atomica': mc_data.get('definicion', ''),
                         'criterio_exito': mc_data.get('criterio', ''),
                         'icono': "🔹"
                     }
                 )
                 
-                # Conexión Jerárquica
+                # Conexiones
                 mc_obj.temas.add(tema_obj) 
-                
-                # Vinculación al CURSO con ORDEN
                 CursoMicroCompetencia.objects.get_or_create(
                     curso=curso,
                     competencia=mc_obj,
@@ -132,11 +114,35 @@ class BuilderAgent:
                 )
                 orden_global += 1
                 
-                # Generar Reactivos
-                creadas = self._generar_preguntas(mc_obj, nivel_dificultad)
-                preguntas_tema_count += creadas
-                
+                # Generar Reactivos (Aquí se crean en BD)
+                self._generar_preguntas(mc_obj, nivel_dificultad)
                 time.sleep(0.5)
+
+            # ------------------------------------------------------------------
+            # 🛡️ FIX DE INGENIERÍA: AUDITORÍA REAL DE LA BASE DE DATOS
+            # ------------------------------------------------------------------
+            # En lugar de sumar variables en memoria, contamos cuántas preguntas 
+            # REALMENTE quedaron guardadas y verificadas en la BD para este tema.
+            
+            cant_real_bd = Pregunta.objects.filter(
+                micro_competencia__temas=tema_obj,
+                micro_competencia__cursomicrocompetencia__curso=curso,
+                verificado=True
+            ).count()
+
+            print(f"      📊 Auditoría Tema '{tema_obj.nombre}': {cant_real_bd} preguntas verificadas.")
+
+            if cant_real_bd > 0:
+                # Solo agregamos la regla si hay stock real
+                reglas_seleccion.append({
+                    "tema_nombre": tema_obj.nombre,
+                    "cantidad": max(1, int(cant_real_bd * 0.5)), # Regla del 50%
+                    "dificultad_objetivo": nivel_dificultad
+                })
+                total_preguntas += cant_real_bd
+            else:
+                print(f"      ⚠️ ALERTA: Tema '{tema_obj.nombre}' vacío. Omitiendo regla.")
+            # ------------------------------------------------------------------
 
         # 4. Finalizar Configuración
         curso.cantidad_preguntas = total_preguntas
@@ -148,7 +154,7 @@ class BuilderAgent:
         curso.activo = True
         curso.save()
         
-        print(f"✅ [BUILDER] Curso '{curso.nombre}' finalizado con {orden_global-1} competencias.")
+        print(f"✅ [BUILDER] Curso '{curso.nombre}' finalizado con {orden_global-1} competencias y {total_preguntas} preguntas.")
         return curso
 
     def _generar_preguntas(self, mc_obj, nivel):
@@ -169,9 +175,8 @@ class BuilderAgent:
                     respuesta_correcta=p_data['respuesta_correcta'],
                     justificacion=p_data.get('justificacion', 'Generada por IA'),
                     dificultad=nivel,
-                    verificado=False 
+                    verificado=True # <--- IMPORTANTE: Nacen listas para usar
                 )
-                # ✅ Confirmación visual
                 print(f"   [+] Pregunta creada: {p_data['texto'][:40]}...")
                 count += 1
             return count
@@ -186,7 +191,7 @@ class BuilderAgent:
                 contents=prompt,
                 config={
                     "response_mime_type": "application/json",
-                    "temperature": 0.2 # <--- CAMBIO CRÍTICO: Hace a la IA más obediente con el JSON
+                    "temperature": 0.2
                 }
             )
             return self._limpiar_json(response.text)
@@ -202,8 +207,6 @@ class BuilderAgent:
         try:
             return json.loads(texto_limpio)
         except json.JSONDecodeError as e:
-            # 🔴 AQUÍ ESTÁ EL CAMBIO: Imprimimos el error para que lo veas
             print(f"🔴 JSON ROTO: {e}") 
             print(f"   CONTENIDO RECIBIDO: {texto_raw[:100]}...") 
             return None
-        

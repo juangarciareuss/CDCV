@@ -141,7 +141,6 @@ def dashboard_administrar(request):
                 # 5. Guardar cambios en la BD
                 config['reglas_seleccion'] = reglas
                 curso.estructura_examen = config
-                curso.cantidad_preguntas = nuevo_total
                 curso.save()
                 
                 messages.success(request, f"✅ Curso '{curso.nombre}' re-calculado a {nuevo_total} preguntas.")
