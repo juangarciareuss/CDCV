@@ -1,27 +1,55 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 60px auto; text-align: center;">
+<div style="max-width: 550px; margin: 80px auto; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-    <div style="font-size: 5rem;">😓</div>
+    <div style="margin-bottom: 25px; animation: subtleShake 0.4s ease-in-out;">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+            <path d="M15 9L9 15" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 9L15 15" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
     
-    <h1 style="color: #dc3545; margin-bottom: 10px;">Casi lo logras...</h1>
-    <p style="font-size: 1.2rem; color: #555;">
-        No has alcanzado el 100% necesario para ganar la insignia de <br>
-        <strong>{{ competencia.nombre }}</strong>.
+    <h1 style="color: #111827; font-size: 2rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.025em;">
+        Casi, pero no fue suficiente
+    </h1>
+    <p style="font-size: 1.125rem; color: #4B5563; line-height: 1.6; margin-bottom: 35px;">
+        El estándar es alto. Necesitas un <strong style="color: #111827; font-weight: 700;">100% de aciertos</strong> para certificar tu dominio en 
+        <span style="color: #6a11cb; font-weight: 600;">{{ competencia.nombre }}</span>.
     </p>
 
-    <div style="background: white; padding: 30px; border-radius: 15px; margin: 30px 0; border: 1px solid #eee;">
-        <p>Recuerda revisar los conceptos de:</p>
-        <ul style="text-align: left; color: #666; max-width: 300px; margin: 0 auto;">
-            <li>{{ competencia.definicion_atomica|truncatewords:10 }}</li>
-            <li>{{ competencia.criterio_exito|truncatewords:10 }}</li>
-        </ul>
+    <div style="background: #F9FAFB; padding: 25px; border-radius: 16px; margin: 35px 0; border: 1px solid #E5E7EB; text-align: left; display: flex; align-items: flex-start;">
+        
+        <div style="margin-right: 15px; flex-shrink: 0; background: #FEF3C7; padding: 8px; border-radius: 10px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2ZM10 20C10 20.55 10.45 21 11 21H13C13.55 21 14 20.55 14 20V19H10V20Z" fill="#D97706"/>
+            </svg>
+        </div>
+
+        <div>
+            <p style="color: #111827; font-weight: 700; font-size: 1rem; margin: 0 0 8px 0;">Tip de Experto:</p>
+            <p style="color: #4B5563; font-size: 0.95rem; margin: 0; line-height: 1.5;">
+                Revisa los fundamentos teóricos. Las preguntas están diseñadas para detectar dudas conceptuales.
+            </p>
+        </div>
     </div>
 
-    <a href="{{ request.path }}" style="display: inline-block; background: #6c757d; color: white; padding: 15px 40px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 1.1rem;">
-        🔄 Intentar de Nuevo
+    <a href="{{ request.path }}" style="display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #7B2CBF 0%, #6a11cb 100%); color: white; padding: 16px 48px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.125rem; box-shadow: 0 8px 20px rgba(106, 17, 203, 0.25); transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 25px rgba(106, 17, 203, 0.35)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(106, 17, 203, 0.25)'">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 10px;">
+            <path d="M21 12C21 16.9706 16.9706 21 12 21C9.69494 21 7.59227 20.1334 6.00003 18.7083L3 21M3 21V15M3 15H9M3 12C3 7.02944 7.02944 3 12 3C14.3051 3 16.4077 3.86656 18 5.29168L21 3M21 3V9M21 9H15" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Intentarlo de Nuevo
     </a>
 
 </div>
+
+<style>
+/* Animación más sutil y profesional que el "bounce" anterior */
+@keyframes subtleShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+</style>
 {% endblock %}

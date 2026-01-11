@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load socialaccount %} {# Carga necesaria para el botón de Google #}
 
 {% block content %}
 <div style="max-width: 600px; margin: 60px auto; text-align: center;">
@@ -11,36 +12,55 @@
         <strong>{{ competencia.nombre }}</strong>
     </p>
 
-    <div style="background: #fff3cd; border: 2px solid #ffeeba; padding: 20px; border-radius: 15px; margin: 30px 0;">
-        <h3 style="margin: 0; color: #856404;">🏅 Insignia Desbloqueada</h3>
-        <p style="margin: 5px 0 0;">Se ha añadido a tu perfil profesional.</p>
-    </div>
-
-   {% if competencia.curso_sugerido %}
-    <div style="background: white; border: 1px solid #ddd; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
-        <p style="color: #666; font-size: 1.1rem;">
-            Ya tienes <strong>1 victoria</strong>. <br>
-            Completa las micro-competencias restantes para obtener tu:
-        </p>
+    {# --- INICIO DE LA LÓGICA INTELIGENTE --- #}
+    {% if es_usuario_anonimo %}
         
-        <h2 style="color: #0056b3; margin: 10px 0;">{{ competencia.curso_sugerido.nombre }}</h2>
-        
-        <div style="margin: 20px 0;">
-            <span style="text-decoration: line-through; color: #999;">$100.00 USD</span>
-            <span style="font-size: 1.5rem; font-weight: bold; color: #28a745; margin-left: 10px;">
-                ${{ competencia.curso_sugerido.precio_usd }} USD
-            </span>
+        <div style="background: #fff3cd; border: 2px solid #ffeeba; padding: 20px; border-radius: 15px; margin: 30px 0;">
+            <h3 style="margin: 0; color: #856404;">⚠️ ¡Espera! No está guardada</h3>
+            <p style="margin: 5px 0 15px;">Ganaste la insignia, pero como no has iniciado sesión, <strong>se perderá al salir</strong>.</p>
+            
+            <a href="{% provider_login_url 'google' %}?next={{ request.path }}%3Fclaim%3D1" 
+            style="display: inline-block; background: #4285F4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+            <span style="margin-right: 8px;">G</span> Guardar mi Insignia con Google
+            </a>
+            <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Es gratis y solo toma 1 clic.</p>
         </div>
 
-        <a href="{% url 'core:examen' competencia.curso_sugerido.id %}" style="display: inline-block; background: #0056b3; color: white; padding: 15px 40px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,91,187,0.3);">
-            👉 Ir por la Certificación Completa
-        </a>
-    </div>
-    {% endif %}
+    {% else %}
 
-    <div style="margin-top: 30px;">
-        <a href="{% url 'core:perfil_usuario' %}" style="color: #666;">Ver mi colección de insignias</a>
-    </div>
+        <div style="background: #d4edda; border: 2px solid #c3e6cb; padding: 20px; border-radius: 15px; margin: 30px 0;">
+            <h3 style="margin: 0; color: #155724;">🏅 Insignia Guardada</h3>
+            <p style="margin: 5px 0 0;">Se ha añadido correctamente a tu perfil profesional.</p>
+        </div>
+
+        {% if competencia.curso_sugerido %}
+        <div style="background: white; border: 1px solid #ddd; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-top: 30px;">
+            <p style="color: #666; font-size: 1.1rem;">
+                Ya tienes <strong>1 victoria</strong>. <br>
+                Completa las micro-competencias restantes para obtener tu:
+            </p>
+            
+            <h2 style="color: #0056b3; margin: 10px 0;">{{ competencia.curso_sugerido.nombre }}</h2>
+            
+            <div style="margin: 20px 0;">
+                <span style="text-decoration: line-through; color: #999;">$100.00 USD</span>
+                <span style="font-size: 1.5rem; font-weight: bold; color: #28a745; margin-left: 10px;">
+                    ${{ competencia.curso_sugerido.precio_usd }} USD
+                </span>
+            </div>
+
+            <a href="{% url 'core:examen' competencia.curso_sugerido.id %}" style="display: inline-block; background: #0056b3; color: white; padding: 15px 40px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,91,187,0.3);">
+                👉 Ir por la Certificación Completa
+            </a>
+        </div>
+        {% endif %}
+
+        <div style="margin-top: 30px;">
+            <a href="{% url 'core:perfil_usuario' %}" style="color: #666;">Ver mi colección de insignias</a>
+        </div>
+
+    {% endif %}
+    {# --- FIN DE LA LÓGICA --- #}
 
 </div>
 
