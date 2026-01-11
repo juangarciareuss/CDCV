@@ -31,10 +31,6 @@ def reto_microcompetencia(request, slug_competencia):
 
     # 2. CALIFICAR EL SPRINT (POST)
     if request.method == 'POST':
-        # Validación de Login (Fundamental para guardar el progreso)
-        if not request.user.is_authenticated:
-            messages.warning(request, "¡Casi lo tienes! Inicia sesión para guardar tu medalla.")
-            return redirect(f'/accounts/login/?next={request.path}')
 
         puntaje = 0
         total = 0
@@ -58,7 +54,8 @@ def reto_microcompetencia(request, slug_competencia):
         es_ganador = (puntaje == total and total > 0)
         
         if es_ganador:
-            # 🏅 Dar Medalla (Si ya la tiene, no la duplica gracias a get_or_create)
+        # 🏅 AGREGAMOS CONDICIONAL: Solo guardamos si está logueado
+         if request.user.is_authenticated:
             InsigniaUsuario.objects.get_or_create(
                 usuario=request.user,
                 competencia=competencia
