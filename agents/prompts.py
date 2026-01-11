@@ -12,7 +12,7 @@ def obtener_reglas_nivel(nivel):
 
     niveles = {
         1: {
-            "rol": "Maestro de Alfabetización Técnica",
+            "rol": "Instructor de Fundamentos y conceptos básicos",
             "estilo": "Definición directa, memoria visual, reconocimiento de interfaz.",
             "longitud_max": "15 palabras",
             "prohibido": "Ambigüedad, casos de uso complejos, excepciones.",
@@ -51,90 +51,69 @@ def obtener_reglas_nivel(nivel):
 
 # core/agents/prompts.py
 
-def prompt_plan_maestro(nicho, nivel):
+def prompt_arquitectura_curso(nicho, nivel):
+    
+    if ":" in nicho:
+        base = nicho.split(":")[0].strip()
+    else:
+        base = nicho.strip()
+    
     return f"""
-    Actúa como un Arquitecto Curricular Senior especializado en Taxonomía Educativa.
-    Tu misión es diseñar la estructura de base de datos para un curso de: "{nicho}" (Nivel {nivel} de 1-5).
+    Actúa como un Arquitecto de Datos Educativos y Experto en SEO.
+    Tu misión es diseñar la estructura de base de datos para una certificación de: "{nicho}" (Nivel {nivel} de 1-5).
 
     ESTRUCTURA DE RESPUESTA REQUERIDA (JSON):
     {{
       "curso": {{
-        "nombre": "Título Comercial y Atractivo",
-        "descripcion": "Descripción breve enfocada en beneficios.",
-        "precio_usd": 19.99
+        "descripcion": "Descripción técnica objetiva enfocada en validación de competencias."
       }},
       "temas": [
         {{
-          "nombre": "CATEGORÍA MAESTRA: Subtema Específico", 
+          "nombre": "{base}: Subtema Específico", 
           "micro_competencias": [
              {{ 
-               "nombre": "Verbo de Acción + Objeto + Contexto", 
-               "definicion": "Explicación breve.", 
-               "criterio": "Criterio de evaluación." 
+               "nombre": "Nombre técnico de la competencia", 
+               "slug_seo": "como-hacer-la-accion-exacta",
+               "definicion": "Explicación atómica.", 
+               "criterio": "Criterio de éxito." 
              }}
           ]
         }}
       ]
     }}
 
-    🛑 REGLAS CRÍTICAS DE TAXONOMÍA (FORMATO AMAZON):
+    🛑 REGLAS CRÍTICAS de Taxonomía:
     
-    1. REGLA DEL TEMA (Tags Globales):
-       - El campo "nombre" del tema DEBE seguir estrictamente el formato: "CATEGORÍA: Subtema".
-       - La CATEGORÍA suele ser la herramienta, lenguaje o habilidad principal.
-       - El Subtema es el área específica.
-       
-       ✅ EJEMPLOS CORRECTOS:
-       - "Excel: Fórmulas Lógicas"
-       - "Excel: Tablas Dinámicas"
-       - "Inglés Negocios: Emails Formales"
-       - "Inglés Negocios: Reuniones"
-       - "Python: Data Science"
-       - "Python: Web Scraping"
-       
-       ❌ EJEMPLOS PROHIBIDOS (Grave error):
-       - "Módulo 1" (No aporta información)
-       - "Fórmulas" (Muy genérico, colisiona con otros cursos)
-       - "Introducción" (Demasiado vago)
+    1. REGLA DEL TEMA (FORMATO PATH):
+       - El campo "nombre" del tema DEBE seguir estrictamente el formato: "Categoria: Subtema". Si tiene más de un subtema puede ser 
+       Categoría:subtema:subtema (subtema tantas veces como subcategorías queremos crear).
+       - La Categoría y los subtemas, la primera letra debe ser mayúscula por cada palabra relevante
+       - ✅ CORRECTO: "Excel: Filtros
+       - ✅ CORRECTO: "Excel: Fórmulas: Fórmulas de Texto"
+       - ❌ PROHIBIDO: "Fórmulas" (Sin contexto).
 
-    2. REGLA DE MICRO-COMPETENCIAS:
-       - Deben ser atómicas y verificables.
-       - Usa nombres autocontenidos.
-       - ✅ Bien: "Crear una tabla dinámica con fuentes externas en Excel"
-       - ❌ Mal: "Crear tabla"
+    2. REGLA DE MICRO-COMPETENCIAS (SLUG SEO):
+       - El campo "slug_seo" es CRÍTICO. Debe responder a lo que el usuario escribe en Google.
+       - Debe usar formato: "como-accion-objeto" o "que-es-concepto".
+       - Debe tener un máximo de 6 palabras
+       - ✅ Bien: "como-fijar-celdas-excel"
+       - ✅ Bien: "como-crear-tabla-dinamica"
+       - ✅ Bien: "diferencia-buscarv-buscarx"
+       - ✅ Bien: "Inglés Negocios: Emails Formales"
+       - ✅ Bien:"Inglés Negocios: Reuniones"
+       - ✅ Bien:"Python: Data Science"
+       - ✅ Bien:"Python: Web Scraping"
+       - ❌ Mal: "fijar-celdas" (Muy corto)
+       - ❌ Mal: "aprender-a-fijar-las-celdas-de-forma-correcta" (Muy largo, máx 6 palabras).
 
     3. CANTIDAD:
-       - Genera entre 5 y 8 Temas (Categoría: Subtema).
-       - Genera entre 2 y 4 Micro-competencias por Tema.
-    """
+       - Genera entre 5 Temas
+       - Genera entre 4 Micro-competencias por Tema.
 
-def prompt_generacion_reactivos(mc, nivel):
-    return f"""
-    Eres un experto en psicometría y evaluación técnica.
-    Genera 2 preguntas de selección múltiple (dificultad {nivel}/5) para evaluar la siguiente micro-competencia:
-    
-    COMPETENCIA: "{mc.nombre}"
-    CONTEXTO (Tema): "{mc.temas.first().nombre if mc.temas.exists() else 'General'}"
-    DEFINICIÓN: "{mc.definicion_atomica}"
+    4. CONTENIDO
+       ⚠️ INSTRUCCIÓN CRÍTICA DE CONTENIDO:
+    - El contenido debe ser **100% sobre "{nicho}"**.
 
-    REGLAS DE FORMATO (JSON ARRAY):
-    [
-      {{
-        "texto": "¿Pregunta situacional o técnica?",
-        "opciones": {{
-          "a": "Distractor plausible 1",
-          "b": "Respuesta Correcta",
-          "c": "Distractor plausible 2",
-          "d": "Error común"
-        }},
-        "respuesta_correcta": "b",
-        "justificacion": "Explicación breve de por qué 'b' es la correcta."
-      }}
-    ]
-    
-    IMPORTANTE:
-    - Las preguntas deben ser prácticas, no teóricas.
-    - La respuesta correcta debe variar de posición (a, b, c, d) aleatoriamente.
     """
 
 def prompt_generacion_reactivos(mc_obj, nivel):

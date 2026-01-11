@@ -6,25 +6,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CertUfy - {% block title %}Valida tu Habilidad{% endblock %}</title>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "CertUfy",
+      "url": "{{ request.scheme }}://{{ request.get_host }}",
+      "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'core/img/logo_oficial.png' %}",
+      "sameAs": [
+        "https://www.linkedin.com/company/108549606/"
+      ]
+    }
+    </script>
+
     <style>
-        /* --- ESTILOS GLOBALES Y DE ESTRUCTURA --- */
+        /* --- 1. ESTILOS GLOBALES --- */
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
             line-height: 1.6; 
             margin: 0; 
-            background-color: #f9f9f9; 
-            color: #333;
+            background-color: #f8f9fa; 
+            color: #1a202c; 
+            -webkit-font-smoothing: antialiased; 
         }
+
         .container { 
             max-width: 1100px; 
             margin: 0 auto; 
             padding: 20px; 
         }
 
-        /* --- NAVBAR PROFESIONAL --- */
+        /* --- 2. NAVBAR SILICON VALLEY (11/10) --- */
         .navbar {
-            background-color: #fff;
-            border-bottom: 1px solid #D4AF37; /* Detalle Dorado */
+            background-color: #ffffff;
+            border-bottom: 1px solid #D4AF37; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 
+                        0 2px 4px -1px rgba(0, 0, 0, 0.03);
             padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -32,133 +50,155 @@
             position: sticky; 
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #0056D2; /* Azul CertUfy */
-            text-decoration: none;
-            letter-spacing: -0.5px;
             display: flex;
             align-items: center;
-            gap: 8px;
         }
 
+        /* --- 3. MENÚ DE NAVEGACIÓN --- */
         .navbar-menu {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px; 
         }
 
-        /* Botones de Navegación */
         .nav-link {
             text-decoration: none;
-            color: #555;
+            color: #4a5568; 
             font-weight: 500;
             font-size: 0.95rem;
             padding: 8px 12px;
             border-radius: 6px;
             transition: all 0.2s ease;
         }
+
         .nav-link:hover {
-            background-color: #f0f4f8;
-            color: #0056D2;
+            background-color: #edf2f7; 
+            color: #0056D2; 
         }
 
-        .btn-outline {
-            border: 1px solid #dee2e6;
-            padding: 6px 14px;
-            border-radius: 6px;
-        }
-        .btn-google {
-            background-color: #fff;
-            color: #444;
-            border: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-weight: 600;
-            text-decoration: none;
+        .nav-link.admin-link { color: #6a11cb; }
+        .nav-link.superuser-link { color: #d63384; }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #718096;
+            padding: 8px 12px;
             transition: all 0.2s;
         }
+        .logout-btn:hover {
+            color: #e53e3e; 
+            background-color: #fff5f5;
+        }
+
+        /* --- 4. BOTÓN GOOGLE & USUARIO --- */
+        .btn-google {
+            background-color: #fff;
+            color: #3c4043;
+            border: 1px solid #dadce0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color .2s, box-shadow .2s;
+        }
         .btn-google:hover {
-            background-color: #f8f9fa;
-            border-color: #ccc;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background-color: #f7f8f8;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+            border-color: #d2e3fc;
         }
-        .google-icon {
-            width: 18px;
-            height: 18px;
-        }
+        .google-icon { width: 18px; height: 18px; }
 
-        /* Dropdown simple para usuario */
         .user-badge {
-            background: #E1F0FF;
-            color: #0056D2;
-            padding: 6px 12px;
-            border-radius: 20px;
             font-size: 0.9rem;
+            color: #2d3748;
             font-weight: 600;
+            margin-right: 5px;
         }
 
-        /* --- ESTILOS COMUNES PARA HIJOS --- */
-        .section-title { font-size: 28px; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 40px; margin-bottom: 20px; }
+        /* --- 5. FOOTER & SOCIAL --- */
+        footer {
+            margin-top: 60px;
+            padding: 40px 0;
+            border-top: 1px solid #eaeaea;
+            text-align: center;
+            color: #718096;
+            font-size: 0.85rem;
+            background-color: #fff;
+        }
+        footer a { color: #718096; text-decoration: none; transition: color 0.2s; }
+        footer a:hover { color: #0056D2; }
         
+        /* Iconos Sociales SVG */
+        .social-icon {
+            width: 20px;
+            height: 20px;
+            fill: #A0AEC0; /* Gris inicial */
+            transition: fill 0.3s ease;
+            vertical-align: middle;
+        }
+        .social-link:hover .social-icon {
+            fill: #0077B5; /* Azul LinkedIn Oficial al pasar el mouse */
+        }
+
     </style>
 
     {% block extra_css %}{% endblock %}
 
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DCJ91D65GL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-DCJ91D65GL');
-</script>
-
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCJ91D65GL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-DCJ91D65GL');
+    </script>
 </head>
 <body>
 
     <nav class="navbar">
-        <a href="{% url 'core:homepage' %}" class="logo">
-            <img src="{% static 'core/img/logo_oficial.png' %}" alt="CertUfy Logo" style="height: 70px; vertical-align: middle;">
+        <a href="{% url 'core:homepage' %}" class="navbar-brand">
+            <img src="{% static 'core/img/logo_oficial.png' %}" alt="CertUfy Logo" style="height: 50px;">
         </a>
  
         <div class="navbar-menu">
             {% if user.is_authenticated %}
-            {% if user.is_staff %}
-                <a href="{% url 'core:dashboard_crear' %}" class="nav-link" style="color: #6a11cb; font-weight: bold;">
-                    🏭 Dashboard
-                </a>
-                <a href="/admin/" class="nav-link" target="_blank">🔧 Admin</a>
-
-            {% if user.is_superuser %}
-                    <a href="{% url 'core:maintenance_dashboard' %}" class="nav-link" style="color: #d63384; font-weight: bold;">
-                        ⚙️ Mantenimiento
-                    </a>
-                {% endif %}
-            {% endif %}
-
-                <span class="user-badge">{{ user.username }}</span>
                 
-                <a href="{% url 'core:perfil_usuario' %}" class="nav-link">👤 Mi Perfil</a>
+                {% if user.is_staff %}
+                    <a href="{% url 'core:dashboard_crear' %}" class="nav-link admin-link">
+                        Dashboard
+                    </a>
+                    <a href="/admin/" class="nav-link" target="_blank">Admin</a>
+
+                    {% if user.is_superuser %}
+                        <a href="{% url 'core:maintenance_dashboard' %}" class="nav-link superuser-link">
+                            Mantenimiento
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+                <span class="user-badge">Hola, {{ user.username }}</span>
+                
+                <a href="{% url 'core:perfil_usuario' %}" class="nav-link">Mi Perfil</a>
                 
                 <form action="{% url 'account_logout' %}" method="post" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit" class="nav-link" style="background: none; border: none; cursor: pointer; color: #dc3545;">
-                        Salir
+                    <button type="submit" class="logout-btn">
+                        Cerrar Sesión
                     </button>
                 </form>
 
-           {% else %}
+            {% else %}
                 
-
                 <a href="{% provider_login_url 'google' %}" class="btn-google">
                     <svg class="google-icon" viewBox="0 0 48 48">
                         <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
@@ -166,7 +206,7 @@
                         <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
                         <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
                     </svg>
-                    Ingresar con Google
+                    Continuar con Google
                 </a>
             {% endif %}
         </div>
@@ -175,13 +215,20 @@
     {% block content %}
     {% endblock %}
 
-    <footer style="margin-top: 50px; padding: 40px 0; border-top: 1px solid #eee; text-align: center; color: #777; font-size: 0.9rem;">
+    <footer>
         <div class="container">
-            <p>&copy; 2026 CertUfy - Validación de Competencias Digitales.</p>
-            <div style="margin-top: 10px;">
-                <a href="{% url 'core:terminos' %}" style="color: #777; text-decoration: none; margin: 0 10px;">Términos y Condiciones</a>
-                |
-                <a href="{% url 'core:privacidad' %}" style="color: #777; text-decoration: none; margin: 0 10px;">Privacidad</a>
+            <div style="margin-bottom: 20px;">
+                <a href="https://www.linkedin.com/company/108549606/" target="_blank" class="social-link" title="Síguenos en LinkedIn">
+                    <svg class="social-icon" viewBox="0 0 24 24">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                </a>
+            </div>
+
+            <p>&copy; 2026 CertUfy Inc. Todos los derechos reservados.</p>
+            <div style="margin-top: 15px;">
+                <a href="{% url 'core:terminos' %}" style="margin: 0 15px;">Términos</a>
+                <a href="{% url 'core:privacidad' %}" style="margin: 0 15px;">Privacidad</a>
             </div>
         </div>
     </footer>
